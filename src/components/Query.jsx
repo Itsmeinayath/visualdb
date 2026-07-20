@@ -1,5 +1,5 @@
 import { cn } from "../utils/cn";
-import { Play, RotateCcw } from "lucide-react";
+import { Play, RotateCcw, Terminal } from "lucide-react";
 
 export default function Query({ 
   queryLines = [], 
@@ -10,50 +10,52 @@ export default function Query({
   isFinished = false
 }) {
   return (
-    <div className="glass-panel rounded-xl overflow-hidden shadow-2xl shadow-black/50 border border-border flex flex-col h-full">
-      <div className="bg-card/50 px-4 py-3 border-b border-border flex items-center justify-between">
-        <div className="flex gap-2">
-          <div className="w-3 h-3 rounded-full bg-red-500/20 border border-red-500/50"></div>
-          <div className="w-3 h-3 rounded-full bg-yellow-500/20 border border-yellow-500/50"></div>
-          <div className="w-3 h-3 rounded-full bg-green-500/20 border border-green-500/50"></div>
-        </div>
-        <div className="text-xs font-mono text-muted-foreground uppercase tracking-widest">Query Editor</div>
+    <div className="panel overflow-hidden flex flex-col border border-border h-full">
+      {/* Editor Header */}
+      <div className="bg-zinc-950 px-3 py-2 border-b border-border flex items-center gap-2">
+        <Terminal size={14} className="text-zinc-500" />
+        <span className="text-xs font-mono text-zinc-400">query.sql</span>
       </div>
       
-      <div className="p-6 font-mono text-lg leading-loose flex-1 flex flex-col justify-center">
+      {/* Code Editor Body */}
+      <div className="bg-zinc-950 flex-1 p-4 font-mono text-[13px] leading-relaxed flex flex-col relative overflow-hidden">
         {queryLines.map((line, idx) => (
           <div 
             key={idx}
             className={cn(
-              "px-4 py-1 -mx-4 rounded-md transition-all duration-300 border border-transparent",
+              "flex transition-colors duration-150 rounded px-2 -mx-2 py-0.5",
               activeLineIndex === idx 
-                ? "bg-primary/20 text-white border-primary/50 shadow-[0_0_15px_rgba(59,130,246,0.1)] scale-[1.02] transform-gpu font-bold" 
+                ? "bg-accent/20 border-l-2 border-accent text-zinc-100" 
                 : activeLineIndex > idx
-                  ? "text-muted-foreground opacity-50"
-                  : "text-foreground"
+                  ? "text-zinc-600 border-l-2 border-transparent"
+                  : "text-zinc-300 border-l-2 border-transparent"
             )}
           >
-            {line}
+            <div className="w-6 shrink-0 text-right pr-3 text-zinc-600 select-none tabular-nums">
+              {idx + 1}
+            </div>
+            <div>{line}</div>
           </div>
         ))}
       </div>
 
-      <div className="p-4 border-t border-border flex justify-end gap-3 bg-black/10">
+      {/* Action Bar */}
+      <div className="p-3 bg-zinc-900 border-t border-border flex justify-end gap-2 shrink-0">
         <button
           onClick={onReset}
           disabled={isPlaying && !isFinished}
-          className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all hover:bg-white/5 disabled:opacity-50 disabled:cursor-not-allowed"
+          className="flex items-center gap-1.5 px-3 py-1.5 rounded text-xs font-medium text-zinc-300 transition-colors hover:bg-zinc-800 disabled:opacity-50 disabled:cursor-not-allowed border border-transparent"
         >
-          <RotateCcw size={16} />
+          <RotateCcw size={14} />
           Reset
         </button>
         <button
           onClick={onRun}
           disabled={isPlaying || isFinished}
-          className="flex items-center gap-2 px-6 py-2 rounded-lg bg-primary text-white text-sm font-medium transition-all hover:bg-primary/90 hover:scale-105 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 shadow-lg shadow-primary/20"
+          className="flex items-center gap-1.5 px-4 py-1.5 rounded bg-accent text-white text-xs font-medium transition-all hover:bg-accent/90 disabled:opacity-50 disabled:cursor-not-allowed shadow-sm"
         >
-          <Play size={16} fill="currentColor" />
-          Run Animation
+          <Play size={14} fill="currentColor" />
+          Run
         </button>
       </div>
     </div>

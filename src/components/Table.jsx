@@ -1,8 +1,10 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "../utils/cn";
+import { Table as TableIcon } from "lucide-react";
+
 export default function Table({ 
   data, 
-  title = "Table", 
+  title = "table", 
   highlightedRows = [], 
   discardedRows = [],
   highlightedColumns = []
@@ -11,25 +13,34 @@ export default function Table({
   
   const columns = Object.keys(data[0]);
 
+  // Use spring animation for snappy SaaS feel
+  const springConfig = { type: "spring", stiffness: 500, damping: 40 };
+
   return (
-    <div className="glass-panel rounded-xl overflow-hidden shadow-2xl shadow-black/50 border border-border">
-      <div className="bg-card/50 px-4 py-3 border-b border-border flex items-center justify-between">
-        <h3 className="font-mono font-semibold text-sm text-foreground flex items-center gap-2">
-          <span className="text-primary">table</span> {title}
-        </h3>
-        <div className="text-xs text-muted-foreground">{data.length} rows</div>
+    <div className="panel overflow-hidden flex flex-col h-full border border-border">
+      {/* Table Header / Toolbar */}
+      <div className="bg-muted/50 px-3 py-2 border-b border-border flex items-center justify-between text-xs">
+        <div className="flex items-center gap-2">
+          <TableIcon size={14} className="text-muted-foreground" />
+          <span className="font-mono text-muted-foreground font-medium">{title}</span>
+        </div>
+        <div className="text-muted-foreground font-mono">{data.length} rows</div>
       </div>
       
-      <div className="overflow-x-auto">
-        <table className="w-full text-sm text-left">
-          <thead className="text-xs uppercase bg-black/20 text-muted-foreground">
+      {/* Table Grid */}
+      <div className="overflow-auto bg-background flex-1">
+        <table className="w-full text-sm text-left border-collapse">
+          <thead className="text-xs text-muted-foreground bg-muted/30 sticky top-0 z-20 shadow-[0_1px_0_var(--border)]">
             <tr>
+              <th className="w-12 px-3 py-1.5 border-r border-border font-mono font-medium text-center">
+                #
+              </th>
               {columns.map((col) => (
                 <th 
                   key={col} 
                   className={cn(
-                    "px-4 py-3 font-mono font-semibold transition-colors",
-                    highlightedColumns.includes(col) ? "text-primary" : ""
+                    "px-3 py-1.5 border-r border-border font-mono font-medium last:border-r-0 transition-colors",
+                    highlightedColumns.includes(col) ? "text-foreground bg-accent/5" : ""
                   )}
                 >
                   {col}
@@ -37,7 +48,7 @@ export default function Table({
               ))}
             </tr>
           </thead>
-          <tbody>
+          <tbody className="font-mono text-[13px]">
             <AnimatePresence>
               {data.map((row, idx) => {
                 const isHighlighted = highlightedRows.includes(row.id || idx);
@@ -46,26 +57,27 @@ export default function Table({
                 return (
                   <motion.tr
                     key={row.id || idx}
-                    initial={{ opacity: 0, y: 10 }}
+                    initial={{ opacity: 0, y: -4 }}
                     animate={{ 
-                      opacity: isDiscarded ? 0.2 : 1, 
+                      opacity: isDiscarded ? 0.3 : 1, 
                       y: 0,
-                      scale: isHighlighted ? 1.02 : 1,
-                      backgroundColor: isHighlighted ? "rgba(59, 130, 246, 0.15)" : "transparent"
                     }}
-                    exit={{ opacity: 0, scale: 0.95 }}
-                    transition={{ duration: 0.3 }}
+                    transition={springConfig}
                     className={cn(
-                      "border-b border-border/50 last:border-0 transition-colors",
-                      isHighlighted ? "relative z-10 shadow-lg border-primary/30" : "hover:bg-white/5"
+                      "border-b border-border transition-colors group",
+                      isHighlighted ? "bg-accent/10 relative z-10" : "hover:bg-muted/30"
                     )}
                   >
+                    <td className="px-3 py-1.5 border-r border-border text-muted-foreground text-center tabular-nums">
+                      {idx + 1}
+                    </td>
                     {columns.map((col) => (
                       <td 
                         key={col} 
                         className={cn(
-                          "px-4 py-3 font-mono whitespace-nowrap",
-                          highlightedColumns.includes(col) ? "text-white font-medium" : "text-muted-foreground"
+                          "px-3 py-1.5 border-r border-border last:border-r-0 whitespace-nowrap",
+                          isHighlighted ? "text-foreground" : "text-muted-foreground group-hover:text-foreground/80",
+                          highlightedColumns.includes(col) ? "font-semibold" : ""
                         )}
                       >
                         {row[col]}

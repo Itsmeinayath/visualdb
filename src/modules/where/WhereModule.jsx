@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import Table from "../../components/Table";
 import Query from "../../components/Query";
 import studentsData from "../../data/students.json";
-import { CheckCircle2, XCircle } from "lucide-react";
+import { CheckCircle2, XCircle, Terminal, Cpu } from "lucide-react";
 
 export default function WhereModule() {
   const [isPlaying, setIsPlaying] = useState(false);
@@ -14,9 +14,9 @@ export default function WhereModule() {
   const [checkingCondition, setCheckingCondition] = useState(false);
   
   const queryLines = [
-    <span key="1"><span className="text-pink-500">SELECT</span> *</span>,
-    <span key="2"><span className="text-pink-500">FROM</span> students</span>,
-    <span key="3"><span className="text-pink-500">WHERE</span> age <span className="text-blue-400">&gt; 20</span>;</span>
+    <span key="1"><span className="text-pink-500 font-semibold">SELECT</span> *</span>,
+    <span key="2"><span className="text-pink-500 font-semibold">FROM</span> <span className="text-blue-400">students</span></span>,
+    <span key="3"><span className="text-pink-500 font-semibold">WHERE</span> age <span className="text-orange-400">&gt; 20</span>;</span>
   ];
 
   const handleRun = () => {
@@ -43,14 +43,14 @@ export default function WhereModule() {
 
     let timeout;
     
+    // Snappy SaaS timings
     if (step === 0) {
-      timeout = setTimeout(() => setStep(1), 1000);
+      timeout = setTimeout(() => setStep(1), 600);
     } else if (step === 1) {
-      timeout = setTimeout(() => setStep(2), 1000);
+      timeout = setTimeout(() => setStep(2), 600);
     } else if (step === 2) {
-      timeout = setTimeout(() => setStep(3), 1000);
+      timeout = setTimeout(() => setStep(3), 600);
     } else if (step === 3) {
-      // Begin row iteration
       setCurrentRowIdx(0);
       setStep(4);
     } else if (step === 4) {
@@ -68,10 +68,9 @@ export default function WhereModule() {
           
           timeout = setTimeout(() => {
             setCurrentRowIdx(prev => prev + 1);
-          }, 800); // Wait before next row
-        }, 1200); // Time spent "checking"
+          }, 300); // Faster iteration between rows
+        }, 600); // Quick condition check
       } else {
-        // Finished all rows
         setCurrentRowIdx(-1);
         setStep(5);
       }
@@ -84,96 +83,99 @@ export default function WhereModule() {
   }, [isPlaying, step, currentRowIdx]);
 
   return (
-    <div className="h-full flex flex-col p-6 max-w-7xl mx-auto gap-6">
+    <div className="h-full flex flex-col p-8 max-w-7xl mx-auto gap-8">
       <header className="flex-none">
-        <h1 className="text-3xl font-display font-bold mb-2">The WHERE Clause</h1>
-        <p className="text-muted-foreground text-lg">
-          Filter records that meet specific conditions. Watch how the database checks 
-          <strong> every single row </strong> to decide if it should be included.
+        <h1 className="text-2xl font-bold mb-2 tracking-tight">The WHERE Clause</h1>
+        <p className="text-muted-foreground text-sm max-w-3xl leading-relaxed">
+          The execution engine evaluates the boolean expression in the <code>WHERE</code> clause against every row in the target relation. Rows evaluating to <code>TRUE</code> are included in the result set.
         </p>
       </header>
 
-      <div className="flex-1 grid grid-cols-1 lg:grid-cols-12 gap-6 min-h-0">
+      <div className="flex-1 grid grid-cols-1 lg:grid-cols-12 gap-8 min-h-0">
         <div className="col-span-1 lg:col-span-4 flex flex-col gap-6">
-          <Query 
-            queryLines={queryLines} 
-            activeLineIndex={
-              step === 0 ? 0 : 
-              step === 1 ? 1 : 
-              step >= 2 && step <= 4 ? 2 : 
-              -1
-            } 
-            onRun={handleRun}
-            onReset={handleReset}
-            isPlaying={isPlaying}
-            isFinished={isFinished}
-          />
+          <div className="h-48 shrink-0">
+            <Query 
+              queryLines={queryLines} 
+              activeLineIndex={
+                step === 0 ? 0 : 
+                step === 1 ? 1 : 
+                step >= 2 && step <= 4 ? 2 : 
+                -1
+              } 
+              onRun={handleRun}
+              onReset={handleReset}
+              isPlaying={isPlaying}
+              isFinished={isFinished}
+            />
+          </div>
           
-          <div className="glass-panel p-6 rounded-xl border border-border h-48 flex flex-col justify-center items-center text-center transition-all">
-            {step === -1 && <p className="text-muted-foreground">Click Run Animation to start.</p>}
-            {step === 0 && <p className="text-primary animate-pulse font-medium">Parsing SELECT...</p>}
-            {step === 1 && <p className="text-primary animate-pulse font-medium">Identifying table...</p>}
-            {step === 2 && <p className="text-accent-purple font-medium">Applying WHERE filter...</p>}
+          <div className="panel p-4 flex flex-col gap-4">
+            <div className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider flex items-center gap-2 border-b border-border pb-2">
+              <Cpu size={14} /> Evaluation Engine
+            </div>
             
-            {step === 4 && currentRowIdx >= 0 && currentRowIdx < studentsData.length && (
-              <div className="flex flex-col items-center gap-4 w-full">
-                <div className="text-sm text-muted-foreground uppercase tracking-widest font-bold">
-                  Evaluating Row {currentRowIdx + 1}
-                </div>
-                
-                <div className="bg-black/20 p-4 rounded-lg border border-white/5 w-full">
-                  <div className="font-mono text-lg mb-2">
-                    <span className="text-muted-foreground">age: </span>
-                    <span className="text-white">{studentsData[currentRowIdx].age}</span>
+            <div className="h-32 flex flex-col justify-center font-mono text-[13px]">
+              {step === -1 && <div className="text-zinc-500 text-center">Idle</div>}
+              {step === 0 && <div className="text-foreground animate-pulse">AST Parsing: SELECT...</div>}
+              {step === 1 && <div className="text-foreground animate-pulse">Resolving relation: public.students</div>}
+              {step === 2 && <div className="text-foreground animate-pulse">Preparing filter condition...</div>}
+              
+              {step === 4 && currentRowIdx >= 0 && currentRowIdx < studentsData.length && (
+                <div className="flex flex-col gap-3">
+                  <div className="text-zinc-400">
+                    Eval Row <span className="text-foreground font-semibold">#{currentRowIdx + 1}</span>
                   </div>
                   
-                  {checkingCondition ? (
-                    <div className="flex items-center justify-center gap-2 text-accent-purple animate-pulse">
-                      <div className="w-4 h-4 rounded-full border-2 border-accent-purple border-t-transparent animate-spin" />
-                      Checking if {studentsData[currentRowIdx].age} &gt; 20
+                  <div className="bg-zinc-900 border border-zinc-800 p-3 rounded">
+                    <div className="flex justify-between mb-2">
+                      <span className="text-zinc-500">var_age:</span>
+                      <span className="text-zinc-200">{studentsData[currentRowIdx].age}</span>
                     </div>
-                  ) : (
-                    <div className={`flex items-center justify-center gap-2 font-bold ${studentsData[currentRowIdx].age > 20 ? 'text-green-500' : 'text-red-500'}`}>
-                      {studentsData[currentRowIdx].age > 20 ? (
-                         <>
-                           <CheckCircle2 size={20} />
-                           Condition TRUE (Keep)
-                         </>
-                      ) : (
-                         <>
-                           <XCircle size={20} />
-                           Condition FALSE (Discard)
-                         </>
-                      )}
-                    </div>
-                  )}
+                    
+                    {checkingCondition ? (
+                      <div className="flex items-center gap-2 text-accent text-xs">
+                        <div className="w-3 h-3 rounded-full border border-accent border-t-transparent animate-spin" />
+                        Evaluating: {studentsData[currentRowIdx].age} &gt; 20
+                      </div>
+                    ) : (
+                      <div className={`flex items-center gap-1.5 text-xs font-semibold ${studentsData[currentRowIdx].age > 20 ? 'text-success' : 'text-zinc-500'}`}>
+                        {studentsData[currentRowIdx].age > 20 ? (
+                           <>
+                             <CheckCircle2 size={14} /> Condition TRUE
+                           </>
+                        ) : (
+                           <>
+                             <XCircle size={14} /> Condition FALSE
+                           </>
+                        )}
+                      </div>
+                    )}
+                  </div>
                 </div>
-              </div>
-            )}
-            
-            {step === 5 && (
-              <div className="text-green-400 font-bold text-xl flex items-center gap-2">
-                <CheckCircle2 /> Filtering Complete
-              </div>
-            )}
+              )}
+              
+              {step === 5 && (
+                <div className="text-success font-medium flex flex-col gap-1">
+                  <div className="flex items-center gap-2"><CheckCircle2 size={16} /> Filter pass complete</div>
+                  <div className="text-zinc-500 text-xs mt-1">Returned {highlightedRows.length} rows.</div>
+                </div>
+              )}
+            </div>
           </div>
         </div>
         
-        <div className="col-span-1 lg:col-span-8 flex flex-col gap-6 relative">
-          {/* We show the table and manually add an overlay/border to the row being evaluated */}
-          <div className="flex-1">
-            <Table 
-              data={studentsData} 
-              title="students" 
-              highlightedRows={
-                step === 4 && checkingCondition 
-                  ? [...highlightedRows, studentsData[currentRowIdx]?.id] // highlight current while checking
-                  : highlightedRows
-              }
-              discardedRows={discardedRows}
-              highlightedColumns={step >= 2 ? ["age"] : []}
-            />
-          </div>
+        <div className="col-span-1 lg:col-span-8 flex flex-col h-full overflow-hidden">
+          <Table 
+            data={studentsData} 
+            title="public.students" 
+            highlightedRows={
+              step === 4 && checkingCondition 
+                ? [...highlightedRows, studentsData[currentRowIdx]?.id]
+                : highlightedRows
+            }
+            discardedRows={discardedRows}
+            highlightedColumns={step >= 2 ? ["age"] : []}
+          />
         </div>
       </div>
     </div>

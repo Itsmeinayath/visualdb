@@ -1,59 +1,73 @@
 import { Link } from "react-router-dom";
-import { ArrowRight, Database, Play } from "lucide-react";
+import { Database, Play, Code2, Layers } from "lucide-react";
 
 export default function Home() {
   return (
-    <div className="h-full flex flex-col items-center justify-center p-8 text-center">
+    <div className="min-h-full flex flex-col p-8 md:p-12 lg:p-24 max-w-6xl mx-auto">
       <div className="max-w-3xl space-y-8">
-        <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full glass-panel text-primary border border-primary/20 shadow-[0_0_15px_rgba(59,130,246,0.15)] mb-4">
-          <span className="relative flex h-3 w-3">
-            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
-            <span className="relative inline-flex rounded-full h-3 w-3 bg-primary"></span>
+        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-accent/10 text-accent border border-accent/20 mb-2">
+          <span className="relative flex h-2 w-2">
+            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-accent opacity-75"></span>
+            <span className="relative inline-flex rounded-full h-2 w-2 bg-accent"></span>
           </span>
-          <span className="text-sm font-medium">Version 1.0 is live</span>
+          <span className="text-xs font-semibold tracking-wide uppercase">VisualDB v1.0</span>
         </div>
         
-        <h1 className="text-5xl md:text-7xl font-bold tracking-tight text-transparent bg-clip-text bg-gradient-to-br from-white via-white/90 to-white/30 drop-shadow-sm">
-          See Databases.
-          <br />
+        <h1 className="text-5xl md:text-6xl font-bold tracking-tight text-foreground leading-[1.1]">
+          See Databases.<br />
           <span className="text-muted-foreground">Don't Just Read About Them.</span>
         </h1>
         
-        <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto leading-relaxed">
-          The best free visual DBMS learning platform on the internet. 
-          Stop memorizing syntax and start understanding how SQL thinks through interactive animations.
+        <p className="text-lg md:text-xl text-muted-foreground max-w-2xl leading-relaxed">
+          The professional visual DBMS learning platform. 
+          Stop memorizing syntax and start understanding how SQL execution engines process data row by row.
         </p>
 
-        <div className="flex items-center justify-center gap-4 pt-8">
+        <div className="flex flex-wrap items-center gap-4 pt-4">
           <Link 
             to="/select" 
-            className="group relative inline-flex h-12 items-center justify-center overflow-hidden rounded-md bg-primary px-8 font-medium text-white transition-all duration-300 hover:scale-105 hover:shadow-[0_0_20px_rgba(59,130,246,0.4)]"
+            className="inline-flex h-10 items-center justify-center rounded-md bg-foreground px-6 font-medium text-background transition-colors hover:bg-foreground/90 shadow-sm"
           >
-            <span className="mr-2">Start Learning</span>
-            <Play size={18} className="transition-transform group-hover:translate-x-1" fill="currentColor" />
+            <Play size={16} className="mr-2" fill="currentColor" />
+            Start Learning
           </Link>
           <a 
             href="https://github.com/visualdb" 
             target="_blank" 
             rel="noreferrer"
-            className="inline-flex h-12 items-center justify-center rounded-md border border-white/10 bg-white/5 px-8 font-medium text-foreground transition-colors hover:bg-white/10"
+            className="inline-flex h-10 items-center justify-center rounded-md border border-border bg-transparent px-6 font-medium text-foreground transition-colors hover:bg-muted"
           >
-            View on GitHub
+            View Documentation
           </a>
         </div>
-        
-        <div className="pt-20 grid grid-cols-1 md:grid-cols-3 gap-6 text-left">
-          {[
-            { title: "Visual First", desc: "Animation before explanation. Watch how queries affect data row by row." },
-            { title: "Interactive", desc: "Experiment with queries and instantly see the results visualized." },
-            { title: "Free Forever", desc: "Open source and built for the community. No paywalls, ever." }
-          ].map((feature, i) => (
-            <div key={i} className="glass-panel p-6 rounded-xl">
-              <h3 className="font-display font-semibold text-lg mb-2">{feature.title}</h3>
-              <p className="text-sm text-muted-foreground">{feature.desc}</p>
+      </div>
+
+      <div className="mt-24 border-t border-border pt-12 grid grid-cols-1 md:grid-cols-3 gap-8">
+        {[
+          { 
+            icon: Code2,
+            title: "Execution Visualization", 
+            desc: "Watch how queries affect data row by row, condition by condition. Real-time feedback on SQL operations." 
+          },
+          { 
+            icon: Database,
+            title: "Interactive Data Grids", 
+            desc: "Experiment with queries and instantly see the results visualized in high-density, professional data tables." 
+          },
+          { 
+            icon: Layers,
+            title: "Production Ready", 
+            desc: "Designed like the tools you'll use in the industry. Open source and built for the developer community." 
+          }
+        ].map((feature, i) => (
+          <div key={i} className="flex flex-col gap-3">
+            <div className="w-10 h-10 rounded-lg bg-muted flex items-center justify-center border border-border">
+              <feature.icon size={20} className="text-foreground" />
             </div>
-          ))}
-        </div>
+            <h3 className="font-semibold text-foreground text-base tracking-tight">{feature.title}</h3>
+            <p className="text-sm text-muted-foreground leading-relaxed">{feature.desc}</p>
+          </div>
+        ))}
       </div>
     </div>
   );

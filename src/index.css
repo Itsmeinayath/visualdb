@@ -2,42 +2,49 @@
 
 @theme {
   --font-sans: "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-  --font-display: "Outfit", system-ui, -apple-system, sans-serif;
+  --font-display: "Inter", system-ui, -apple-system, sans-serif;
   --font-mono: "Fira Code", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
 
-  --color-dark-bg: #0B0E14;
-  --color-dark-surface: #151A23;
-  --color-dark-border: #2A3143;
+  /* Strict Zinc / Linear Aesthetic */
+  --color-zinc-950: #09090b;
+  --color-zinc-900: #18181b;
+  --color-zinc-800: #27272a;
+  --color-zinc-400: #a1a1aa;
   
-  --color-accent-purple: #8B5CF6;
-  --color-accent-blue: #3B82F6;
-  --color-accent-pink: #EC4899;
-  --color-accent-green: #10B981;
+  /* Accent: Stripe/Linear Indigo */
+  --color-accent-indigo: #6366f1;
+  --color-accent-indigo-light: #818cf8;
 }
 
 @layer base {
   :root {
     --background: #ffffff;
-    --foreground: #0f172a;
+    --foreground: #09090b;
     --card: #ffffff;
-    --card-foreground: #0f172a;
-    --border: #e2e8f0;
-    --primary: #3b82f6;
+    --card-foreground: #09090b;
+    --border: #e4e4e7;
+    --primary: #18181b;
     --primary-foreground: #ffffff;
-    --muted: #f1f5f9;
-    --muted-foreground: #64748b;
+    --muted: #f4f4f5;
+    --muted-foreground: #71717a;
+    --accent: #6366f1;
+    --danger: #ef4444;
+    --success: #10b981;
   }
 
   .dark {
-    --background: var(--color-dark-bg);
-    --foreground: #f8fafc;
-    --card: var(--color-dark-surface);
-    --card-foreground: #f8fafc;
-    --border: var(--color-dark-border);
-    --primary: var(--color-accent-purple);
-    --primary-foreground: #ffffff;
-    --muted: #1e293b;
-    --muted-foreground: #94a3b8;
+    --background: #09090b; /* zinc-950 */
+    --foreground: #fafafa; /* zinc-50 */
+    --card: #09090b; 
+    --card-foreground: #fafafa;
+    --border: #27272a; /* zinc-800 */
+    --primary: #fafafa;
+    --primary-foreground: #09090b;
+    --muted: #18181b; /* zinc-900 */
+    --muted-foreground: #a1a1aa; /* zinc-400 */
+    --accent: #6366f1;
+    --danger: #ef4444;
+    --success: #10b981;
   }
 
   * {
@@ -52,22 +59,29 @@
     -moz-osx-font-smoothing: grayscale;
   }
 
-  h1, h2, h3, h4, h5, h6 {
-    font-family: var(--font-display);
-    font-weight: 600;
+  /* Scrollbar for SaaS look */
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: var(--border);
+    border-radius: 4px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: var(--muted-foreground);
   }
 }
 
 @layer utilities {
-  .glass-panel {
-    @apply backdrop-blur-lg border border-white/10 bg-black/5;
+  .panel {
+    @apply bg-card border border-border rounded-lg shadow-sm;
   }
   
-  .dark .glass-panel {
-    @apply bg-black/20 backdrop-blur-xl border border-white/5 bg-gradient-to-br from-white/[0.05] to-transparent;
-  }
-  
-  .text-gradient {
-    @apply bg-clip-text text-transparent bg-gradient-to-r;
+  .dark .panel {
+    @apply bg-card border border-border shadow-none;
   }
 }

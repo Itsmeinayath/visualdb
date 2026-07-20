@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import Table from "../../components/Table";
 import Query from "../../components/Query";
 import studentsData from "../../data/students.json";
-import { CheckCircle2 } from "lucide-react";
+import { CheckCircle2, Terminal } from "lucide-react";
 
 export default function SelectModule() {
   const [isPlaying, setIsPlaying] = useState(false);
@@ -11,8 +11,8 @@ export default function SelectModule() {
   const [highlightedRows, setHighlightedRows] = useState([]);
   
   const queryLines = [
-    <span key="1"><span className="text-pink-500">SELECT</span> *</span>,
-    <span key="2"><span className="text-pink-500">FROM</span> students;</span>
+    <span key="1"><span className="text-pink-500 font-semibold">SELECT</span> *</span>,
+    <span key="2"><span className="text-pink-500 font-semibold">FROM</span> <span className="text-blue-400">students</span>;</span>
   ];
 
   const handleRun = () => {
@@ -33,18 +33,12 @@ export default function SelectModule() {
 
     let timeout;
     
+    // Snappy timings
     if (step === 0) {
-      // Step 0: Highlight "SELECT *" line
-      timeout = setTimeout(() => {
-        setStep(1);
-      }, 1500);
+      timeout = setTimeout(() => setStep(1), 800);
     } else if (step === 1) {
-      // Step 1: Highlight "FROM students" line
-      timeout = setTimeout(() => {
-        setStep(2);
-      }, 1500);
+      timeout = setTimeout(() => setStep(2), 800);
     } else if (step === 2) {
-      // Step 2: Highlight all rows one by one rapidly
       let rowIdx = 0;
       const interval = setInterval(() => {
         if (rowIdx < studentsData.length) {
@@ -53,14 +47,11 @@ export default function SelectModule() {
           rowIdx++;
         } else {
           clearInterval(interval);
-          timeout = setTimeout(() => {
-            setStep(3);
-          }, 1000);
+          timeout = setTimeout(() => setStep(3), 500);
         }
-      }, 200);
+      }, 100);
       return () => clearInterval(interval);
     } else if (step === 3) {
-      // Finish
       setIsPlaying(false);
       setIsFinished(true);
     }
@@ -69,54 +60,48 @@ export default function SelectModule() {
   }, [isPlaying, step]);
 
   return (
-    <div className="h-full flex flex-col p-6 max-w-7xl mx-auto gap-6">
+    <div className="h-full flex flex-col p-8 max-w-7xl mx-auto gap-8">
       <header className="flex-none">
-        <h1 className="text-3xl font-display font-bold mb-2">The SELECT Statement</h1>
-        <p className="text-muted-foreground text-lg">
-          The most basic SQL command. It tells the database what data you want to retrieve.
-          <code className="mx-2 text-sm">SELECT *</code> means "select all columns".
+        <h1 className="text-2xl font-bold mb-2 tracking-tight">The SELECT Statement</h1>
+        <p className="text-muted-foreground text-sm max-w-3xl leading-relaxed">
+          The foundation of SQL. It instructs the execution engine on which data columns to retrieve from a target table.
+          <code className="mx-1 px-1.5 py-0.5 rounded bg-muted text-foreground border border-border text-xs font-mono">SELECT *</code> instructs the engine to return all available columns.
         </p>
       </header>
 
-      <div className="flex-1 grid grid-cols-1 lg:grid-cols-12 gap-6 min-h-0">
-        <div className="col-span-1 lg:col-span-4 flex flex-col">
-          <Query 
-            queryLines={queryLines} 
-            activeLineIndex={step === 0 ? 0 : step === 1 ? 1 : step >= 2 ? 0 : -1} 
-            onRun={handleRun}
-            onReset={handleReset}
-            isPlaying={isPlaying}
-            isFinished={isFinished}
-          />
-        </div>
-        
-        <div className="col-span-1 lg:col-span-8 flex flex-col gap-6">
-          <div className="flex-1 overflow-hidden relative flex flex-col">
-            <div className="absolute top-4 right-4 z-20 transition-all duration-500">
-              {isFinished && (
-                <div className="glass-panel px-4 py-2 rounded-full flex items-center gap-2 text-green-400 border-green-500/20 bg-green-500/10">
-                  <CheckCircle2 size={18} />
-                  <span className="font-medium text-sm">Result Set Returned</span>
-                </div>
-              )}
+      <div className="flex-1 grid grid-cols-1 lg:grid-cols-12 gap-8 min-h-0">
+        <div className="col-span-1 lg:col-span-4 flex flex-col gap-6">
+          <div className="h-48">
+            <Query 
+              queryLines={queryLines} 
+              activeLineIndex={step === 0 ? 0 : step === 1 ? 1 : step >= 2 ? 0 : -1} 
+              onRun={handleRun}
+              onReset={handleReset}
+              isPlaying={isPlaying}
+              isFinished={isFinished}
+            />
+          </div>
+          
+          <div className="panel p-4 flex flex-col gap-2">
+            <div className="text-xs font-semibold text-muted-foreground uppercase tracking-wider flex items-center gap-2">
+              <Terminal size={14} /> Execution Log
             </div>
-            
-            <div className="flex-1">
-              <Table 
-                data={studentsData} 
-                title="students" 
-                highlightedRows={highlightedRows}
-              />
-            </div>
-            
-            <div className="h-32 mt-4 glass-panel rounded-xl p-6 border border-border flex items-center justify-center text-center">
-              {step === -1 && <p className="text-muted-foreground font-medium">Click <strong className="text-foreground">Run Animation</strong> to see how the database processes this query.</p>}
-              {step === 0 && <p className="text-primary font-medium text-lg animate-pulse">Parsing SELECT command...</p>}
-              {step === 1 && <p className="text-primary font-medium text-lg animate-pulse">Locating table 'students'...</p>}
-              {step === 2 && <p className="text-accent-purple font-medium text-lg animate-pulse">Selecting all rows matching criteria...</p>}
-              {step === 3 && <p className="text-green-400 font-medium text-lg">Query executed successfully! {studentsData.length} rows returned.</p>}
+            <div className="font-mono text-[13px] h-20 overflow-y-auto flex flex-col justify-end">
+              {step === -1 && <div className="text-muted-foreground">Ready. Awaiting execution.</div>}
+              {step >= 0 && <div className="text-foreground">↳ Parsing SELECT statement...</div>}
+              {step >= 1 && <div className="text-foreground">↳ Locating table relation 'students'...</div>}
+              {step >= 2 && <div className="text-accent">↳ Iterating over table rows...</div>}
+              {step === 3 && <div className="text-success font-medium flex items-center gap-1 mt-1"><CheckCircle2 size={14} /> Query executed successfully. {studentsData.length} rows returned.</div>}
             </div>
           </div>
+        </div>
+        
+        <div className="col-span-1 lg:col-span-8 flex flex-col h-full overflow-hidden">
+          <Table 
+            data={studentsData} 
+            title="public.students" 
+            highlightedRows={highlightedRows}
+          />
         </div>
       </div>
     </div>
