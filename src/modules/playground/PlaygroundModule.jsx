@@ -1,143 +1,30 @@
-import { useState, useEffect } from "react";
-import { Parser } from "node-sql-parser";
 import Table from "../../components/Table";
 import { CheckCircle2, XCircle, Terminal, Cpu, Play, Database } from "lucide-react";
 import { cn } from "../../utils/cn";
 import EditorModule from "react-simple-code-editor";
 import Prism from "prismjs";
 import "prismjs/components/prism-sql";
-import "prismjs/themes/prism-tomorrow.css"; // Dark theme for code
+import "prismjs/themes/prism-tomorrow.css";
+import { useExecutionEngine } from "../../hooks/useExecutionEngine";
 
 const Editor = EditorModule.default || EditorModule;
 
-// Load dummy data
-import studentsData from "../../data/students.json";
-import employeesData from "../../data/employees.json";
-import ordersData from "../../data/orders.json";
-
-const DB = {
-  students: studentsData,
-  employees: employeesData,
-  orders: ordersData,
-};
-
-// Very basic AST Evaluator for WHERE clause
-const evaluateCondition = (ast, row) => {
-  if (!ast) return true;
-  
-  if (ast.type === 'binary_expr') {
-    const leftVal = ast.left.type === 'column_ref' ? row[ast.left.column] : ast.left.value;
-    const rightVal = ast.right.type === 'column_ref' ? row[ast.right.column] : ast.right.value;
-    
-    switch (ast.operator) {
-      case '=': return leftVal == rightVal;
-      case '!=': return leftVal != rightVal;
-      case '>': return leftVal > rightVal;
-      case '<': return leftVal < rightVal;
-      case '>=': return leftVal >= rightVal;
-      case '<=': return leftVal <= rightVal;
-      case 'AND': return evaluateCondition(ast.left, row) && evaluateCondition(ast.right, row);
-      case 'OR': return evaluateCondition(ast.left, row) || evaluateCondition(ast.right, row);
-      default: return true;
-    }
-  }
-  return true;
-};
-
 export default function PlaygroundModule() {
-  const [queryInput, setQueryInput] = useState("SELECT *\nFROM students\nWHERE age > 20;");
-  
-  const [isPlaying, setIsPlaying] = useState(false);
-  const [isFinished, setIsFinished] = useState(false);
-  const [step, setStep] = useState(-1);
-  const [currentRowIdx, setCurrentRowIdx] = useState(-1);
-  
-  const [activeTable, setActiveTable] = useState("students");
-  const [tableData, setTableData] = useState(studentsData);
-  const [parsedAST, setParsedAST] = useState(null);
-  const [parseError, setParseError] = useState(null);
-  
-  const [highlightedRows, setHighlightedRows] = useState([]);
-  const [checkingCondition, setCheckingCondition] = useState(false);
-  const [resultSetData, setResultSetData] = useState([]);
-
-  const handleRun = () => {
-    if (isPlaying) return;
-    
-    try {
-      const parser = new Parser();
-      const astList = parser.astify(queryInput);
-      const ast = Array.isArray(astList) ? astList[0] : astList;
-      
-      if (ast.type !== 'select') {
-        throw new Error("Only SELECT queries are supported right now.");
-      }
-      
-      const tableName = ast.from[0].table;
-      if (!DB[tableName]) {
-        throw new Error(`Table '${tableName}' does not exist. Try 'students', 'employees', or 'orders'.`);
-      }
-
-      setParsedAST(ast);
-      setActiveTable(tableName);
-      setTableData(DB[tableName]);
-      setParseError(null);
-      
-      // Start Animation
-      setIsPlaying(true);
-      setIsFinished(false);
-      setStep(0);
-      setCurrentRowIdx(-1);
-      setHighlightedRows([]);
-      setResultSetData([]);
-      
-    } catch (err) {
-      setParseError(err.message || "Syntax error in SQL query.");
-    }
-  };
-
-  useEffect(() => {
-    if (!isPlaying || !parsedAST) return;
-
-    let timeout;
-    if (step === 0) {
-      timeout = setTimeout(() => setStep(1), 600);
-    } else if (step === 1) {
-      timeout = setTimeout(() => setStep(2), 600);
-    } else if (step === 2) {
-      timeout = setTimeout(() => setStep(3), 600);
-    } else if (step === 3) {
-      setCurrentRowIdx(0);
-      setStep(4);
-    } else if (step === 4) {
-      if (currentRowIdx < tableData.length) {
-        const row = tableData[currentRowIdx];
-        setCheckingCondition(true);
-        
-        timeout = setTimeout(() => {
-          setCheckingCondition(false);
-          const isMatch = parsedAST.where ? evaluateCondition(parsedAST.where, row) : true;
-          
-          if (isMatch) {
-            setHighlightedRows(prev => [...prev, row.id || row.order_id || currentRowIdx]);
-            setResultSetData(prev => [...prev, row]);
-          }
-          
-          timeout = setTimeout(() => {
-            setCurrentRowIdx(prev => prev + 1);
-          }, 300); 
-        }, 600); 
-      } else {
-        setCurrentRowIdx(-1);
-        setStep(5);
-      }
-    } else if (step === 5) {
-      setIsPlaying(false);
-      setIsFinished(true);
-    }
-
-    return () => clearTimeout(timeout);
-  }, [isPlaying, step, currentRowIdx, parsedAST, tableData]);
+  const {
+    queryInput,
+    setQueryInput,
+    isPlaying,
+    step,
+    currentRowIdx,
+    activeTable,
+    tableData,
+    parsedAST,
+    parseError,
+    highlightedRows,
+    checkingCondition,
+    resultSetData,
+    runQuery
+  } = useExecutionEngine("SELECT *\nFROM students\nWHERE age > 20;");
 
   const highlightCode = (code) => {
     return Prism.highlight(code, Prism.languages.sql, "sql");
@@ -160,7 +47,6 @@ export default function PlaygroundModule() {
       <div className="h-[650px] grid grid-cols-1 lg:grid-cols-12 gap-8 relative z-10">
         <div className="col-span-1 lg:col-span-4 flex flex-col gap-6">
           
-          {/* Crisp Code Editor Panel */}
           <div className={cn(
             "panel overflow-hidden flex flex-col h-56 shrink-0 relative transition-all duration-300",
             isPlaying ? "border-zinc-500 shadow-sm shadow-white/5" : "border-zinc-800"
@@ -171,7 +57,7 @@ export default function PlaygroundModule() {
                 <span className="text-xs font-mono text-zinc-400">query.sql</span>
               </div>
               <button
-                onClick={handleRun}
+                onClick={() => runQuery()}
                 disabled={isPlaying}
                 className="flex items-center gap-1.5 px-4 py-1.5 rounded bg-zinc-100 text-zinc-900 text-xs font-semibold transition-all hover:bg-white hover:scale-[1.02] active:scale-95 disabled:opacity-50 disabled:scale-100"
               >
@@ -188,9 +74,7 @@ export default function PlaygroundModule() {
                 padding={16}
                 disabled={isPlaying}
                 className="font-mono text-[14px] leading-relaxed w-full min-h-full disabled:opacity-50 text-zinc-200"
-                style={{
-                  fontFamily: '"Fira Code", "Fira Mono", monospace',
-                }}
+                style={{ fontFamily: '"Fira Code", "Fira Mono", monospace' }}
               />
             </div>
             
@@ -201,7 +85,6 @@ export default function PlaygroundModule() {
             )}
           </div>
           
-          {/* Strict Terminal-like Execution Log */}
           <div className="panel flex flex-col flex-1 bg-zinc-950 border border-zinc-800">
             <div className="bg-zinc-900/50 px-3 py-2 border-b border-zinc-800 text-[11px] font-semibold text-zinc-400 uppercase tracking-wider flex items-center gap-2">
               <Cpu size={14} className={isPlaying ? "text-zinc-200" : ""} /> Execution Trace

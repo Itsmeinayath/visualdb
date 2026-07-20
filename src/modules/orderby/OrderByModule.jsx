@@ -1,68 +1,27 @@
-import { useState, useEffect } from "react";
 import Table from "../../components/Table";
 import Query from "../../components/Query";
-import studentsData from "../../data/students.json";
 import { CheckCircle2, Terminal, Cpu, ArrowDownAZ } from "lucide-react";
+import { useExecutionEngine } from "../../hooks/useExecutionEngine";
 
 export default function OrderByModule() {
-  const [isPlaying, setIsPlaying] = useState(false);
-  const [isFinished, setIsFinished] = useState(false);
-  const [step, setStep] = useState(-1);
-  const [resultSetData, setResultSetData] = useState([]);
-  const [highlightedColumns, setHighlightedColumns] = useState([]);
-  
-  // Create a sorted version of the data for the final step
-  const sortedStudents = [...studentsData].sort((a, b) => b.gpa - a.gpa); // DESC by gpa
+  const {
+    isPlaying,
+    isFinished,
+    step,
+    currentRowIdx,
+    activeTable,
+    tableData,
+    parsedAST,
+    resultSetData,
+    runQuery,
+    resetQuery
+  } = useExecutionEngine("SELECT *\nFROM students\nORDER BY gpa DESC;");
   
   const queryLines = [
     <span key="1"><span className="text-pink-500 font-semibold">SELECT</span> *</span>,
     <span key="2"><span className="text-pink-500 font-semibold">FROM</span> <span className="text-blue-400">students</span></span>,
     <span key="3"><span className="text-pink-500 font-semibold">ORDER BY</span> gpa <span className="text-pink-500 font-semibold">DESC</span>;</span>
   ];
-
-  const handleRun = () => {
-    if (isPlaying || isFinished) return;
-    setIsPlaying(true);
-    setStep(0);
-    setResultSetData([]);
-    setHighlightedColumns([]);
-  };
-
-  const handleReset = () => {
-    setIsPlaying(false);
-    setIsFinished(false);
-    setStep(-1);
-    setResultSetData([]);
-    setHighlightedColumns([]);
-  };
-
-  useEffect(() => {
-    if (!isPlaying) return;
-
-    let timeout;
-    
-    // SaaS Execution Engine Timings
-    if (step === 0) {
-      timeout = setTimeout(() => setStep(1), 600);
-    } else if (step === 1) {
-      timeout = setTimeout(() => setStep(2), 600);
-    } else if (step === 2) {
-      timeout = setTimeout(() => setStep(3), 600);
-    } else if (step === 3) {
-      // Highlight the column we are sorting by
-      setHighlightedColumns(["gpa"]);
-      timeout = setTimeout(() => setStep(4), 1000);
-    } else if (step === 4) {
-      // Generate sorted result set (populating bottom table)
-      setResultSetData(sortedStudents);
-      timeout = setTimeout(() => setStep(5), 500);
-    } else if (step === 5) {
-      setIsPlaying(false);
-      setIsFinished(true);
-    }
-
-    return () => clearTimeout(timeout);
-  }, [isPlaying, step]);
 
   return (
     <div className="h-full flex flex-col p-8 max-w-7xl mx-auto gap-8">
@@ -120,8 +79,8 @@ export default function OrderByModule() {
                 step >= 2 && step <= 4 ? 2 : 
                 -1
               } 
-              onRun={handleRun}
-              onReset={handleReset}
+              onRun={() => runQuery("SELECT *\nFROM students\nORDER BY gpa DESC;")}
+              onReset={resetQuery}
               isPlaying={isPlaying}
               isFinished={isFinished}
             />
@@ -135,10 +94,10 @@ export default function OrderByModule() {
             <div className="h-32 flex flex-col justify-center font-mono text-[13px]">
               {step === -1 && <div className="text-zinc-500 text-center">Idle</div>}
               {step === 0 && <div className="text-foreground animate-pulse">AST Parsing: SELECT...</div>}
-              {step === 1 && <div className="text-foreground animate-pulse">Resolving relation: public.students</div>}
+              {step === 1 && <div className="text-foreground animate-pulse">Resolving relation: public.{activeTable}</div>}
               {step === 2 && <div className="text-foreground animate-pulse">Table scan complete...</div>}
               
-              {step === 3 && (
+              {step === 4 && (
                 <div className="flex flex-col gap-3">
                   <div className="text-accent flex items-center gap-2">
                     <div className="w-3 h-3 rounded-full border border-accent border-t-transparent animate-spin" />
@@ -148,12 +107,12 @@ export default function OrderByModule() {
                     <div className="flex items-center gap-1.5 text-xs font-semibold text-zinc-300">
                        <ArrowDownAZ size={14} className="text-accent" /> Target Column: `gpa`
                     </div>
-                    <div className="text-zinc-500 text-[11px] mt-1">Applying Quicksort (DESC)...</div>
+                    <div className="text-zinc-500 text-[11px] mt-1">Applying Sort ({parsedAST?.orderby?.[0]?.type || "DESC"})...</div>
                   </div>
                 </div>
               )}
               
-              {step >= 4 && (
+              {step >= 5 && (
                 <div className="text-success font-medium flex flex-col gap-1">
                   <div className="flex items-center gap-2"><CheckCircle2 size={16} /> Sort operation complete</div>
                   <div className="text-zinc-500 text-xs mt-1">Generating sorted Result Set...</div>
@@ -166,9 +125,9 @@ export default function OrderByModule() {
         <div className="col-span-1 lg:col-span-8 flex flex-col h-full overflow-hidden gap-6">
           <div className="flex-1 overflow-hidden min-h-[250px]">
             <Table 
-              data={studentsData} 
-              title="Source: public.students (Unsorted)" 
-              highlightedColumns={highlightedColumns}
+              data={tableData} 
+              title={`Source: public.${activeTable} (Unsorted)`} 
+              highlightedColumns={step >= 4 ? ["gpa"] : []}
             />
           </div>
           <div className="flex-1 overflow-hidden min-h-[250px]">
@@ -176,7 +135,7 @@ export default function OrderByModule() {
               <Table 
                 data={resultSetData} 
                 title="Result Set (Sorted by GPA DESC)" 
-                highlightedColumns={highlightedColumns}
+                highlightedColumns={step >= 4 ? ["gpa"] : []}
               />
             ) : (
               <div className="panel h-full w-full flex items-center justify-center text-zinc-500 font-mono text-sm border-dashed border-2">
