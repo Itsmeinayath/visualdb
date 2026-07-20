@@ -1,0 +1,7 @@
+[
+  { "order_id": 1001, "customer_id": 5, "product": "Laptop", "amount": 1200, "status": "Shipped" },
+  { "order_id": 1002, "customer_id": 2, "product": "Mouse", "amount": 45, "status": "Processing" },
+  { "order_id": 1003, "customer_id": 5, "product": "Keyboard", "amount": 130, "status": "Shipped" },
+  { "order_id": 1004, "customer_id": 1, "product": "Monitor", "amount": 350, "status": "Delivered" },
+  { "order_id": 1005, "customer_id": 3, "product": "Webcam", "amount": 80, "status": "Cancelled" }
+]
