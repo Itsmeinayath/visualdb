@@ -8,6 +8,7 @@ import PlaygroundModule from "./modules/playground/PlaygroundModule";
 import LimitModule from "./modules/limit/LimitModule";
 import GroupByModule from "./modules/groupby/GroupByModule";
 import InnerJoinModule from "./modules/join/InnerJoinModule";
+import LeftJoinModule from "./modules/join/LeftJoinModule";
 
 function App() {
   return (
@@ -18,6 +19,7 @@ function App() {
           <Route path="select" element={<SelectModule />} />
           <Route path="where" element={<WhereModule />} />
           <Route path="innerjoin" element={<InnerJoinModule />} />
+          <Route path="leftjoin" element={<LeftJoinModule />} />
           <Route path="groupby" element={<GroupByModule />} />
           <Route path="orderby" element={<OrderByModule />} />
           <Route path="limit" element={<LimitModule />} />

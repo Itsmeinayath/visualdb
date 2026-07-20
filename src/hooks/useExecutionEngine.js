@@ -21,6 +21,7 @@ export function useExecutionEngine(initialQuery = "") {
 
   const [rightTableData, setRightTableData] = useState([]);
   const [currentRightRowIdx, setCurrentRightRowIdx] = useState(-1);
+  const [hasMatchInInnerLoop, setHasMatchInInnerLoop] = useState(false);
 
   // Initialize with initialQuery table if possible, just for initial UI state
   useEffect(() => {
@@ -77,6 +78,7 @@ export function useExecutionEngine(initialQuery = "") {
       setStep(0);
       setCurrentRowIdx(-1);
       setCurrentRightRowIdx(-1);
+      setHasMatchInInnerLoop(false);
       setHighlightedRows([]);
       setResultSetData([]);
       
@@ -91,6 +93,7 @@ export function useExecutionEngine(initialQuery = "") {
     setStep(-1);
     setCurrentRowIdx(-1);
     setCurrentRightRowIdx(-1);
+    setHasMatchInInnerLoop(false);
     setHighlightedRows([]);
     setResultSetData([]);
     setParseError(null);
@@ -109,6 +112,7 @@ export function useExecutionEngine(initialQuery = "") {
     } else if (step === 3) {
       setCurrentRowIdx(0);
       setCurrentRightRowIdx(rightTableData.length > 0 ? 0 : -1);
+      setHasMatchInInnerLoop(false);
       setStep(4);
     } else if (step === 4) {
       if (currentRowIdx < tableData.length) {
@@ -131,6 +135,7 @@ export function useExecutionEngine(initialQuery = "") {
               const isMatch = onCondition ? evaluateCondition(onCondition, combinedRow) : true;
               
               if (isMatch) {
+                setHasMatchInInnerLoop(true);
                 // Also apply WHERE if present
                 const passesWhere = parsedAST.where ? evaluateCondition(parsedAST.where, combinedRow) : true;
                 if (passesWhere) {
@@ -144,9 +149,29 @@ export function useExecutionEngine(initialQuery = "") {
               }, 300);
             }, 600);
           } else {
-            // Inner loop finished, step outer loop
+            // Inner loop finished
+            const joinType = parsedAST.from[1].join?.toUpperCase();
+            
+            if (joinType === "LEFT JOIN" && !hasMatchInInnerLoop) {
+              const nullRightRow = {};
+              if (rightTableData.length > 0) {
+                Object.keys(rightTableData[0]).forEach(key => {
+                  nullRightRow[key] = null;
+                });
+              }
+              const combinedRow = { ...leftRow, ...nullRightRow };
+              const passesWhere = parsedAST.where ? evaluateCondition(parsedAST.where, combinedRow) : true;
+              
+              if (passesWhere) {
+                setHighlightedRows(prev => [...prev, leftRow.id || currentRowIdx]);
+                setResultSetData(prev => [...prev, combinedRow]);
+              }
+            }
+            
+            // step outer loop
             setCurrentRightRowIdx(0);
             setCurrentRowIdx(prev => prev + 1);
+            setHasMatchInInnerLoop(false);
           }
         } else {
           // Standard Single Table Animation

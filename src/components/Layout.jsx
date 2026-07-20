@@ -8,6 +8,7 @@ export default function Layout() {
     { to: "/select", label: "SELECT Query", icon: MousePointerClick },
     { to: "/where", label: "WHERE Clause", icon: Filter },
     { to: "/innerjoin", label: "INNER JOIN", icon: Combine },
+    { to: "/leftjoin", label: "LEFT JOIN", icon: Combine },
     { to: "/groupby", label: "GROUP BY Clause", icon: FolderTree },
     { to: "/orderby", label: "ORDER BY Clause", icon: ArrowDownAZ },
     { to: "/limit", label: "LIMIT Clause", icon: Scissors },
