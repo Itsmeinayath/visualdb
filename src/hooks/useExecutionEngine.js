@@ -174,7 +174,11 @@ export function useExecutionEngine(initialQuery = "") {
     } else if (step === 5) {
       if (parsedAST.groupby) {
         setResultSetData(prev => {
-          const groupCol = parsedAST.groupby[0].column;
+          // node-sql-parser puts groupby in an object with a 'columns' array, or sometimes directly an array
+          const groupCol = parsedAST.groupby.columns 
+            ? parsedAST.groupby.columns[0].column 
+            : parsedAST.groupby[0].column;
+            
           const buckets = {};
           
           // Hash aggregation
