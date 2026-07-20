@@ -112,7 +112,7 @@ Check out our issues tab for tasks labeled `good first issue`.
 - [x] LIMIT (Truncation)
 - [x] GROUP BY (Hash Aggregation)
 - [x] Custom Query Playground (AST Parsing)
-- [ ] INNER JOIN
+- [x] INNER JOIN
 - [ ] LEFT JOIN
 
 **Version 2 (Database Design)**

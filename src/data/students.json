@@ -1,7 +1,7 @@
 [
-  { "id": 1, "name": "Alice Johnson", "age": 20, "major": "Computer Science", "gpa": 3.8 },
-  { "id": 2, "name": "Bob Smith", "age": 22, "major": "Mathematics", "gpa": 3.4 },
-  { "id": 3, "name": "Charlie Brown", "age": 19, "major": "Physics", "gpa": 3.9 },
-  { "id": 4, "name": "Diana Prince", "age": 21, "major": "Computer Science", "gpa": 4.0 },
-  { "id": 5, "name": "Evan Wright", "age": 23, "major": "History", "gpa": 3.1 }
+  { "id": 1, "name": "Alice Johnson", "age": 20, "major": "Computer Science", "gpa": 3.8, "course_id": 101 },
+  { "id": 2, "name": "Bob Smith", "age": 22, "major": "Mathematics", "gpa": 3.4, "course_id": 201 },
+  { "id": 3, "name": "Charlie Brown", "age": 19, "major": "Physics", "gpa": 3.9, "course_id": 301 },
+  { "id": 4, "name": "Diana Prince", "age": 21, "major": "Computer Science", "gpa": 4.0, "course_id": 102 },
+  { "id": 5, "name": "Evan Wright", "age": 23, "major": "History", "gpa": 3.1, "course_id": 999 }
 ]

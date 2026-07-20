@@ -1,0 +1,8 @@
+[
+  { "course_id": 101, "course_name": "Intro to Programming", "department": "CS", "credits": 4 },
+  { "course_id": 102, "course_name": "Data Structures", "department": "CS", "credits": 4 },
+  { "course_id": 201, "course_name": "Calculus I", "department": "Math", "credits": 3 },
+  { "course_id": 202, "course_name": "Linear Algebra", "department": "Math", "credits": 3 },
+  { "course_id": 301, "course_name": "Modern Physics", "department": "Physics", "credits": 4 },
+  { "course_id": 401, "course_name": "Organic Chemistry", "department": "Biology", "credits": 4 }
+]

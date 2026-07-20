@@ -19,6 +19,9 @@ export function useExecutionEngine(initialQuery = "") {
   const [checkingCondition, setCheckingCondition] = useState(false);
   const [resultSetData, setResultSetData] = useState([]);
 
+  const [rightTableData, setRightTableData] = useState([]);
+  const [currentRightRowIdx, setCurrentRightRowIdx] = useState(-1);
+
   // Initialize with initialQuery table if possible, just for initial UI state
   useEffect(() => {
     try {
@@ -29,6 +32,10 @@ export function useExecutionEngine(initialQuery = "") {
         const tableName = ast.from[0].table;
         setActiveTable(tableName);
         setTableData(getTable(tableName));
+        
+        if (ast.from.length > 1 && ast.from[1].join) {
+          setRightTableData(getTable(ast.from[1].table));
+        }
       } else {
         setTableData(getTable("students"));
       }
@@ -52,10 +59,16 @@ export function useExecutionEngine(initialQuery = "") {
       
       const tableName = ast.from[0].table;
       const data = getTable(tableName); // throws if not found
+      
+      let rightData = [];
+      if (ast.from.length > 1 && ast.from[1].join) {
+        rightData = getTable(ast.from[1].table);
+      }
 
       setParsedAST(ast);
       setActiveTable(tableName);
       setTableData(data);
+      setRightTableData(rightData);
       setParseError(null);
       
       // Start Animation
@@ -63,6 +76,7 @@ export function useExecutionEngine(initialQuery = "") {
       setIsFinished(false);
       setStep(0);
       setCurrentRowIdx(-1);
+      setCurrentRightRowIdx(-1);
       setHighlightedRows([]);
       setResultSetData([]);
       
@@ -76,6 +90,7 @@ export function useExecutionEngine(initialQuery = "") {
     setIsFinished(false);
     setStep(-1);
     setCurrentRowIdx(-1);
+    setCurrentRightRowIdx(-1);
     setHighlightedRows([]);
     setResultSetData([]);
     setParseError(null);
@@ -93,27 +108,67 @@ export function useExecutionEngine(initialQuery = "") {
       timeout = setTimeout(() => setStep(3), 600);
     } else if (step === 3) {
       setCurrentRowIdx(0);
+      setCurrentRightRowIdx(rightTableData.length > 0 ? 0 : -1);
       setStep(4);
     } else if (step === 4) {
       if (currentRowIdx < tableData.length) {
-        const row = tableData[currentRowIdx];
-        setCheckingCondition(true);
+        const leftRow = tableData[currentRowIdx];
         
-        timeout = setTimeout(() => {
-          setCheckingCondition(false);
-          const isMatch = parsedAST.where ? evaluateCondition(parsedAST.where, row) : true;
-          
-          if (isMatch) {
-            setHighlightedRows(prev => [...prev, row.id || row.order_id || currentRowIdx]);
-            setResultSetData(prev => [...prev, row]);
+        if (rightTableData.length > 0) {
+          // Nested Loop Join Animation
+          if (currentRightRowIdx < rightTableData.length) {
+            const rightRow = rightTableData[currentRightRowIdx];
+            setCheckingCondition(true);
+            
+            timeout = setTimeout(() => {
+              setCheckingCondition(false);
+              
+              // Simple row merge (assumes no column collisions for now, or prefixes)
+              const combinedRow = { ...leftRow, ...rightRow };
+              const onCondition = parsedAST.from[1].on;
+              
+              // Evaluate ON
+              const isMatch = onCondition ? evaluateCondition(onCondition, combinedRow) : true;
+              
+              if (isMatch) {
+                // Also apply WHERE if present
+                const passesWhere = parsedAST.where ? evaluateCondition(parsedAST.where, combinedRow) : true;
+                if (passesWhere) {
+                  setHighlightedRows(prev => [...prev, leftRow.id || currentRowIdx]);
+                  setResultSetData(prev => [...prev, combinedRow]);
+                }
+              }
+              
+              timeout = setTimeout(() => {
+                setCurrentRightRowIdx(prev => prev + 1);
+              }, 300);
+            }, 600);
+          } else {
+            // Inner loop finished, step outer loop
+            setCurrentRightRowIdx(0);
+            setCurrentRowIdx(prev => prev + 1);
           }
+        } else {
+          // Standard Single Table Animation
+          setCheckingCondition(true);
           
           timeout = setTimeout(() => {
-            setCurrentRowIdx(prev => prev + 1);
-          }, 300); 
-        }, 600); 
+            setCheckingCondition(false);
+            const isMatch = parsedAST.where ? evaluateCondition(parsedAST.where, leftRow) : true;
+            
+            if (isMatch) {
+              setHighlightedRows(prev => [...prev, leftRow.id || leftRow.order_id || currentRowIdx]);
+              setResultSetData(prev => [...prev, leftRow]);
+            }
+            
+            timeout = setTimeout(() => {
+              setCurrentRowIdx(prev => prev + 1);
+            }, 300); 
+          }, 600); 
+        }
       } else {
         setCurrentRowIdx(-1);
+        setCurrentRightRowIdx(-1);
         setStep(5); // Move to GROUP BY
       }
     } else if (step === 5) {
@@ -189,6 +244,8 @@ export function useExecutionEngine(initialQuery = "") {
     currentRowIdx,
     activeTable,
     tableData,
+    rightTableData,
+    currentRightRowIdx,
     parsedAST,
     parseError,
     highlightedRows,

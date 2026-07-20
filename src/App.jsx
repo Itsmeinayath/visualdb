@@ -7,6 +7,7 @@ import OrderByModule from "./modules/orderby/OrderByModule";
 import PlaygroundModule from "./modules/playground/PlaygroundModule";
 import LimitModule from "./modules/limit/LimitModule";
 import GroupByModule from "./modules/groupby/GroupByModule";
+import InnerJoinModule from "./modules/join/InnerJoinModule";
 
 function App() {
   return (
@@ -16,6 +17,7 @@ function App() {
           <Route index element={<Home />} />
           <Route path="select" element={<SelectModule />} />
           <Route path="where" element={<WhereModule />} />
+          <Route path="innerjoin" element={<InnerJoinModule />} />
           <Route path="groupby" element={<GroupByModule />} />
           <Route path="orderby" element={<OrderByModule />} />
           <Route path="limit" element={<LimitModule />} />
