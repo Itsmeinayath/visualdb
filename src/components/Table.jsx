@@ -64,20 +64,25 @@ export default function Table({
                     }}
                     transition={springConfig}
                     className={cn(
-                      "border-b border-border transition-colors group",
-                      isHighlighted ? "bg-accent/10 relative z-10" : "hover:bg-muted/30"
+                      "border-b transition-all duration-300 group",
+                      isHighlighted 
+                        ? "bg-emerald-500/20 border-emerald-500/50 relative z-10 shadow-[inset_3px_0_0_rgba(16,185,129,1)]" 
+                        : "border-border hover:bg-muted/30"
                     )}
                   >
-                    <td className="px-3 py-1.5 border-r border-border text-muted-foreground text-center tabular-nums">
+                    <td className={cn(
+                      "px-3 py-1.5 border-r border-border text-center tabular-nums transition-colors",
+                      isHighlighted ? "text-emerald-400 font-bold" : "text-muted-foreground"
+                    )}>
                       {idx + 1}
                     </td>
                     {columns.map((col) => (
                       <td 
                         key={col} 
                         className={cn(
-                          "px-3 py-1.5 border-r border-border last:border-r-0 whitespace-nowrap",
-                          isHighlighted ? "text-foreground" : "text-muted-foreground group-hover:text-foreground/80",
-                          highlightedColumns.includes(col) ? "font-semibold" : ""
+                          "px-3 py-1.5 border-r border-border last:border-r-0 whitespace-nowrap transition-colors",
+                          isHighlighted ? "text-emerald-50 font-medium" : "text-muted-foreground group-hover:text-foreground/80",
+                          highlightedColumns.includes(col) ? "font-semibold text-foreground" : ""
                         )}
                       >
                         {row[col]}
