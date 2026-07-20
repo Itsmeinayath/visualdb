@@ -131,6 +131,12 @@ export function useExecutionEngine(initialQuery = "") {
           return sorted;
         });
       }
+      timeout = setTimeout(() => setStep(6), parsedAST.orderby ? 600 : 0);
+    } else if (step === 6) {
+      if (parsedAST.limit && parsedAST.limit.value && parsedAST.limit.value.length > 0) {
+        const limitValue = parsedAST.limit.value[0].value;
+        setResultSetData(prev => prev.slice(0, limitValue));
+      }
       setIsPlaying(false);
       setIsFinished(true);
     }

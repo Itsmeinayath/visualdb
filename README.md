@@ -62,8 +62,8 @@ It is an open-source platform that helps students understand how databases think
 - [x] SELECT
 - [x] WHERE
 - [x] Custom Query Playground (AST Parsing)
-- [ ] ORDER BY
-- [ ] LIMIT
+- [x] ORDER BY
+- [x] LIMIT
 - [ ] GROUP BY
 - [ ] INNER JOIN
 - [ ] LEFT JOIN
