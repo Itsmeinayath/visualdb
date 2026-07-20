@@ -1,35 +1,108 @@
 # VisualDB
-**See Databases. Don't Just Read About Them.**
 
-VisualDB is a free, open-source visual DBMS learning platform. It is designed to solve the problem of students memorizing SQL syntax without actually understanding how database execution engines process data under the hood.
+> **Learn SQL & Database Concepts Visually.**
 
-## 🚀 Features
+Animations. Interactive Simulations. Open Source.
 
-* **SaaS Developer Aesthetic:** Built with a dense, professional UI inspired by tools like Vercel and Supabase.
-* **Interactive Modules:** 
-  * `SELECT`: Visualizes table scanning and relation resolution.
-  * `WHERE`: Features a real-time boolean evaluation debugger.
-* **Custom Query Playground:** Integrated with an AST parser (`node-sql-parser`), allowing students to type their own custom SQL queries and watch the execution engine evaluate them dynamically against multiple datasets (`students`, `employees`, `orders`).
-* **Dual Table View:** Instantly compares the untouched "Source Table" with the dynamically generated "Result Set" to accurately model how databases buffer output.
+Built for students, educators, and self learners.
 
-## 🛠️ Tech Stack
-* **Framework:** React + Vite
-* **Styling:** Tailwind CSS v4 (Strict Zinc monochrome palette)
-* **Animations:** Framer Motion (Spring physics)
-* **SQL Parser:** `node-sql-parser`
+---
 
-## 🏃‍♂️ Running Locally
+![React](https://img.shields.io/badge/React-19-blue)
+![License](https://img.shields.io/github/license/Itsmeinayath/visualdb)
+![Stars](https://img.shields.io/github/stars/Itsmeinayath/visualdb)
+![Issues](https://img.shields.io/github/issues/Itsmeinayath/visualdb)
+![PRs Welcome](https://img.shields.io/badge/PRs-Welcome-brightgreen)
+![Open Source](https://badges.frapsoft.com/os/v1/open-source.svg?v=103)
 
-1. Clone the repository:
-   ```bash
-   git clone https://github.com/Itsmeinayath/visualdb.git
-   ```
-2. Install dependencies:
-   ```bash
-   npm install
-   ```
-3. Start the development server:
-   ```bash
-   npm run dev
-   ```
-4. Open `http://localhost:5173` in your browser.
+---
+
+## Why VisualDB?
+
+Most SQL tutorials teach syntax.
+
+**VisualDB teaches execution.**
+
+Instead of asking students to memorize SQL, VisualDB helps them understand what happens inside a database engine through animations, interactive visualizations, and simulations. 
+
+It is an open-source platform that helps students understand how databases think.
+
+---
+
+## Who is this for?
+
+✔ College Students  
+✔ Teachers  
+✔ Self Learners  
+✔ Coding Bootcamps  
+✔ Interview Preparation  
+✔ Anyone learning SQL  
+
+---
+
+## Screenshots
+
+*(Coming Soon)*
+- 📸 Homepage
+- 📸 WHERE Animation (Execution Trace)
+- 📸 Custom Query Playground
+- 📸 JOIN Animation
+
+---
+
+## Live Demo
+
+*Deployment coming soon!*
+
+---
+
+## Roadmap
+
+**Version 1 (Current)**
+- [x] SELECT
+- [x] WHERE
+- [x] Custom Query Playground (AST Parsing)
+- [ ] ORDER BY
+- [ ] LIMIT
+- [ ] GROUP BY
+- [ ] INNER JOIN
+- [ ] LEFT JOIN
+
+**Version 2**
+- [ ] Primary Key
+- [ ] Foreign Key
+- [ ] ER Diagram
+- [ ] Normalization
+
+**Version 3**
+- [ ] Transactions
+- [ ] ACID
+- [ ] Indexing
+- [ ] Query Optimizer
+
+**Version 4**
+- [ ] MongoDB
+- [ ] Aggregation
+- [ ] Replica Sets
+- [ ] Sharding
+
+---
+
+## Contributing
+
+We love contributions! Whether you're fixing a typo or building a new SQL execution module, your help is welcome.
+
+See [CONTRIBUTING.md](./CONTRIBUTING.md) for details on how to get started.
+
+---
+
+## Documentation
+
+Check out the `/docs` folder for deep dives into how VisualDB works under the hood:
+- `architecture.md`
+- `animations.md`
+- `sql-engine.md`
+
+## License
+
+MIT
