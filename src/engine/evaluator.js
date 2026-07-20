@@ -20,3 +20,21 @@ export const evaluateCondition = (ast, row) => {
   }
   return true;
 };
+
+// Evaluator for Aggregate Functions (e.g. COUNT, SUM) over a bucket of rows
+export const evaluateAggregate = (aggrAST, rows) => {
+  if (!aggrAST || aggrAST.type !== 'aggr_func') return null;
+  
+  const name = aggrAST.name.toUpperCase();
+  
+  if (name === 'COUNT') {
+    return rows.length;
+  }
+  
+  if (name === 'SUM') {
+    const col = aggrAST.args.expr.column;
+    return rows.reduce((acc, row) => acc + (Number(row[col]) || 0), 0);
+  }
+  
+  return null;
+};

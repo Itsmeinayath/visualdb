@@ -1,5 +1,5 @@
 import { NavLink, Outlet } from "react-router-dom";
-import { Database, Home, MousePointerClick, Filter, ArrowDownAZ, Search, Settings, TerminalSquare, Scissors } from "lucide-react";
+import { Database, Home, MousePointerClick, Filter, ArrowDownAZ, Search, Settings, TerminalSquare, Scissors, FolderTree } from "lucide-react";
 import { cn } from "../utils/cn";
 
 export default function Layout() {
@@ -7,6 +7,7 @@ export default function Layout() {
     { to: "/", label: "Overview", icon: Home },
     { to: "/select", label: "SELECT Query", icon: MousePointerClick },
     { to: "/where", label: "WHERE Clause", icon: Filter },
+    { to: "/groupby", label: "GROUP BY Clause", icon: FolderTree },
     { to: "/orderby", label: "ORDER BY Clause", icon: ArrowDownAZ },
     { to: "/limit", label: "LIMIT Clause", icon: Scissors },
     { to: "/playground", label: "Playground", icon: TerminalSquare },

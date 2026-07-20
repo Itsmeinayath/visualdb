@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { Parser } from "node-sql-parser";
 import { getTable } from "../engine/database";
-import { evaluateCondition } from "../engine/evaluator";
+import { evaluateCondition, evaluateAggregate } from "../engine/evaluator";
 
 export function useExecutionEngine(initialQuery = "") {
   const [queryInput, setQueryInput] = useState(initialQuery);
@@ -114,9 +114,45 @@ export function useExecutionEngine(initialQuery = "") {
         }, 600); 
       } else {
         setCurrentRowIdx(-1);
-        setStep(5);
+        setStep(5); // Move to GROUP BY
       }
     } else if (step === 5) {
+      if (parsedAST.groupby) {
+        setResultSetData(prev => {
+          const groupCol = parsedAST.groupby[0].column;
+          const buckets = {};
+          
+          // Hash aggregation
+          prev.forEach(row => {
+            const key = row[groupCol];
+            if (!buckets[key]) buckets[key] = [];
+            buckets[key].push(row);
+          });
+          
+          // Collapse buckets into new rows based on SELECT columns
+          const newResultSet = [];
+          Object.keys(buckets).forEach(key => {
+            const newRow = { [groupCol]: key };
+            
+            if (parsedAST.columns) {
+              parsedAST.columns.forEach(col => {
+                if (col.expr.type === 'aggr_func') {
+                  // e.g. COUNT(*) -> newRow["COUNT(*)"] = ...
+                  const aggrName = col.expr.name;
+                  const argName = col.expr.args?.expr?.value || '*';
+                  const alias = col.as || `${aggrName}(${argName})`;
+                  
+                  newRow[alias] = evaluateAggregate(col.expr, buckets[key]);
+                }
+              });
+            }
+            newResultSet.push(newRow);
+          });
+          return newResultSet;
+        });
+      }
+      timeout = setTimeout(() => setStep(6), parsedAST.orderby ? 600 : 0);
+    } else if (step === 6) {
       if (parsedAST.orderby) {
         setResultSetData(prev => {
           const sorted = [...prev];
@@ -131,8 +167,8 @@ export function useExecutionEngine(initialQuery = "") {
           return sorted;
         });
       }
-      timeout = setTimeout(() => setStep(6), parsedAST.orderby ? 600 : 0);
-    } else if (step === 6) {
+      timeout = setTimeout(() => setStep(7), parsedAST.limit ? 600 : 0);
+    } else if (step === 7) {
       if (parsedAST.limit && parsedAST.limit.value && parsedAST.limit.value.length > 0) {
         const limitValue = parsedAST.limit.value[0].value;
         setResultSetData(prev => prev.slice(0, limitValue));
