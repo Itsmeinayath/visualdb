@@ -64,13 +64,46 @@ export default function SelectModule() {
 
   return (
     <div className="h-full flex flex-col p-8 max-w-7xl mx-auto gap-8">
-      <header className="flex-none">
-        <h1 className="text-2xl font-bold mb-2 tracking-tight">The SELECT Statement</h1>
-        <p className="text-muted-foreground text-sm max-w-3xl leading-relaxed">
-          The foundation of SQL. It instructs the execution engine on which data columns to retrieve from a target table.
-          <code className="mx-1 px-1.5 py-0.5 rounded bg-muted text-foreground border border-border text-xs font-mono">SELECT *</code> instructs the engine to return all available columns.
-        </p>
-      </header>
+      <div className="flex-none flex flex-col gap-6 mb-4">
+        <header>
+          <h1 className="text-3xl font-bold mb-3 tracking-tight">The SELECT Statement</h1>
+          <p className="text-muted-foreground text-base max-w-3xl leading-relaxed">
+            The foundation of all SQL queries. The <code className="mx-1 px-1.5 py-0.5 rounded bg-muted text-foreground border border-border text-sm font-mono">SELECT</code> statement instructs the execution engine to retrieve data from a database and return it as a result set.
+          </p>
+        </header>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="panel p-5 bg-zinc-900/50">
+            <h3 className="font-semibold text-sm uppercase tracking-wider text-zinc-400 mb-3">📖 The Concept</h3>
+            <p className="text-sm text-zinc-300 leading-relaxed mb-3">
+              Think of <code className="text-pink-400 text-xs">SELECT</code> as telling the database exactly <strong>which columns</strong> of data you want to see. The <code className="text-pink-400 text-xs">FROM</code> clause tells the database <strong>which table</strong> those columns live in.
+            </p>
+            <p className="text-sm text-zinc-300 leading-relaxed">
+              If you want to return every single column in the table without writing them all out, you use the asterisk <code className="text-accent text-xs">*</code> (pronounced "star").
+            </p>
+          </div>
+          <div className="panel p-5 bg-zinc-900/50">
+            <h3 className="font-semibold text-sm uppercase tracking-wider text-zinc-400 mb-3">💻 Syntax Examples</h3>
+            <div className="flex flex-col gap-3 font-mono text-[13px]">
+              <div className="bg-zinc-950 p-3 rounded border border-border">
+                <span className="text-zinc-500 block text-xs mb-1">-- Return all columns</span>
+                <span className="text-pink-500">SELECT</span> * <span className="text-pink-500">FROM</span> <span className="text-blue-400">students</span>;
+              </div>
+              <div className="bg-zinc-950 p-3 rounded border border-border">
+                <span className="text-zinc-500 block text-xs mb-1">-- Return specific columns</span>
+                <span className="text-pink-500">SELECT</span> name, age <span className="text-pink-500">FROM</span> <span className="text-blue-400">students</span>;
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <div className="h-px w-full bg-border my-2"></div>
+      
+      <div className="flex items-center gap-2 mb-2">
+        <h2 className="text-lg font-bold">Execution Trace</h2>
+        <span className="px-2 py-0.5 rounded-full bg-accent/10 text-accent text-xs font-semibold">Interactive</span>
+      </div>
 
       <div className="flex-1 grid grid-cols-1 lg:grid-cols-12 gap-8 min-h-0">
         <div className="col-span-1 lg:col-span-4 flex flex-col gap-6">

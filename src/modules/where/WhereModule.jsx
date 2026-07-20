@@ -83,12 +83,46 @@ export default function WhereModule() {
 
   return (
     <div className="h-full flex flex-col p-8 max-w-7xl mx-auto gap-8">
-      <header className="flex-none">
-        <h1 className="text-2xl font-bold mb-2 tracking-tight">The WHERE Clause</h1>
-        <p className="text-muted-foreground text-sm max-w-3xl leading-relaxed">
-          The execution engine evaluates the boolean expression in the <code>WHERE</code> clause against every row in the target relation. Rows evaluating to <code>TRUE</code> are included in the result set.
-        </p>
-      </header>
+      <div className="flex-none flex flex-col gap-6 mb-4">
+        <header>
+          <h1 className="text-3xl font-bold mb-3 tracking-tight">The WHERE Clause</h1>
+          <p className="text-muted-foreground text-base max-w-3xl leading-relaxed">
+            The <code className="mx-1 px-1.5 py-0.5 rounded bg-muted text-foreground border border-border text-sm font-mono">WHERE</code> clause acts as a filter. It instructs the execution engine to evaluate a boolean condition (True or False) against every single row in the target table.
+          </p>
+        </header>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="panel p-5 bg-zinc-900/50">
+            <h3 className="font-semibold text-sm uppercase tracking-wider text-zinc-400 mb-3">📖 The Concept</h3>
+            <p className="text-sm text-zinc-300 leading-relaxed mb-3">
+              Think of <code className="text-pink-400 text-xs">WHERE</code> like a bouncer at a club checking IDs. The engine points at a row and asks the question you provided (e.g., <em>"Is this person's age greater than 20?"</em>).
+            </p>
+            <p className="text-sm text-zinc-300 leading-relaxed">
+              If the answer is <strong>True</strong>, the row is allowed into the Result Set. If it's <strong>False</strong>, the row is skipped and discarded.
+            </p>
+          </div>
+          <div className="panel p-5 bg-zinc-900/50">
+            <h3 className="font-semibold text-sm uppercase tracking-wider text-zinc-400 mb-3">💻 Syntax Examples</h3>
+            <div className="flex flex-col gap-3 font-mono text-[13px]">
+              <div className="bg-zinc-950 p-3 rounded border border-border">
+                <span className="text-zinc-500 block text-xs mb-1">-- Filter using greater than</span>
+                <span className="text-pink-500">SELECT</span> * <span className="text-pink-500">FROM</span> <span className="text-blue-400">students</span> <span className="text-pink-500">WHERE</span> age <span className="text-orange-400">&gt; 20</span>;
+              </div>
+              <div className="bg-zinc-950 p-3 rounded border border-border">
+                <span className="text-zinc-500 block text-xs mb-1">-- Filter using equality</span>
+                <span className="text-pink-500">SELECT</span> * <span className="text-pink-500">FROM</span> <span className="text-blue-400">students</span> <span className="text-pink-500">WHERE</span> major = <span className="text-green-400">'CS'</span>;
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <div className="h-px w-full bg-border my-2"></div>
+      
+      <div className="flex items-center gap-2 mb-2">
+        <h2 className="text-lg font-bold">Execution Trace</h2>
+        <span className="px-2 py-0.5 rounded-full bg-accent/10 text-accent text-xs font-semibold">Interactive</span>
+      </div>
 
       <div className="flex-1 grid grid-cols-1 lg:grid-cols-12 gap-8 min-h-0">
         <div className="col-span-1 lg:col-span-4 flex flex-col gap-6">
