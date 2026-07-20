@@ -85,7 +85,9 @@ export default function Table({
                           highlightedColumns.includes(col) ? "font-semibold text-foreground" : ""
                         )}
                       >
-                        {row[col]}
+                        {row[col] === null || row[col] === undefined
+                          ? <span className="text-red-400/70 font-mono text-[11px] italic">NULL</span>
+                          : row[col]}
                       </td>
                     ))}
                   </motion.tr>

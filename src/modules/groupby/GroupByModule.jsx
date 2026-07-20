@@ -1,50 +1,47 @@
+import { Link } from "react-router-dom";
 import Table from "../../components/Table";
 import Query from "../../components/Query";
-import { CheckCircle2, Terminal, Cpu, FolderTree } from "lucide-react";
+import { CheckCircle2, Cpu, FolderTree, ArrowRight, Lightbulb } from "lucide-react";
 import { useExecutionEngine } from "../../hooks/useExecutionEngine";
 
 export default function GroupByModule() {
   const {
-    isPlaying,
-    isFinished,
-    step,
-    activeTable,
-    tableData,
-    parsedAST,
-    resultSetData,
-    runQuery,
-    resetQuery
+    queryInput, setQueryInput,
+    isPlaying, isFinished, step,
+    activeTable, tableData, parsedAST,
+    resultSetData, runQuery, resetQuery, parseError,
   } = useExecutionEngine("SELECT major, COUNT(*)\nFROM students\nGROUP BY major;");
-  
+
   const queryLines = [
     <span key="1"><span className="text-pink-500 font-semibold">SELECT</span> major, <span className="text-pink-500 font-semibold">COUNT</span>(*)</span>,
     <span key="2"><span className="text-pink-500 font-semibold">FROM</span> <span className="text-blue-400">students</span></span>,
-    <span key="3"><span className="text-pink-500 font-semibold">GROUP BY</span> major;</span>
+    <span key="3"><span className="text-pink-500 font-semibold">GROUP BY</span> major;</span>,
   ];
 
   return (
-    <div className="h-full flex flex-col p-8 max-w-7xl mx-auto gap-8">
-      
-      <div className="flex-none flex flex-col gap-6 mb-4">
+    <div className="flex flex-col p-6 md:p-8 max-w-7xl mx-auto gap-8">
+
+      <div className="flex flex-col gap-4">
+        <span className="bg-amber-400/10 text-amber-400 text-[10px] font-bold px-2 py-0.5 rounded-full border border-amber-400/20 self-start">Step 5 · Intermediate</span>
         <header>
           <h1 className="text-3xl font-bold mb-3 tracking-tight">The GROUP BY Clause</h1>
           <p className="text-muted-foreground text-base max-w-3xl leading-relaxed">
-            The <code className="mx-1 px-1.5 py-0.5 rounded bg-muted text-foreground border border-border text-sm font-mono">GROUP BY</code> clause fundamentally changes how data is returned. It instructs the engine to collect rows that share the same values in specified columns and compress them into a single row.
+            <code className="mx-1 px-1.5 py-0.5 rounded bg-muted text-foreground border border-border text-sm font-mono">GROUP BY</code> fundamentally changes how data is returned. Instead of returning individual rows, it <strong>collapses rows that share a value</strong> into a single summary row. It's how you answer questions like "How many students are in each major?"
           </p>
         </header>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="panel p-5 bg-zinc-900/50">
-            <h3 className="font-semibold text-sm uppercase tracking-wider text-zinc-400 mb-3">📖 The Concept</h3>
-            <p className="text-sm text-zinc-300 leading-relaxed mb-3">
-              Imagine sorting physical files into buckets. <code className="text-pink-400 text-xs">GROUP BY</code> creates a bucket for each unique value (e.g., one bucket for 'CS' majors, one for 'Math' majors).
+            <h3 className="font-semibold text-sm text-zinc-300 mb-3">The Concept</h3>
+            <p className="text-sm text-zinc-400 leading-relaxed mb-3">
+              Imagine sorting physical folders into labelled buckets. <code className="text-pink-400 text-xs">GROUP BY</code> creates a bucket for each unique value — one for "CS" majors, one for "Math" majors, etc.
             </p>
-            <p className="text-sm text-zinc-300 leading-relaxed">
-              Once bucketed, you can use <strong>Aggregate Functions</strong> like <code className="text-pink-400 text-xs">COUNT()</code> or <code className="text-pink-400 text-xs">SUM()</code> to calculate metrics for all the rows inside each bucket.
+            <p className="text-sm text-zinc-400 leading-relaxed">
+              Once bucketed, you use <strong>aggregate functions</strong> like <code className="text-pink-400 text-xs">COUNT()</code> or <code className="text-pink-400 text-xs">SUM()</code> to calculate a single number representing all the rows in each bucket.
             </p>
           </div>
           <div className="panel p-5 bg-zinc-900/50">
-            <h3 className="font-semibold text-sm uppercase tracking-wider text-zinc-400 mb-3">💻 Syntax Examples</h3>
+            <h3 className="font-semibold text-sm text-zinc-300 mb-3">Syntax Examples</h3>
             <div className="flex flex-col gap-3 font-mono text-[13px]">
               <div className="bg-zinc-950 p-3 rounded border border-border">
                 <span className="text-zinc-500 block text-xs mb-1">-- Count students per major</span>
@@ -58,91 +55,96 @@ export default function GroupByModule() {
           </div>
         </div>
       </div>
-      
-      <div className="h-px w-full bg-border my-2"></div>
-      
-      <div className="flex items-center gap-2 mb-2">
-        <h2 className="text-lg font-bold">Execution Trace</h2>
-        <span className="px-2 py-0.5 rounded-full bg-accent/10 text-accent text-xs font-semibold">Interactive</span>
+
+      <div className="h-px w-full bg-border" />
+      <div className="flex items-center gap-2 -mb-4">
+        <h2 className="text-lg font-bold">Live Execution Trace</h2>
+        <span className="px-2 py-0.5 rounded-full bg-accent/10 text-accent text-xs font-semibold">Interactive — try GROUP BY age!</span>
       </div>
 
-      <div className="h-[650px] grid grid-cols-1 lg:grid-cols-12 gap-8">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 min-h-[600px]">
         <div className="col-span-1 lg:col-span-4 flex flex-col gap-6">
-          <div className="h-48 shrink-0">
-            <Query 
-              queryLines={queryLines} 
-              activeLineIndex={
-                step === 0 ? 0 : 
-                step === 1 ? 1 : 
-                step >= 2 && step <= 4 ? 1 : 
-                step === 5 ? 2 :
-                -1
-              } 
-              onRun={() => runQuery("SELECT major, COUNT(*)\nFROM students\nGROUP BY major;")}
+          <div className="h-52 shrink-0">
+            <Query
+              queryLines={queryLines}
+              value={queryInput}
+              onChange={setQueryInput}
+              activeLineIndex={step === 0 ? 0 : step === 1 ? 1 : step >= 2 && step <= 4 ? 1 : step === 5 ? 2 : -1}
+              onRun={() => runQuery()}
               onReset={resetQuery}
               isPlaying={isPlaying}
               isFinished={isFinished}
             />
           </div>
-          
+          {parseError && <div className="panel p-3 border-red-500/30 bg-red-500/5 text-red-400 text-xs font-mono">{parseError}</div>}
           <div className="panel p-4 flex flex-col gap-4">
             <div className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider flex items-center gap-2 border-b border-border pb-2">
-              <Cpu size={14} /> Evaluation Engine
+              <Cpu size={14} /> What's happening
             </div>
-            
-            <div className="h-32 flex flex-col justify-center font-mono text-[13px]">
-              {step === -1 && <div className="text-zinc-500 text-center">Idle</div>}
-              {step === 0 && <div className="text-foreground animate-pulse">AST Parsing: SELECT...</div>}
-              {step === 1 && <div className="text-foreground animate-pulse">Resolving relation: public.{activeTable}</div>}
-              {step >= 2 && step <= 4 && <div className="text-foreground animate-pulse">Table scan complete...</div>}
-              
+            <div className="h-36 flex flex-col justify-start font-mono text-[13px] gap-1">
+              {step === -1 && <div className="text-zinc-500 text-center pt-4">Ready.</div>}
+              {step === 0 && <div className="text-zinc-300 animate-pulse">Reading your query...</div>}
+              {step === 1 && <div className="text-zinc-300 animate-pulse">Found the <span className="text-blue-400">students</span> table. Scanning all rows...</div>}
+              {step >= 2 && step <= 4 && <div className="text-zinc-300 animate-pulse">All rows loaded. Getting ready to group...</div>}
               {step === 5 && (
                 <div className="flex flex-col gap-3">
-                  <div className="text-accent flex items-center gap-2">
+                  <div className="text-accent flex items-center gap-2 animate-pulse">
                     <div className="w-3 h-3 rounded-full border border-accent border-t-transparent animate-spin" />
-                    Executing Hash Aggregation...
+                    Grouping rows by: <span className="text-zinc-200">major</span>
                   </div>
                   <div className="bg-zinc-900 border border-zinc-800 p-3 rounded">
                     <div className="flex items-center gap-1.5 text-xs font-semibold text-zinc-300">
-                       <FolderTree size={14} className="text-accent" /> Grouping by: `{parsedAST?.groupby?.[0]?.column || 'major'}`
+                      <FolderTree size={14} className="text-accent" /> Creating buckets for each unique major...
                     </div>
-                    <div className="text-zinc-500 text-[11px] mt-1">Evaluating aggregate functions...</div>
+                    <div className="text-zinc-500 text-[11px] mt-1">Counting rows in each bucket with COUNT(*)...</div>
                   </div>
                 </div>
               )}
-              
-              {step >= 6 && (
-                <div className="text-success font-medium flex flex-col gap-1">
-                  <div className="flex items-center gap-2"><CheckCircle2 size={16} /> Aggregation complete</div>
-                  <div className="text-zinc-500 text-xs mt-1">Collapsed into {resultSetData.length} buckets.</div>
+              {isFinished && (
+                <div className="text-emerald-400 font-medium flex flex-col gap-1">
+                  <div className="flex items-center gap-2"><CheckCircle2 size={16} /> Grouping complete!</div>
+                  <div className="text-zinc-500 text-xs">Collapsed {tableData.length} rows into {resultSetData.length} groups.</div>
                 </div>
               )}
             </div>
           </div>
         </div>
-        
-        <div className="col-span-1 lg:col-span-8 flex flex-col h-full overflow-hidden gap-6">
-          <div className="flex-1 overflow-hidden min-h-[250px]">
-            <Table 
-              data={tableData} 
-              title={`Source: public.${activeTable} (Raw Rows)`} 
-              highlightedColumns={step >= 5 ? ["major"] : []}
-            />
+
+        <div className="col-span-1 lg:col-span-8 flex flex-col gap-6 overflow-hidden">
+          <div className="flex-1 overflow-hidden min-h-[220px]">
+            <Table data={tableData} title={`Source table: ${activeTable} (individual rows)`} highlightedColumns={step >= 5 ? ["major"] : []} />
           </div>
-          <div className="flex-1 overflow-hidden min-h-[250px]">
-            {resultSetData.length > 0 || step >= 6 ? (
-              <Table 
-                data={resultSetData} 
-                title="Result Set (Aggregated Buckets)" 
-                highlightedColumns={step >= 5 ? ["major", "COUNT(*)"] : []}
-              />
+          <div className="flex-1 overflow-hidden min-h-[220px]">
+            {resultSetData.length > 0 || isFinished ? (
+              <Table data={resultSetData} title="Result Set (one row per group)" highlightedColumns={step >= 5 ? ["major", "COUNT(*)"] : []} />
             ) : (
               <div className="panel h-full w-full flex items-center justify-center text-zinc-500 font-mono text-sm border-dashed border-2">
-                Awaiting Execution...
+                Grouped summary rows will appear here
               </div>
             )}
           </div>
         </div>
+      </div>
+
+      {isFinished && (
+        <div className="panel p-5 bg-amber-400/5 border border-amber-400/20">
+          <div className="flex items-start gap-3">
+            <Lightbulb size={18} className="text-amber-400 mt-0.5 flex-shrink-0" />
+            <div>
+              <div className="font-semibold text-amber-300 mb-1">Key Takeaway</div>
+              <p className="text-sm text-zinc-400 leading-relaxed">
+                The engine used a <strong className="text-zinc-200">Hash Aggregation</strong> strategy — it created an internal bucket for each unique major and placed each student row in its matching bucket. Then it counted the rows in each bucket. The result: <strong className="text-zinc-200">{tableData.length} individual rows collapsed into just {resultSetData.length} summary rows</strong>. This is the power of GROUP BY.
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
+
+      <div className="flex items-center justify-between pt-2 border-t border-zinc-800">
+        <Link to="/limit" className="text-sm text-zinc-500 hover:text-zinc-300 transition-colors">← LIMIT</Link>
+        <Link to="/innerjoin" className="inline-flex items-center gap-2 px-5 py-2.5 rounded-md bg-zinc-800 hover:bg-zinc-700 text-zinc-200 text-sm font-medium transition-all hover:scale-[1.02] group">
+          Next: INNER JOIN <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
+        </Link>
       </div>
     </div>
   );
