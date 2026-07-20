@@ -3,10 +3,12 @@ import { Parser } from "node-sql-parser";
 import Table from "../../components/Table";
 import { CheckCircle2, XCircle, Terminal, Cpu, Play, Sparkles } from "lucide-react";
 import { cn } from "../../utils/cn";
-import Editor from "react-simple-code-editor";
+import EditorModule from "react-simple-code-editor";
 import Prism from "prismjs";
 import "prismjs/components/prism-sql";
 import "prismjs/themes/prism-tomorrow.css"; // Dark theme for code
+
+const Editor = EditorModule.default || EditorModule;
 
 // Load dummy data
 import studentsData from "../../data/students.json";
