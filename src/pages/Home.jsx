@@ -35,7 +35,7 @@ export default function Home() {
         <div className="flex flex-col sm:flex-row items-center gap-4 w-full justify-center">
           <Link 
             to="/select" 
-            className="group inline-flex h-11 items-center justify-center rounded-md bg-foreground px-8 font-medium text-background transition-all hover:bg-zinc-200 hover:scale-[1.02] active:scale-[0.98] shadow-lg shadow-white/5"
+            className="group inline-flex h-11 items-center justify-center rounded-md bg-zinc-100 px-8 font-medium text-zinc-950 transition-all hover:bg-white hover:scale-[1.02] active:scale-[0.98] shadow-lg shadow-white/5"
           >
             <Play size={16} className="mr-2" fill="currentColor" />
             Start Execution Trace
