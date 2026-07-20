@@ -109,7 +109,7 @@ export default function OrderByModule() {
         <span className="px-2 py-0.5 rounded-full bg-accent/10 text-accent text-xs font-semibold">Interactive</span>
       </div>
 
-      <div className="flex-1 grid grid-cols-1 lg:grid-cols-12 gap-8 min-h-0">
+      <div className="h-[650px] grid grid-cols-1 lg:grid-cols-12 gap-8">
         <div className="col-span-1 lg:col-span-4 flex flex-col gap-6">
           <div className="h-48 shrink-0">
             <Query 

@@ -143,7 +143,7 @@ export default function PlaygroundModule() {
         </p>
       </header>
 
-      <div className="flex-1 grid grid-cols-1 lg:grid-cols-12 gap-8 min-h-0">
+      <div className="h-[650px] grid grid-cols-1 lg:grid-cols-12 gap-8">
         <div className="col-span-1 lg:col-span-4 flex flex-col gap-6">
           <div className="panel overflow-hidden flex flex-col border border-border h-48 shrink-0 relative">
             <div className="bg-zinc-950 px-3 py-2 border-b border-border flex items-center justify-between">
