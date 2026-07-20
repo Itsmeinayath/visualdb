@@ -9,6 +9,7 @@ export default function SelectModule() {
   const [isFinished, setIsFinished] = useState(false);
   const [step, setStep] = useState(-1);
   const [highlightedRows, setHighlightedRows] = useState([]);
+  const [resultSetData, setResultSetData] = useState([]);
   
   const queryLines = [
     <span key="1"><span className="text-pink-500 font-semibold">SELECT</span> *</span>,
@@ -26,6 +27,7 @@ export default function SelectModule() {
     setIsFinished(false);
     setStep(-1);
     setHighlightedRows([]);
+    setResultSetData([]);
   };
 
   useEffect(() => {
@@ -42,8 +44,9 @@ export default function SelectModule() {
       let rowIdx = 0;
       const interval = setInterval(() => {
         if (rowIdx < studentsData.length) {
-          const currentId = studentsData[rowIdx].id;
-          setHighlightedRows(prev => [...prev, currentId]);
+          const student = studentsData[rowIdx];
+          setHighlightedRows([student.id]);
+          setResultSetData(prev => [...prev, student]);
           rowIdx++;
         } else {
           clearInterval(interval);
@@ -96,12 +99,26 @@ export default function SelectModule() {
           </div>
         </div>
         
-        <div className="col-span-1 lg:col-span-8 flex flex-col h-full overflow-hidden">
-          <Table 
-            data={studentsData} 
-            title="public.students" 
-            highlightedRows={highlightedRows}
-          />
+        <div className="col-span-1 lg:col-span-8 flex flex-col h-full overflow-hidden gap-6">
+          <div className="flex-1 overflow-hidden min-h-[250px]">
+            <Table 
+              data={studentsData} 
+              title="Source: public.students" 
+              highlightedRows={step === 2 ? highlightedRows : []}
+            />
+          </div>
+          <div className="flex-1 overflow-hidden min-h-[250px]">
+            {resultSetData.length > 0 || step === 3 ? (
+              <Table 
+                data={resultSetData} 
+                title="Result Set" 
+              />
+            ) : (
+              <div className="panel h-full w-full flex items-center justify-center text-zinc-500 font-mono text-sm border-dashed border-2">
+                Awaiting Execution...
+              </div>
+            )}
+          </div>
         </div>
       </div>
     </div>

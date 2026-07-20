@@ -10,8 +10,8 @@ export default function WhereModule() {
   const [step, setStep] = useState(-1);
   const [currentRowIdx, setCurrentRowIdx] = useState(-1);
   const [highlightedRows, setHighlightedRows] = useState([]);
-  const [discardedRows, setDiscardedRows] = useState([]);
   const [checkingCondition, setCheckingCondition] = useState(false);
+  const [resultSetData, setResultSetData] = useState([]);
   
   const queryLines = [
     <span key="1"><span className="text-pink-500 font-semibold">SELECT</span> *</span>,
@@ -25,7 +25,7 @@ export default function WhereModule() {
     setStep(0);
     setCurrentRowIdx(-1);
     setHighlightedRows([]);
-    setDiscardedRows([]);
+    setResultSetData([]);
   };
 
   const handleReset = () => {
@@ -34,7 +34,7 @@ export default function WhereModule() {
     setStep(-1);
     setCurrentRowIdx(-1);
     setHighlightedRows([]);
-    setDiscardedRows([]);
+    setResultSetData([]);
     setCheckingCondition(false);
   };
 
@@ -62,8 +62,7 @@ export default function WhereModule() {
           setCheckingCondition(false);
           if (student.age > 20) {
             setHighlightedRows(prev => [...prev, student.id]);
-          } else {
-            setDiscardedRows(prev => [...prev, student.id]);
+            setResultSetData(prev => [...prev, student]);
           }
           
           timeout = setTimeout(() => {
@@ -164,18 +163,32 @@ export default function WhereModule() {
           </div>
         </div>
         
-        <div className="col-span-1 lg:col-span-8 flex flex-col h-full overflow-hidden">
-          <Table 
-            data={studentsData} 
-            title="public.students" 
-            highlightedRows={
-              step === 4 && checkingCondition 
-                ? [...highlightedRows, studentsData[currentRowIdx]?.id]
-                : highlightedRows
-            }
-            discardedRows={discardedRows}
-            highlightedColumns={step >= 2 ? ["age"] : []}
-          />
+        <div className="col-span-1 lg:col-span-8 flex flex-col h-full overflow-hidden gap-6">
+          <div className="flex-1 overflow-hidden min-h-[250px]">
+            <Table 
+              data={studentsData} 
+              title="Source: public.students" 
+              highlightedRows={
+                step === 4 && checkingCondition 
+                  ? [studentsData[currentRowIdx]?.id]
+                  : []
+              }
+              highlightedColumns={step >= 2 ? ["age"] : []}
+            />
+          </div>
+          <div className="flex-1 overflow-hidden min-h-[250px]">
+            {resultSetData.length > 0 || step === 5 ? (
+              <Table 
+                data={resultSetData} 
+                title="Result Set" 
+                highlightedColumns={step >= 2 ? ["age"] : []}
+              />
+            ) : (
+              <div className="panel h-full w-full flex items-center justify-center text-zinc-500 font-mono text-sm border-dashed border-2">
+                Awaiting Execution...
+              </div>
+            )}
+          </div>
         </div>
       </div>
     </div>

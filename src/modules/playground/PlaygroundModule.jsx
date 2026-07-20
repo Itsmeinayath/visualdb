@@ -52,8 +52,8 @@ export default function PlaygroundModule() {
   const [parseError, setParseError] = useState(null);
   
   const [highlightedRows, setHighlightedRows] = useState([]);
-  const [discardedRows, setDiscardedRows] = useState([]);
   const [checkingCondition, setCheckingCondition] = useState(false);
+  const [resultSetData, setResultSetData] = useState([]);
 
   const handleRun = () => {
     if (isPlaying) return;
@@ -83,7 +83,7 @@ export default function PlaygroundModule() {
       setStep(0);
       setCurrentRowIdx(-1);
       setHighlightedRows([]);
-      setDiscardedRows([]);
+      setResultSetData([]);
       
     } catch (err) {
       setParseError(err.message || "Syntax error in SQL query.");
@@ -114,8 +114,7 @@ export default function PlaygroundModule() {
           
           if (isMatch) {
             setHighlightedRows(prev => [...prev, row.id || row.order_id || currentRowIdx]);
-          } else {
-            setDiscardedRows(prev => [...prev, row.id || row.order_id || currentRowIdx]);
+            setResultSetData(prev => [...prev, row]);
           }
           
           timeout = setTimeout(() => {
@@ -227,17 +226,30 @@ export default function PlaygroundModule() {
           </div>
         </div>
         
-        <div className="col-span-1 lg:col-span-8 flex flex-col h-full overflow-hidden">
-          <Table 
-            data={tableData} 
-            title={`public.${activeTable}`} 
-            highlightedRows={
-              step === 4 && checkingCondition 
-                ? [...highlightedRows, tableData[currentRowIdx]?.id || tableData[currentRowIdx]?.order_id || currentRowIdx]
-                : highlightedRows
-            }
-            discardedRows={discardedRows}
-          />
+        <div className="col-span-1 lg:col-span-8 flex flex-col h-full overflow-hidden gap-6">
+          <div className="flex-1 overflow-hidden min-h-[250px]">
+            <Table 
+              data={tableData} 
+              title={`Source: public.${activeTable}`} 
+              highlightedRows={
+                step === 4 && checkingCondition 
+                  ? [tableData[currentRowIdx]?.id || tableData[currentRowIdx]?.order_id || currentRowIdx]
+                  : []
+              }
+            />
+          </div>
+          <div className="flex-1 overflow-hidden min-h-[250px]">
+            {resultSetData.length > 0 || step === 5 ? (
+              <Table 
+                data={resultSetData} 
+                title="Result Set" 
+              />
+            ) : (
+              <div className="panel h-full w-full flex items-center justify-center text-zinc-500 font-mono text-sm border-dashed border-2">
+                Awaiting Execution...
+              </div>
+            )}
+          </div>
         </div>
       </div>
     </div>

@@ -78,10 +78,10 @@
 
 @layer utilities {
   .panel {
-    @apply bg-card border border-border rounded-lg shadow-sm;
+    @apply bg-[var(--card)] border border-[var(--border)] rounded-lg shadow-sm;
   }
   
   .dark .panel {
-    @apply bg-card border border-border shadow-none;
+    @apply bg-[var(--card)] border border-[var(--border)] shadow-none;
   }
 }
