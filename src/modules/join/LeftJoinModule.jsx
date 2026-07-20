@@ -1,7 +1,8 @@
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import Table from "../../components/Table";
 import Query from "../../components/Query";
-import { CheckCircle2, Cpu, Combine, ArrowRight, Lightbulb } from "lucide-react";
+import { CheckCircle2, Cpu, Combine, ArrowRight, Lightbulb, Trophy } from "lucide-react";
 import { useExecutionEngine } from "../../hooks/useExecutionEngine";
 
 export default function LeftJoinModule() {
@@ -14,6 +15,18 @@ export default function LeftJoinModule() {
     runQuery, resetQuery, parseError,
   } = useExecutionEngine("SELECT *\nFROM students\nLEFT JOIN courses\n  ON students.course_id = courses.course_id;");
 
+  const [challengeCompleted, setChallengeCompleted] = useState(false);
+
+  useEffect(() => {
+    if (isFinished && parsedAST && resultSetData.length > 0) {
+      const keys = Object.keys(resultSetData[0]);
+      const passed = keys.length === 2 && keys.includes("name") && keys.includes("credits") && resultSetData.length === 5;
+      setChallengeCompleted(passed);
+    } else if (!isFinished) {
+      setChallengeCompleted(false);
+    }
+  }, [isFinished, parsedAST, resultSetData]);
+
   const queryLines = [
     <span key="1"><span className="text-pink-500 font-semibold">SELECT</span> *</span>,
     <span key="2"><span className="text-pink-500 font-semibold">FROM</span> <span className="text-blue-400">students</span></span>,
@@ -25,7 +38,7 @@ export default function LeftJoinModule() {
     <div className="flex flex-col p-6 md:p-8 max-w-7xl mx-auto gap-8">
 
       <div className="flex flex-col gap-4">
-        <span className="bg-amber-400/10 text-amber-400 text-[10px] font-bold px-2 py-0.5 rounded-full border border-amber-400/20 self-start">Step 7 · Intermediate</span>
+        <span className="bg-amber-400/10 text-amber-400 text-[10px] font-bold px-2 py-0.5 rounded-full border border-amber-400/20 self-start">Step 8 · Intermediate</span>
         <header>
           <h1 className="text-3xl font-bold mb-3 tracking-tight">The LEFT JOIN</h1>
           <p className="text-muted-foreground text-base max-w-3xl leading-relaxed">
@@ -64,6 +77,23 @@ export default function LeftJoinModule() {
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 min-h-[700px]">
         <div className="col-span-1 lg:col-span-4 flex flex-col gap-6">
+          <div className="panel p-4 bg-accent/5 border border-accent/20 flex flex-col gap-2">
+            <div className="text-xs font-semibold text-accent uppercase tracking-wider flex items-center gap-2">
+              <Trophy size={14} /> Challenge Goal
+            </div>
+            <p className="text-[13px] text-zinc-300">
+              Modify the query to retrieve all students' <code className="text-pink-400 text-xs">name</code> and their course <code className="text-pink-400 text-xs">credits</code> using a <code className="text-pink-400 text-xs">LEFT JOIN</code> (so students with no matching course are still included).
+            </p>
+            {isFinished && (
+              <div className="mt-1 text-xs font-semibold">
+                {challengeCompleted ? (
+                  <span className="text-emerald-400 flex items-center gap-1">🎉 Challenge Passed! You got it right!</span>
+                ) : (
+                  <span className="text-amber-400 flex items-center gap-1">Try again! Make sure you select name, credits and use LEFT JOIN.</span>
+                )}
+              </div>
+            )}
+          </div>
           <div className="h-56 shrink-0">
             <Query
               queryLines={queryLines}

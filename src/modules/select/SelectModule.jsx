@@ -1,7 +1,8 @@
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import Table from "../../components/Table";
 import Query from "../../components/Query";
-import { CheckCircle2, Terminal, ArrowRight, Lightbulb } from "lucide-react";
+import { CheckCircle2, Terminal, ArrowRight, Lightbulb, Trophy } from "lucide-react";
 import { useExecutionEngine } from "../../hooks/useExecutionEngine";
 
 export default function SelectModule() {
@@ -21,6 +22,18 @@ export default function SelectModule() {
     resetQuery,
     parseError,
   } = useExecutionEngine("SELECT *\nFROM students;");
+
+  const [challengeCompleted, setChallengeCompleted] = useState(false);
+
+  useEffect(() => {
+    if (isFinished && parsedAST && resultSetData.length > 0) {
+      const keys = Object.keys(resultSetData[0]);
+      const passed = keys.length === 2 && keys.includes("name") && keys.includes("gpa");
+      setChallengeCompleted(passed);
+    } else if (!isFinished) {
+      setChallengeCompleted(false);
+    }
+  }, [isFinished, parsedAST, resultSetData]);
 
   const queryLines = [
     <span key="1"><span className="text-pink-500 font-semibold">SELECT</span> *</span>,
@@ -82,6 +95,23 @@ export default function SelectModule() {
       {/* Execution Area */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 min-h-[600px]">
         <div className="col-span-1 lg:col-span-4 flex flex-col gap-6">
+          <div className="panel p-4 bg-accent/5 border border-accent/20 flex flex-col gap-2">
+            <div className="text-xs font-semibold text-accent uppercase tracking-wider flex items-center gap-2">
+              <Trophy size={14} /> Challenge Goal
+            </div>
+            <p className="text-[13px] text-zinc-300">
+              Modify the query to retrieve only the <code className="text-pink-400 text-xs">name</code> and <code className="text-pink-400 text-xs">gpa</code> of all students.
+            </p>
+            {isFinished && (
+              <div className="mt-1 text-xs font-semibold">
+                {challengeCompleted ? (
+                  <span className="text-emerald-400 flex items-center gap-1">🎉 Challenge Passed! You got it right!</span>
+                ) : (
+                  <span className="text-amber-400 flex items-center gap-1">Try again! Make sure you select only name and gpa.</span>
+                )}
+              </div>
+            )}
+          </div>
           <div className="h-52 shrink-0">
             <Query
               queryLines={queryLines}

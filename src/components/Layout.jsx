@@ -1,6 +1,6 @@
 import { NavLink, Outlet, useLocation } from "react-router-dom";
-import { useState } from "react";
-import { Database, Home, MousePointerClick, Filter, ArrowDownAZ, Search, Settings, TerminalSquare, Scissors, FolderTree, Combine, Menu, X, ChevronRight } from "lucide-react";
+import { useState, useEffect } from "react";
+import { Database, Home, MousePointerClick, Filter, ArrowDownAZ, Search, Settings, TerminalSquare, Scissors, FolderTree, Combine, Menu, X, ChevronRight, Check } from "lucide-react";
 import { cn } from "../utils/cn";
 
 const links = [
@@ -10,12 +10,31 @@ const links = [
   { to: "/orderby", label: "ORDER BY", icon: ArrowDownAZ, step: 3, difficulty: "Beginner", diffColor: "text-emerald-400 bg-emerald-400/10" },
   { to: "/limit", label: "LIMIT", icon: Scissors, step: 4, difficulty: "Beginner", diffColor: "text-emerald-400 bg-emerald-400/10" },
   { to: "/groupby", label: "GROUP BY", icon: FolderTree, step: 5, difficulty: "Intermediate", diffColor: "text-amber-400 bg-amber-400/10" },
-  { to: "/innerjoin", label: "INNER JOIN", icon: Combine, step: 6, difficulty: "Intermediate", diffColor: "text-amber-400 bg-amber-400/10" },
-  { to: "/leftjoin", label: "LEFT JOIN", icon: Combine, step: 7, difficulty: "Intermediate", diffColor: "text-amber-400 bg-amber-400/10" },
+  { to: "/having", label: "HAVING", icon: Filter, step: 6, difficulty: "Intermediate", diffColor: "text-amber-400 bg-amber-400/10" },
+  { to: "/innerjoin", label: "INNER JOIN", icon: Combine, step: 7, difficulty: "Intermediate", diffColor: "text-amber-400 bg-amber-400/10" },
+  { to: "/leftjoin", label: "LEFT JOIN", icon: Combine, step: 8, difficulty: "Intermediate", diffColor: "text-amber-400 bg-amber-400/10" },
   { to: "/playground", label: "Playground", icon: TerminalSquare, step: null, difficulty: "Advanced", diffColor: "text-rose-400 bg-rose-400/10" },
 ];
 
 function SidebarContent({ onClose }) {
+  const [completedPaths, setCompletedPaths] = useState({});
+
+  const updateCompletion = () => {
+    const completed = {};
+    links.forEach(link => {
+      if (localStorage.getItem("completed_" + link.to) === "true") {
+        completed[link.to] = true;
+      }
+    });
+    setCompletedPaths(completed);
+  };
+
+  useEffect(() => {
+    updateCompletion();
+    window.addEventListener("completion-change", updateCompletion);
+    return () => window.removeEventListener("completion-change", updateCompletion);
+  }, []);
+
   return (
     <>
       <div className="h-12 px-4 border-b border-zinc-800/80 flex items-center gap-2 flex-shrink-0">
@@ -68,8 +87,13 @@ function SidebarContent({ onClose }) {
               )
             }
           >
-            <div className="w-5 h-5 rounded flex items-center justify-center text-[10px] font-bold text-zinc-500 bg-zinc-800/50 group-hover:text-zinc-300 flex-shrink-0">
-              {link.step}
+            <div className={cn(
+              "w-5 h-5 rounded flex items-center justify-center text-[10px] font-bold flex-shrink-0 transition-all duration-200",
+              completedPaths[link.to]
+                ? "bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 shadow-[0_0_8px_rgba(16,185,129,0.15)]"
+                : "bg-zinc-800/50 text-zinc-500 group-hover:text-zinc-300"
+            )}>
+              {completedPaths[link.to] ? <Check size={10} strokeWidth={3} /> : link.step}
             </div>
             <link.icon size={13} strokeWidth={2.5} className="flex-shrink-0" />
             <span className="flex-1">{link.label}</span>

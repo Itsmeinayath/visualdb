@@ -68,3 +68,37 @@ export const evaluateAggregate = (aggrAST, rows) => {
   
   return null;
 };
+
+// AST Evaluator for HAVING clause (runs on groups/buckets)
+export const evaluateHavingCondition = (ast, groupRows) => {
+  if (!ast) return true;
+  
+  if (ast.type === 'binary_expr') {
+    const leftVal = resolveHavingValue(ast.left, groupRows);
+    const rightVal = resolveHavingValue(ast.right, groupRows);
+    
+    switch (ast.operator) {
+      case '=': return leftVal == rightVal;
+      case '!=': return leftVal != rightVal;
+      case '>': return leftVal > rightVal;
+      case '<': return leftVal < rightVal;
+      case '>=': return leftVal >= rightVal;
+      case '<=': return leftVal <= rightVal;
+      case 'AND': return evaluateHavingCondition(ast.left, groupRows) && evaluateHavingCondition(ast.right, groupRows);
+      case 'OR': return evaluateHavingCondition(ast.left, groupRows) || evaluateHavingCondition(ast.right, groupRows);
+      default: return true;
+    }
+  }
+  return true;
+};
+
+function resolveHavingValue(node, groupRows) {
+  if (node.type === 'aggr_func') {
+    return evaluateAggregate(node, groupRows);
+  }
+  if (node.type === 'column_ref') {
+    const col = node.column;
+    return groupRows[0] ? groupRows[0][col] : null;
+  }
+  return node.value;
+}

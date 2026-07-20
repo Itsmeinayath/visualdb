@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { Parser } from "node-sql-parser";
 import { getTable } from "../engine/database";
-import { evaluateCondition, evaluateAggregate } from "../engine/evaluator";
+import { evaluateCondition, evaluateAggregate, evaluateHavingCondition } from "../engine/evaluator";
 
 export function useExecutionEngine(initialQuery = "") {
   const [queryInput, setQueryInput] = useState(initialQuery);
@@ -227,6 +227,12 @@ export function useExecutionEngine(initialQuery = "") {
           // Collapse buckets into new rows based on SELECT columns
           const newResultSet = [];
           Object.keys(buckets).forEach(key => {
+            // Apply HAVING filter if present
+            if (parsedAST.having) {
+              const passesHaving = evaluateHavingCondition(parsedAST.having, buckets[key]);
+              if (!passesHaving) return;
+            }
+
             const newRow = { [groupCol]: key };
             
             if (parsedAST.columns) {
@@ -274,6 +280,14 @@ export function useExecutionEngine(initialQuery = "") {
 
     return () => clearTimeout(timeout);
   }, [isPlaying, step, currentRowIdx, parsedAST, tableData]);
+
+  useEffect(() => {
+    if (isFinished) {
+      const path = window.location.pathname;
+      localStorage.setItem("completed_" + path, "true");
+      window.dispatchEvent(new Event("completion-change"));
+    }
+  }, [isFinished]);
 
   return {
     queryInput,

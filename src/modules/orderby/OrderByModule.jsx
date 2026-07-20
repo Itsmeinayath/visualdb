@@ -1,7 +1,8 @@
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import Table from "../../components/Table";
 import Query from "../../components/Query";
-import { CheckCircle2, Cpu, ArrowDownAZ, ArrowRight, Lightbulb } from "lucide-react";
+import { CheckCircle2, Cpu, ArrowDownAZ, ArrowRight, Lightbulb, Trophy } from "lucide-react";
 import { useExecutionEngine } from "../../hooks/useExecutionEngine";
 
 export default function OrderByModule() {
@@ -11,6 +12,19 @@ export default function OrderByModule() {
     activeTable, tableData, parsedAST,
     resultSetData, runQuery, resetQuery, parseError,
   } = useExecutionEngine("SELECT *\nFROM students\nORDER BY gpa DESC;");
+
+  const [challengeCompleted, setChallengeCompleted] = useState(false);
+
+  useEffect(() => {
+    if (isFinished && parsedAST && resultSetData.length > 0) {
+      // Validate: age ascending (19, 20, 21, 22, 23)
+      const correctOrder = [19, 20, 21, 22, 23];
+      const passed = resultSetData.length === 5 && resultSetData.every((r, idx) => r.age === correctOrder[idx]);
+      setChallengeCompleted(passed);
+    } else if (!isFinished) {
+      setChallengeCompleted(false);
+    }
+  }, [isFinished, parsedAST, resultSetData]);
 
   const queryLines = [
     <span key="1"><span className="text-pink-500 font-semibold">SELECT</span> *</span>,
@@ -64,6 +78,23 @@ export default function OrderByModule() {
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 min-h-[600px]">
         <div className="col-span-1 lg:col-span-4 flex flex-col gap-6">
+          <div className="panel p-4 bg-accent/5 border border-accent/20 flex flex-col gap-2">
+            <div className="text-xs font-semibold text-accent uppercase tracking-wider flex items-center gap-2">
+              <Trophy size={14} /> Challenge Goal
+            </div>
+            <p className="text-[13px] text-zinc-300">
+              Modify the query to sort all students by their <code className="text-pink-400 text-xs">age</code> in ascending order (youngest first).
+            </p>
+            {isFinished && (
+              <div className="mt-1 text-xs font-semibold">
+                {challengeCompleted ? (
+                  <span className="text-emerald-400 flex items-center gap-1">🎉 Challenge Passed! You got it right!</span>
+                ) : (
+                  <span className="text-amber-400 flex items-center gap-1">Try again! Make sure you sort by age (ascending is default).</span>
+                )}
+              </div>
+            )}
+          </div>
           <div className="h-52 shrink-0">
             <Query
               queryLines={queryLines}

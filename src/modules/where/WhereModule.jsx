@@ -1,7 +1,8 @@
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import Table from "../../components/Table";
 import Query from "../../components/Query";
-import { CheckCircle2, XCircle, Terminal, Cpu, ArrowRight, Lightbulb } from "lucide-react";
+import { CheckCircle2, XCircle, Terminal, Cpu, ArrowRight, Lightbulb, Trophy } from "lucide-react";
 import { useExecutionEngine } from "../../hooks/useExecutionEngine";
 
 export default function WhereModule() {
@@ -21,6 +22,18 @@ export default function WhereModule() {
     resetQuery,
     parseError,
   } = useExecutionEngine("SELECT *\nFROM students\nWHERE age > 20;");
+
+  const [challengeCompleted, setChallengeCompleted] = useState(false);
+
+  useEffect(() => {
+    if (isFinished && parsedAST && resultSetData.length > 0) {
+      // Validation: GPA > 3.5. Result should have length 3, and all GPAs > 3.5.
+      const passed = resultSetData.length === 3 && resultSetData.every(r => r.gpa > 3.5);
+      setChallengeCompleted(passed);
+    } else if (!isFinished) {
+      setChallengeCompleted(false);
+    }
+  }, [isFinished, parsedAST, resultSetData]);
 
   const queryLines = [
     <span key="1"><span className="text-pink-500 font-semibold">SELECT</span> *</span>,
@@ -76,6 +89,23 @@ export default function WhereModule() {
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 min-h-[600px]">
         <div className="col-span-1 lg:col-span-4 flex flex-col gap-6">
+          <div className="panel p-4 bg-accent/5 border border-accent/20 flex flex-col gap-2">
+            <div className="text-xs font-semibold text-accent uppercase tracking-wider flex items-center gap-2">
+              <Trophy size={14} /> Challenge Goal
+            </div>
+            <p className="text-[13px] text-zinc-300">
+              Modify the query to retrieve all students whose <code className="text-pink-400 text-xs">gpa</code> is greater than 3.5.
+            </p>
+            {isFinished && (
+              <div className="mt-1 text-xs font-semibold">
+                {challengeCompleted ? (
+                  <span className="text-emerald-400 flex items-center gap-1">🎉 Challenge Passed! You got it right!</span>
+                ) : (
+                  <span className="text-amber-400 flex items-center gap-1">Try again! Make sure the condition matches gpa &gt; 3.5.</span>
+                )}
+              </div>
+            )}
+          </div>
           <div className="h-52 shrink-0">
             <Query
               queryLines={queryLines}
