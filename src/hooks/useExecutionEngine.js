@@ -127,8 +127,19 @@ export function useExecutionEngine(initialQuery = "") {
             timeout = setTimeout(() => {
               setCheckingCondition(false);
               
-              // Simple row merge (assumes no column collisions for now, or prefixes)
-              const combinedRow = { ...leftRow, ...rightRow };
+              // Merge rows with table-prefixed keys to avoid column name collisions
+              // e.g. students.course_id and courses.course_id stay separate
+              const leftTableName = parsedAST.from[0].table;
+              const rightTableName = parsedAST.from[1].table;
+              const combinedRow = {};
+              Object.entries(leftRow).forEach(([k, v]) => {
+                combinedRow[k] = v;                         // plain key (for display)
+                combinedRow[`${leftTableName}.${k}`] = v;   // prefixed key (for ON eval)
+              });
+              Object.entries(rightRow).forEach(([k, v]) => {
+                combinedRow[`${rightTableName}.${k}`] = v;  // always prefix right table to avoid collision
+                if (!(k in combinedRow)) combinedRow[k] = v; // only add plain if not already set by left
+              });
               const onCondition = parsedAST.from[1].on;
               
               // Evaluate ON

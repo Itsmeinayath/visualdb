@@ -12,13 +12,13 @@ export default function InnerJoinModule() {
     currentRowIdx, currentRightRowIdx,
     parsedAST, resultSetData, checkingCondition,
     runQuery, resetQuery, parseError,
-  } = useExecutionEngine("SELECT *\nFROM students\nINNER JOIN courses\n  ON students.course_id = courses.id;");
+  } = useExecutionEngine("SELECT *\nFROM students\nINNER JOIN courses\n  ON students.course_id = courses.course_id;");
 
   const queryLines = [
     <span key="1"><span className="text-pink-500 font-semibold">SELECT</span> *</span>,
     <span key="2"><span className="text-pink-500 font-semibold">FROM</span> <span className="text-blue-400">students</span></span>,
     <span key="3"><span className="text-pink-500 font-semibold">INNER JOIN</span> <span className="text-orange-400">courses</span></span>,
-    <span key="4">  <span className="text-pink-500 font-semibold">ON</span> <span className="text-blue-400">students</span>.course_id = <span className="text-orange-400">courses</span>.id;</span>,
+    <span key="4">  <span className="text-pink-500 font-semibold">ON</span> <span className="text-blue-400">students</span>.course_id = <span className="text-orange-400">courses</span>.course_id;</span>,
   ];
 
   return (
@@ -127,8 +127,8 @@ export default function InnerJoinModule() {
             <Table
               data={rightTableData}
               title="Right: courses"
-              highlightedRows={currentRightRowIdx !== -1 ? [rightTableData[currentRightRowIdx]?.id || currentRightRowIdx] : []}
-              highlightedColumns={["id"]}
+              highlightedRows={currentRightRowIdx !== -1 ? [rightTableData[currentRightRowIdx]?.course_id || currentRightRowIdx] : []}
+              highlightedColumns={["course_id"]}
             />
           </div>
           <div className="flex-1 min-h-[280px]">
