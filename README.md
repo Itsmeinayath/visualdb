@@ -28,7 +28,7 @@ It is built for college students, educators, bootcamp attendees, and self-learne
 
 ## 🚀 Live Demo
 
-**[Play with VisualDB Live](https://visualdb-sooty.vercel.app/)** *(Replace this with your Vercel Link)*
+**[Play with VisualDB Live](https://visualdb-sooty.vercel.app/)** 
 
 ---
 
