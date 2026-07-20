@@ -15,8 +15,8 @@ export default function Layout() {
 
   return (
     <div className="flex h-screen w-full bg-background text-foreground overflow-hidden font-sans selection:bg-accent/30 selection:text-white">
-      {/* Sidebar - Linear/VSCode style */}
-      <aside className="w-[240px] border-r border-zinc-800/80 bg-zinc-950 flex flex-col flex-shrink-0">
+      {/* Sidebar - Hidden on mobile, visible on medium screens and up */}
+      <aside className="hidden md:flex w-[240px] border-r border-zinc-800/80 bg-zinc-950 flex-col flex-shrink-0">
         <div className="h-12 px-4 border-b border-zinc-800/80 flex items-center gap-2">
           <div className="w-5 h-5 rounded flex items-center justify-center bg-zinc-100 text-zinc-900 shadow-sm shadow-white/10">
             <Database size={12} strokeWidth={2.5} />
