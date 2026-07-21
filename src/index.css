@@ -98,4 +98,14 @@
     background-image: linear-gradient(to right, rgba(255, 255, 255, 0.05) 1px, transparent 1px),
                       linear-gradient(to bottom, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
   }
+
+  /* Query editor text selection — clearly visible indigo highlight */
+  .query-textarea::selection {
+    background-color: rgba(99, 102, 241, 0.35);
+    color: #fff;
+  }
+  .query-textarea::-moz-selection {
+    background-color: rgba(99, 102, 241, 0.35);
+    color: #fff;
+  }
 }

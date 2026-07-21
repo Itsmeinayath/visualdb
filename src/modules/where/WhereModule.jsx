@@ -1,15 +1,39 @@
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
 import { Link } from "react-router-dom";
 import Table from "../../components/Table";
 import Query from "../../components/Query";
-import { CheckCircle2, XCircle, Terminal, Cpu, ArrowRight, Lightbulb, Trophy } from "lucide-react";
+import ChallengePanel from "../../components/ChallengePanel";
+import { CheckCircle2, XCircle, Terminal, Cpu, ArrowRight, Lightbulb } from "lucide-react";
 import { useExecutionEngine } from "../../hooks/useExecutionEngine";
+import { useChallenges } from "../../hooks/useChallenges";
+
+const CHALLENGES = [
+  {
+    id: "where-gpa",
+    question: (<>Modify the query to retrieve all students whose <code className="text-pink-400 text-xs">gpa</code> is greater than 3.5.</>),
+    hint: "WHERE gpa > 3.5",
+    validate: (rs) => rs.length === 3 && rs.every(r => r.gpa > 3.5),
+  },
+  {
+    id: "where-age",
+    question: (<>Filter the students table to find all students whose <code className="text-pink-400 text-xs">age</code> is exactly 22.</>),
+    hint: "WHERE age = 22",
+    validate: (rs) => rs.length > 0 && rs.every(r => r.age === 22),
+  },
+  {
+    id: "where-major",
+    question: (<>Retrieve all students whose <code className="text-pink-400 text-xs">major</code> is <code className="text-blue-400 text-xs">'CS'</code>.</>),
+    hint: "WHERE major = 'CS'",
+    validate: (rs) => rs.length > 0 && rs.every(r => r.major === 'CS'),
+  },
+];
 
 export default function WhereModule() {
   const {
     queryInput,
     setQueryInput,
     isPlaying,
+    isPaused,
     isFinished,
     step,
     currentRowIdx,
@@ -20,21 +44,23 @@ export default function WhereModule() {
     resultSetData,
     runQuery,
     resetQuery,
+    pauseQuery,
+    stepQuery,
+    speed,
+    setSpeed,
     parseError,
     parsedAST,
   } = useExecutionEngine("SELECT *\nFROM students\nWHERE age > 20;");
 
-  const [challengeCompleted, setChallengeCompleted] = useState(false);
+  const challenges = useChallenges(CHALLENGES);
 
   useEffect(() => {
-    if (isFinished && parsedAST && resultSetData.length > 0) {
-      // Validation: GPA > 3.5. Result should have length 3, and all GPAs > 3.5.
-      const passed = resultSetData.length === 3 && resultSetData.every(r => r.gpa > 3.5);
-      setChallengeCompleted(passed);
+    if (isFinished && resultSetData.length > 0) {
+      challenges.checkAnswer(resultSetData, parsedAST);
     } else if (!isFinished) {
-      setChallengeCompleted(false);
+      challenges.resetChallenge();
     }
-  }, [isFinished, parsedAST, resultSetData]);
+  }, [isFinished, resultSetData]);
 
   const queryLines = [
     <span key="1"><span className="text-pink-500 font-semibold">SELECT</span> *</span>,
@@ -90,23 +116,16 @@ export default function WhereModule() {
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 min-h-[600px]">
         <div className="col-span-1 lg:col-span-4 flex flex-col gap-6">
-          <div className="panel p-4 bg-accent/5 border border-accent/20 flex flex-col gap-2">
-            <div className="text-xs font-semibold text-accent uppercase tracking-wider flex items-center gap-2">
-              <Trophy size={14} /> Challenge Goal
-            </div>
-            <p className="text-[13px] text-zinc-300">
-              Modify the query to retrieve all students whose <code className="text-pink-400 text-xs">gpa</code> is greater than 3.5.
-            </p>
-            {isFinished && (
-              <div className="mt-1 text-xs font-semibold">
-                {challengeCompleted ? (
-                  <span className="text-emerald-400 flex items-center gap-1">🎉 Challenge Passed! You got it right!</span>
-                ) : (
-                  <span className="text-amber-400 flex items-center gap-1">Try again! Make sure the condition matches gpa &gt; 3.5.</span>
-                )}
-              </div>
-            )}
-          </div>
+          <ChallengePanel
+            current={challenges.current}
+            currentIdx={challenges.currentIdx}
+            total={challenges.total}
+            currentStatus={challenges.currentStatus}
+            statuses={challenges.statuses}
+            isFinished={isFinished}
+            onPrev={challenges.goPrev}
+            onNext={challenges.goNext}
+          />
           <div className="h-52 shrink-0">
             <Query
               queryLines={queryLines}
@@ -115,8 +134,13 @@ export default function WhereModule() {
               activeLineIndex={step === 0 ? 0 : step === 1 ? 1 : step >= 2 && step <= 4 ? 2 : -1}
               onRun={() => runQuery()}
               onReset={resetQuery}
+              onPause={pauseQuery}
+              onStep={stepQuery}
               isPlaying={isPlaying}
               isFinished={isFinished}
+              isPaused={isPaused}
+              speed={speed}
+              onSpeedChange={setSpeed}
             />
           </div>
           {parseError && (

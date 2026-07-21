@@ -1,31 +1,57 @@
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
 import { Link } from "react-router-dom";
 import Table from "../../components/Table";
 import Query from "../../components/Query";
-import { CheckCircle2, Cpu, Combine, ArrowRight, Lightbulb, Trophy } from "lucide-react";
+import ChallengePanel from "../../components/ChallengePanel";
+import { CheckCircle2, Cpu, Combine, ArrowRight, Lightbulb } from "lucide-react";
 import { useExecutionEngine } from "../../hooks/useExecutionEngine";
+import { useChallenges } from "../../hooks/useChallenges";
+
+const CHALLENGES = [
+  {
+    id: "leftjoin-name-credits",
+    question: (<>Retrieve all students' <code className="text-pink-400 text-xs">name</code> and course <code className="text-pink-400 text-xs">credits</code> using LEFT JOIN — students with no match should still appear with NULL.</>),
+    hint: "SELECT students.name, courses.credits FROM students LEFT JOIN courses ON ...",
+    validate: (rs) => {
+      if (!rs.length) return false;
+      const keys = Object.keys(rs[0]);
+      return keys.length === 2 && keys.includes("name") && keys.includes("credits") && rs.length === 5;
+    },
+  },
+  {
+    id: "leftjoin-all-rows",
+    question: (<>Run a <code className="text-pink-400 text-xs">SELECT *</code> LEFT JOIN and confirm that <strong>5 rows</strong> appear (including the NULL row for the unmatched student).</>),
+    hint: "SELECT * FROM students LEFT JOIN courses ON students.course_id = courses.course_id;",
+    validate: (rs) => rs.length === 5,
+  },
+  {
+    id: "leftjoin-vs-inner",
+    question: (<>Switch the <code className="text-pink-400 text-xs">LEFT JOIN</code> to an <code className="text-pink-400 text-xs">INNER JOIN</code> and observe how the unmatched student disappears. Only 4 rows should appear.</>),
+    hint: "SELECT * FROM students INNER JOIN courses ON students.course_id = courses.course_id;",
+    validate: (rs) => rs.length === 4,
+  },
+];
 
 export default function LeftJoinModule() {
   const {
     queryInput, setQueryInput,
-    isPlaying, isFinished, step,
+    isPlaying, isPaused, isFinished, step,
     activeTable, tableData, rightTableData,
     currentRowIdx, currentRightRowIdx,
     parsedAST, resultSetData, checkingCondition,
-    runQuery, resetQuery, parseError,
+    runQuery, resetQuery,
+    pauseQuery, stepQuery, speed, setSpeed, parseError,
   } = useExecutionEngine("SELECT *\nFROM students\nLEFT JOIN courses\n  ON students.course_id = courses.course_id;");
 
-  const [challengeCompleted, setChallengeCompleted] = useState(false);
+  const challenges = useChallenges(CHALLENGES);
 
   useEffect(() => {
-    if (isFinished && parsedAST && resultSetData.length > 0) {
-      const keys = Object.keys(resultSetData[0]);
-      const passed = keys.length === 2 && keys.includes("name") && keys.includes("credits") && resultSetData.length === 5;
-      setChallengeCompleted(passed);
+    if (isFinished && resultSetData.length > 0) {
+      challenges.checkAnswer(resultSetData, parsedAST);
     } else if (!isFinished) {
-      setChallengeCompleted(false);
+      challenges.resetChallenge();
     }
-  }, [isFinished, parsedAST, resultSetData]);
+  }, [isFinished, resultSetData]);
 
   const queryLines = [
     <span key="1"><span className="text-pink-500 font-semibold">SELECT</span> *</span>,
@@ -77,23 +103,16 @@ export default function LeftJoinModule() {
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 min-h-[700px]">
         <div className="col-span-1 lg:col-span-4 flex flex-col gap-6">
-          <div className="panel p-4 bg-accent/5 border border-accent/20 flex flex-col gap-2">
-            <div className="text-xs font-semibold text-accent uppercase tracking-wider flex items-center gap-2">
-              <Trophy size={14} /> Challenge Goal
-            </div>
-            <p className="text-[13px] text-zinc-300">
-              Modify the query to retrieve all students' <code className="text-pink-400 text-xs">name</code> and their course <code className="text-pink-400 text-xs">credits</code> using a <code className="text-pink-400 text-xs">LEFT JOIN</code> (so students with no matching course are still included).
-            </p>
-            {isFinished && (
-              <div className="mt-1 text-xs font-semibold">
-                {challengeCompleted ? (
-                  <span className="text-emerald-400 flex items-center gap-1">🎉 Challenge Passed! You got it right!</span>
-                ) : (
-                  <span className="text-amber-400 flex items-center gap-1">Try again! Make sure you select name, credits and use LEFT JOIN.</span>
-                )}
-              </div>
-            )}
-          </div>
+          <ChallengePanel
+            current={challenges.current}
+            currentIdx={challenges.currentIdx}
+            total={challenges.total}
+            currentStatus={challenges.currentStatus}
+            statuses={challenges.statuses}
+            isFinished={isFinished}
+            onPrev={challenges.goPrev}
+            onNext={challenges.goNext}
+          />
           <div className="h-56 shrink-0">
             <Query
               queryLines={queryLines}
@@ -102,8 +121,13 @@ export default function LeftJoinModule() {
               activeLineIndex={step === 0 ? 0 : step === 1 ? 1 : step === 2 ? 2 : step === 4 ? 3 : -1}
               onRun={() => runQuery()}
               onReset={resetQuery}
+              onPause={pauseQuery}
+              onStep={stepQuery}
               isPlaying={isPlaying}
               isFinished={isFinished}
+              isPaused={isPaused}
+              speed={speed}
+              onSpeedChange={setSpeed}
             />
           </div>
           {parseError && <div className="panel p-3 border-red-500/30 bg-red-500/5 text-red-400 text-xs font-mono">{parseError}</div>}

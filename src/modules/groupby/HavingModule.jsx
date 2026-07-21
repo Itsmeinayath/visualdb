@@ -1,29 +1,51 @@
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
 import { Link } from "react-router-dom";
 import Table from "../../components/Table";
 import Query from "../../components/Query";
-import { CheckCircle2, Cpu, FolderTree, ArrowRight, Lightbulb, Trophy } from "lucide-react";
+import ChallengePanel from "../../components/ChallengePanel";
+import { CheckCircle2, Cpu, FolderTree, ArrowRight, Lightbulb } from "lucide-react";
 import { useExecutionEngine } from "../../hooks/useExecutionEngine";
+import { useChallenges } from "../../hooks/useChallenges";
+
+const CHALLENGES = [
+  {
+    id: "having-count1",
+    question: (<>Modify the query to show only majors that have exactly <strong>1</strong> student. Use <code className="text-pink-400 text-xs">HAVING COUNT(*) = 1</code>.</>),
+    hint: "HAVING COUNT(*) = 1",
+    validate: (rs) => rs.length > 0 && !rs.some(r => r.major === "CS"),
+  },
+  {
+    id: "having-count-gte2",
+    question: (<>Show only majors where <strong>2 or more</strong> students are enrolled. Use <code className="text-pink-400 text-xs">HAVING COUNT(*) &gt;= 2</code>.</>),
+    hint: "HAVING COUNT(*) >= 2",
+    validate: (rs) => rs.length > 0 && rs.every(r => (r["COUNT(*)"] || 0) >= 2),
+  },
+  {
+    id: "having-avg-gpa",
+    question: (<>Find majors whose average GPA exceeds 3.5. Use <code className="text-pink-400 text-xs">AVG(gpa)</code> and <code className="text-pink-400 text-xs">HAVING AVG(gpa) &gt; 3.5</code>.</>),
+    hint: "SELECT major, AVG(gpa) FROM students GROUP BY major HAVING AVG(gpa) > 3.5;",
+    validate: (rs) => rs.length > 0 && rs.every(r => Object.values(r).some(v => typeof v === 'number' && v > 3.5)),
+  },
+];
 
 export default function HavingModule() {
   const {
     queryInput, setQueryInput,
-    isPlaying, isFinished, step,
+    isPlaying, isPaused, isFinished, step,
     activeTable, tableData, parsedAST,
-    resultSetData, runQuery, resetQuery, parseError,
+    resultSetData, runQuery, resetQuery,
+    pauseQuery, stepQuery, speed, setSpeed, parseError,
   } = useExecutionEngine("SELECT major, COUNT(*)\nFROM students\nGROUP BY major\nHAVING COUNT(*) > 1;");
 
-  const [challengeCompleted, setChallengeCompleted] = useState(false);
+  const challenges = useChallenges(CHALLENGES);
 
   useEffect(() => {
-    if (isFinished && parsedAST && resultSetData.length > 0) {
-      // Validate: major that has exactly 1 student. Results should have 3 rows (Math, Physics, History).
-      const passed = resultSetData.length === 3 && !resultSetData.some(r => r.major === "Computer Science");
-      setChallengeCompleted(passed);
+    if (isFinished && resultSetData.length > 0) {
+      challenges.checkAnswer(resultSetData, parsedAST);
     } else if (!isFinished) {
-      setChallengeCompleted(false);
+      challenges.resetChallenge();
     }
-  }, [isFinished, parsedAST, resultSetData]);
+  }, [isFinished, resultSetData]);
 
   const queryLines = [
     <span key="1"><span className="text-pink-500 font-semibold">SELECT</span> major, <span className="text-pink-500 font-semibold">COUNT</span>(*)</span>,
@@ -75,23 +97,16 @@ export default function HavingModule() {
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 min-h-[600px]">
         <div className="col-span-1 lg:col-span-4 flex flex-col gap-6">
-          <div className="panel p-4 bg-accent/5 border border-accent/20 flex flex-col gap-2">
-            <div className="text-xs font-semibold text-accent uppercase tracking-wider flex items-center gap-2">
-              <Trophy size={14} /> Challenge Goal
-            </div>
-            <p className="text-[13px] text-zinc-300">
-              Modify the query to retrieve only the majors that have exactly 1 student (hint: change the HAVING filter to <code className="text-pink-400 text-xs">COUNT(*) = 1</code>).
-            </p>
-            {isFinished && (
-              <div className="mt-1 text-xs font-semibold">
-                {challengeCompleted ? (
-                  <span className="text-emerald-400 flex items-center gap-1">🎉 Challenge Passed! You got it right!</span>
-                ) : (
-                  <span className="text-amber-400 flex items-center gap-1">Try again! Make sure you filter HAVING COUNT(*) = 1.</span>
-                )}
-              </div>
-            )}
-          </div>
+          <ChallengePanel
+            current={challenges.current}
+            currentIdx={challenges.currentIdx}
+            total={challenges.total}
+            currentStatus={challenges.currentStatus}
+            statuses={challenges.statuses}
+            isFinished={isFinished}
+            onPrev={challenges.goPrev}
+            onNext={challenges.goNext}
+          />
           <div className="h-56 shrink-0">
             <Query
               queryLines={queryLines}
@@ -100,8 +115,13 @@ export default function HavingModule() {
               activeLineIndex={step === 0 ? 0 : step === 1 ? 1 : step >= 2 && step <= 4 ? 2 : step === 5 ? 3 : -1}
               onRun={() => runQuery()}
               onReset={resetQuery}
+              onPause={pauseQuery}
+              onStep={stepQuery}
               isPlaying={isPlaying}
               isFinished={isFinished}
+              isPaused={isPaused}
+              speed={speed}
+              onSpeedChange={setSpeed}
             />
           </div>
           {parseError && <div className="panel p-3 border-red-500/30 bg-red-500/5 text-red-400 text-xs font-mono">{parseError}</div>}

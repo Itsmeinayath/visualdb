@@ -1,30 +1,54 @@
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
 import { Link } from "react-router-dom";
 import Table from "../../components/Table";
 import Query from "../../components/Query";
-import { CheckCircle2, Cpu, Tag, ArrowRight, Lightbulb, Trophy } from "lucide-react";
+import ChallengePanel from "../../components/ChallengePanel";
+import { CheckCircle2, Cpu, Tag, ArrowRight, Lightbulb } from "lucide-react";
 import { useExecutionEngine } from "../../hooks/useExecutionEngine";
+import { useChallenges } from "../../hooks/useChallenges";
+
+const CHALLENGES = [
+  {
+    id: "alias-student-major",
+    question: (<>Retrieve only the <code className="text-pink-400 text-xs">major</code> column, renamed as <code className="text-pink-400 text-xs">student_major</code> using the <code className="text-pink-400 text-xs">AS</code> keyword.</>),
+    hint: "SELECT major AS student_major FROM students;",
+    validate: (rs) => rs.length === 5 && Object.keys(rs[0]).length === 1 && Object.keys(rs[0])[0] === 'student_major',
+  },
+  {
+    id: "alias-two-columns",
+    question: (<>Select <code className="text-pink-400 text-xs">name</code> renamed to <code className="text-pink-400 text-xs">full_name</code> and <code className="text-pink-400 text-xs">age</code> renamed to <code className="text-pink-400 text-xs">years</code>.</>),
+    hint: "SELECT name AS full_name, age AS years FROM students;",
+    validate: (rs) => {
+      const keys = Object.keys(rs[0] || {});
+      return keys.includes('full_name') && keys.includes('years') && keys.length === 2;
+    },
+  },
+  {
+    id: "alias-count",
+    question: (<>Use <code className="text-pink-400 text-xs">COUNT(*) AS total</code> to count all students and give the result a clean column name.</>),
+    hint: "SELECT COUNT(*) AS total FROM students;",
+    validate: (rs) => rs.length === 1 && 'total' in (rs[0] || {}),
+  },
+];
 
 export default function AliasesModule() {
   const {
     queryInput, setQueryInput,
-    isPlaying, isFinished, step,
+    isPlaying, isPaused, isFinished, step,
     activeTable, tableData, parsedAST,
-    resultSetData, runQuery, resetQuery, parseError,
+    resultSetData, runQuery, resetQuery,
+    pauseQuery, stepQuery, speed, setSpeed, parseError,
   } = useExecutionEngine("SELECT name AS student_name, gpa AS score\nFROM students;");
 
-  const [challengeCompleted, setChallengeCompleted] = useState(false);
+  const challenges = useChallenges(CHALLENGES);
 
   useEffect(() => {
-    if (isFinished && parsedAST && resultSetData.length > 0) {
-      const keys = Object.keys(resultSetData[0]);
-      // Validate: major renamed to student_major
-      const passed = keys.length === 1 && keys[0] === 'student_major' && resultSetData.length === 5;
-      setChallengeCompleted(passed);
+    if (isFinished && resultSetData.length > 0) {
+      challenges.checkAnswer(resultSetData, parsedAST);
     } else if (!isFinished) {
-      setChallengeCompleted(false);
+      challenges.resetChallenge();
     }
-  }, [isFinished, parsedAST, resultSetData]);
+  }, [isFinished, resultSetData]);
 
   const queryLines = [
     <span key="1"><span className="text-pink-500 font-semibold">SELECT</span> name <span className="text-pink-500 font-semibold">AS</span> student_name, gpa <span className="text-pink-500 font-semibold">AS</span> score</span>,
@@ -74,23 +98,16 @@ export default function AliasesModule() {
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 min-h-[600px]">
         <div className="col-span-1 lg:col-span-4 flex flex-col gap-6">
-          <div className="panel p-4 bg-accent/5 border border-accent/20 flex flex-col gap-2">
-            <div className="text-xs font-semibold text-accent uppercase tracking-wider flex items-center gap-2">
-              <Trophy size={14} /> Challenge Goal
-            </div>
-            <p className="text-[13px] text-zinc-300">
-              Modify the query to retrieve only the <code className="text-pink-400 text-xs">major</code> column renamed as <code className="text-pink-400 text-xs">student_major</code> (hint: use `major AS student_major`).
-            </p>
-            {isFinished && (
-              <div className="mt-1 text-xs font-semibold">
-                {challengeCompleted ? (
-                  <span className="text-emerald-400 flex items-center gap-1">🎉 Challenge Passed! You got it right!</span>
-                ) : (
-                  <span className="text-amber-400 flex items-center gap-1">Try again! Make sure you select only major AS student_major.</span>
-                )}
-              </div>
-            )}
-          </div>
+          <ChallengePanel
+            current={challenges.current}
+            currentIdx={challenges.currentIdx}
+            total={challenges.total}
+            currentStatus={challenges.currentStatus}
+            statuses={challenges.statuses}
+            isFinished={isFinished}
+            onPrev={challenges.goPrev}
+            onNext={challenges.goNext}
+          />
           <div className="h-52 shrink-0">
             <Query
               queryLines={queryLines}
@@ -99,8 +116,13 @@ export default function AliasesModule() {
               activeLineIndex={step === 0 ? 0 : step === 1 ? 1 : step >= 2 && step <= 4 ? 0 : -1}
               onRun={() => runQuery()}
               onReset={resetQuery}
+              onPause={pauseQuery}
+              onStep={stepQuery}
               isPlaying={isPlaying}
               isFinished={isFinished}
+              isPaused={isPaused}
+              speed={speed}
+              onSpeedChange={setSpeed}
             />
           </div>
           {parseError && <div className="panel p-3 border-red-500/30 bg-red-500/5 text-red-400 text-xs font-mono">{parseError}</div>}

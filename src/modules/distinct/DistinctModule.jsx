@@ -1,31 +1,51 @@
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
 import { Link } from "react-router-dom";
 import Table from "../../components/Table";
 import Query from "../../components/Query";
-import { CheckCircle2, Cpu, Layers, ArrowRight, Lightbulb, Trophy } from "lucide-react";
+import ChallengePanel from "../../components/ChallengePanel";
+import { CheckCircle2, Cpu, Layers, ArrowRight, Lightbulb } from "lucide-react";
 import { useExecutionEngine } from "../../hooks/useExecutionEngine";
+import { useChallenges } from "../../hooks/useChallenges";
+
+const CHALLENGES = [
+  {
+    id: "distinct-major",
+    question: (<>Add <code className="text-pink-400 text-xs">DISTINCT</code> to retrieve only unique major names from the students table.</>),
+    hint: "SELECT DISTINCT major FROM students;",
+    validate: (rs, ast) => ast?.distinct === 'DISTINCT' && rs.length === 4 && Object.keys(rs[0]).includes('major'),
+  },
+  {
+    id: "distinct-age",
+    question: (<>Use <code className="text-pink-400 text-xs">SELECT DISTINCT age</code> to get every unique age value in the students table.</>),
+    hint: "SELECT DISTINCT age FROM students;",
+    validate: (rs, ast) => ast?.distinct === 'DISTINCT' && rs.length > 0 && Object.keys(rs[0]).includes('age'),
+  },
+  {
+    id: "distinct-no",
+    question: (<>Run <code className="text-pink-400 text-xs">SELECT major</code> (without DISTINCT) and compare the row count to the DISTINCT version above. How many duplicate rows appear?</>),
+    hint: "SELECT major FROM students;",
+    validate: (rs, ast) => !ast?.distinct && rs.length === 5 && Object.keys(rs[0]).includes('major'),
+  },
+];
 
 export default function DistinctModule() {
   const {
     queryInput, setQueryInput,
-    isPlaying, isFinished, step,
+    isPlaying, isPaused, isFinished, step,
     activeTable, tableData, parsedAST,
-    resultSetData, runQuery, resetQuery, parseError,
+    resultSetData, runQuery, resetQuery,
+    pauseQuery, stepQuery, speed, setSpeed, parseError,
   } = useExecutionEngine("SELECT major\nFROM students;");
 
-  const [challengeCompleted, setChallengeCompleted] = useState(false);
+  const challenges = useChallenges(CHALLENGES);
 
   useEffect(() => {
-    if (isFinished && parsedAST && resultSetData.length > 0) {
-      const keys = Object.keys(resultSetData[0]);
-      const isDistinct = parsedAST.distinct === 'DISTINCT';
-      const hasMajor = keys.length === 1 && keys[0] === 'major';
-      const has4Rows = resultSetData.length === 4;
-      setChallengeCompleted(isDistinct && hasMajor && has4Rows);
+    if (isFinished && resultSetData.length > 0) {
+      challenges.checkAnswer(resultSetData, parsedAST);
     } else if (!isFinished) {
-      setChallengeCompleted(false);
+      challenges.resetChallenge();
     }
-  }, [isFinished, parsedAST, resultSetData]);
+  }, [isFinished, resultSetData]);
 
   const queryLines = [
     <span key="1"><span className="text-pink-500 font-semibold">SELECT</span> major</span>,
@@ -74,23 +94,16 @@ export default function DistinctModule() {
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 min-h-[600px]">
         <div className="col-span-1 lg:col-span-4 flex flex-col gap-6">
-          <div className="panel p-4 bg-accent/5 border border-accent/20 flex flex-col gap-2">
-            <div className="text-xs font-semibold text-accent uppercase tracking-wider flex items-center gap-2">
-              <Trophy size={14} /> Challenge Goal
-            </div>
-            <p className="text-[13px] text-zinc-300">
-              Modify the query to return only the **unique** major names from the students table (hint: insert the <code className="text-pink-400 text-xs">DISTINCT</code> keyword).
-            </p>
-            {isFinished && (
-              <div className="mt-1 text-xs font-semibold">
-                {challengeCompleted ? (
-                  <span className="text-emerald-400 flex items-center gap-1">🎉 Challenge Passed! You got it right!</span>
-                ) : (
-                  <span className="text-amber-400 flex items-center gap-1">Try again! Make sure to add DISTINCT before major.</span>
-                )}
-              </div>
-            )}
-          </div>
+          <ChallengePanel
+            current={challenges.current}
+            currentIdx={challenges.currentIdx}
+            total={challenges.total}
+            currentStatus={challenges.currentStatus}
+            statuses={challenges.statuses}
+            isFinished={isFinished}
+            onPrev={challenges.goPrev}
+            onNext={challenges.goNext}
+          />
           <div className="h-52 shrink-0">
             <Query
               queryLines={queryLines}
@@ -99,8 +112,13 @@ export default function DistinctModule() {
               activeLineIndex={step === 0 ? 0 : step === 1 ? 1 : step >= 2 && step <= 4 ? 0 : -1}
               onRun={() => runQuery()}
               onReset={resetQuery}
+              onPause={pauseQuery}
+              onStep={stepQuery}
               isPlaying={isPlaying}
               isFinished={isFinished}
+              isPaused={isPaused}
+              speed={speed}
+              onSpeedChange={setSpeed}
             />
           </div>
           {parseError && <div className="panel p-3 border-red-500/30 bg-red-500/5 text-red-400 text-xs font-mono">{parseError}</div>}

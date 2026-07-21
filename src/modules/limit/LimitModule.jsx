@@ -1,29 +1,51 @@
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
 import { Link } from "react-router-dom";
 import Table from "../../components/Table";
 import Query from "../../components/Query";
-import { CheckCircle2, Cpu, Scissors, ArrowRight, Lightbulb, Trophy } from "lucide-react";
+import ChallengePanel from "../../components/ChallengePanel";
+import { CheckCircle2, Cpu, Scissors, ArrowRight, Lightbulb } from "lucide-react";
 import { useExecutionEngine } from "../../hooks/useExecutionEngine";
+import { useChallenges } from "../../hooks/useChallenges";
+
+const CHALLENGES = [
+  {
+    id: "limit-top1",
+    question: (<>Retrieve only the student with the highest GPA. Combine <code className="text-pink-400 text-xs">ORDER BY gpa DESC</code> and <code className="text-pink-400 text-xs">LIMIT 1</code>.</>),
+    hint: "SELECT * FROM students ORDER BY gpa DESC LIMIT 1;",
+    validate: (rs) => rs.length === 1 && rs[0].name === "Diana Prince",
+  },
+  {
+    id: "limit-2rows",
+    question: (<>Retrieve exactly <strong>2</strong> students sorted by <code className="text-pink-400 text-xs">age</code> youngest first.</>),
+    hint: "SELECT * FROM students ORDER BY age ASC LIMIT 2;",
+    validate: (rs) => rs.length === 2 && rs[0].age <= rs[1].age,
+  },
+  {
+    id: "limit-no-order",
+    question: (<>Use <code className="text-pink-400 text-xs">LIMIT 3</code> without any ORDER BY — just get the first 3 rows from students.</>),
+    hint: "SELECT * FROM students LIMIT 3;",
+    validate: (rs, ast) => rs.length === 3 && !ast?.orderby,
+  },
+];
 
 export default function LimitModule() {
   const {
     queryInput, setQueryInput,
-    isPlaying, isFinished, step,
+    isPlaying, isPaused, isFinished, step,
     activeTable, tableData, parsedAST,
-    resultSetData, runQuery, resetQuery, parseError,
+    resultSetData, runQuery, resetQuery,
+    pauseQuery, stepQuery, speed, setSpeed, parseError,
   } = useExecutionEngine("SELECT *\nFROM students\nORDER BY gpa DESC\nLIMIT 3;");
 
-  const [challengeCompleted, setChallengeCompleted] = useState(false);
+  const challenges = useChallenges(CHALLENGES);
 
   useEffect(() => {
-    if (isFinished && parsedAST && resultSetData.length > 0) {
-      // Validate: single row, Diana Prince (highest GPA)
-      const passed = resultSetData.length === 1 && resultSetData[0].name === "Diana Prince";
-      setChallengeCompleted(passed);
+    if (isFinished && resultSetData.length > 0) {
+      challenges.checkAnswer(resultSetData, parsedAST);
     } else if (!isFinished) {
-      setChallengeCompleted(false);
+      challenges.resetChallenge();
     }
-  }, [isFinished, parsedAST, resultSetData]);
+  }, [isFinished, resultSetData]);
 
   const queryLines = [
     <span key="1"><span className="text-pink-500 font-semibold">SELECT</span> *</span>,
@@ -80,23 +102,16 @@ export default function LimitModule() {
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 min-h-[600px]">
         <div className="col-span-1 lg:col-span-4 flex flex-col gap-6">
-          <div className="panel p-4 bg-accent/5 border border-accent/20 flex flex-col gap-2">
-            <div className="text-xs font-semibold text-accent uppercase tracking-wider flex items-center gap-2">
-              <Trophy size={14} /> Challenge Goal
-            </div>
-            <p className="text-[13px] text-zinc-300">
-              Modify the query to retrieve the single student with the highest GPA (hint: combine <code className="text-pink-400 text-xs">ORDER BY gpa DESC</code> and <code className="text-pink-400 text-xs">LIMIT 1</code>).
-            </p>
-            {isFinished && (
-              <div className="mt-1 text-xs font-semibold">
-                {challengeCompleted ? (
-                  <span className="text-emerald-400 flex items-center gap-1">🎉 Challenge Passed! You got it right!</span>
-                ) : (
-                  <span className="text-amber-400 flex items-center gap-1">Try again! Make sure you sort gpa DESC and LIMIT is 1.</span>
-                )}
-              </div>
-            )}
-          </div>
+          <ChallengePanel
+            current={challenges.current}
+            currentIdx={challenges.currentIdx}
+            total={challenges.total}
+            currentStatus={challenges.currentStatus}
+            statuses={challenges.statuses}
+            isFinished={isFinished}
+            onPrev={challenges.goPrev}
+            onNext={challenges.goNext}
+          />
           <div className="h-56 shrink-0">
             <Query
               queryLines={queryLines}
@@ -105,8 +120,13 @@ export default function LimitModule() {
               activeLineIndex={step === 0 ? 0 : step === 1 ? 1 : step >= 2 && step <= 4 ? 2 : step === 5 ? 3 : -1}
               onRun={() => runQuery()}
               onReset={resetQuery}
+              onPause={pauseQuery}
+              onStep={stepQuery}
               isPlaying={isPlaying}
               isFinished={isFinished}
+              isPaused={isPaused}
+              speed={speed}
+              onSpeedChange={setSpeed}
             />
           </div>
           {parseError && <div className="panel p-3 border-red-500/30 bg-red-500/5 text-red-400 text-xs font-mono">{parseError}</div>}

@@ -1,31 +1,57 @@
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
 import { Link } from "react-router-dom";
 import Table from "../../components/Table";
 import Query from "../../components/Query";
-import { CheckCircle2, Cpu, Combine, ArrowRight, Lightbulb, Trophy } from "lucide-react";
+import ChallengePanel from "../../components/ChallengePanel";
+import { CheckCircle2, Cpu, Combine, ArrowRight, Lightbulb } from "lucide-react";
 import { useExecutionEngine } from "../../hooks/useExecutionEngine";
+import { useChallenges } from "../../hooks/useChallenges";
+
+const CHALLENGES = [
+  {
+    id: "join-name-course",
+    question: (<>Retrieve only the student's <code className="text-pink-400 text-xs">name</code> and the <code className="text-pink-400 text-xs">course_name</code>. Remove the <code className="text-pink-400 text-xs">*</code> and list them explicitly.</>),
+    hint: "SELECT students.name, courses.course_name FROM ...",
+    validate: (rs) => {
+      if (!rs.length) return false;
+      const keys = Object.keys(rs[0]);
+      return keys.length === 2 && keys.includes("name") && keys.includes("course_name") && rs.length === 4;
+    },
+  },
+  {
+    id: "join-where-gpa",
+    question: (<>Join students and courses, but only return students whose <code className="text-pink-400 text-xs">gpa</code> is greater than 3.6.</>),
+    hint: "Add WHERE students.gpa > 3.6 after the ON clause.",
+    validate: (rs) => rs.length > 0 && rs.every(r => r.gpa > 3.6),
+  },
+  {
+    id: "join-all-columns",
+    question: (<>Run the default <code className="text-pink-400 text-xs">SELECT *</code> INNER JOIN and verify all 4 matched students appear in the result.</>),
+    hint: "SELECT * FROM students INNER JOIN courses ON students.course_id = courses.course_id;",
+    validate: (rs) => rs.length === 4,
+  },
+];
 
 export default function InnerJoinModule() {
   const {
     queryInput, setQueryInput,
-    isPlaying, isFinished, step,
+    isPlaying, isPaused, isFinished, step,
     activeTable, tableData, rightTableData,
     currentRowIdx, currentRightRowIdx,
     parsedAST, resultSetData, checkingCondition,
-    runQuery, resetQuery, parseError,
+    runQuery, resetQuery,
+    pauseQuery, stepQuery, speed, setSpeed, parseError,
   } = useExecutionEngine("SELECT *\nFROM students\nINNER JOIN courses\n  ON students.course_id = courses.course_id;");
 
-  const [challengeCompleted, setChallengeCompleted] = useState(false);
+  const challenges = useChallenges(CHALLENGES);
 
   useEffect(() => {
-    if (isFinished && parsedAST && resultSetData.length > 0) {
-      const keys = Object.keys(resultSetData[0]);
-      const passed = keys.length === 2 && keys.includes("name") && keys.includes("course_name") && resultSetData.length === 4;
-      setChallengeCompleted(passed);
+    if (isFinished && resultSetData.length > 0) {
+      challenges.checkAnswer(resultSetData, parsedAST);
     } else if (!isFinished) {
-      setChallengeCompleted(false);
+      challenges.resetChallenge();
     }
-  }, [isFinished, parsedAST, resultSetData]);
+  }, [isFinished, resultSetData]);
 
   const queryLines = [
     <span key="1"><span className="text-pink-500 font-semibold">SELECT</span> *</span>,
@@ -77,23 +103,16 @@ export default function InnerJoinModule() {
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 min-h-[700px]">
         <div className="col-span-1 lg:col-span-4 flex flex-col gap-6">
-          <div className="panel p-4 bg-accent/5 border border-accent/20 flex flex-col gap-2">
-            <div className="text-xs font-semibold text-accent uppercase tracking-wider flex items-center gap-2">
-              <Trophy size={14} /> Challenge Goal
-            </div>
-            <p className="text-[13px] text-zinc-300">
-              Modify the query to retrieve only the student's <code className="text-pink-400 text-xs">name</code> and their <code className="text-pink-400 text-xs">course_name</code> (hint: list these columns instead of using <code className="text-pink-400 text-xs">*</code>).
-            </p>
-            {isFinished && (
-              <div className="mt-1 text-xs font-semibold">
-                {challengeCompleted ? (
-                  <span className="text-emerald-400 flex items-center gap-1">🎉 Challenge Passed! You got it right!</span>
-                ) : (
-                  <span className="text-amber-400 flex items-center gap-1">Try again! Make sure you select only name and course_name.</span>
-                )}
-              </div>
-            )}
-          </div>
+          <ChallengePanel
+            current={challenges.current}
+            currentIdx={challenges.currentIdx}
+            total={challenges.total}
+            currentStatus={challenges.currentStatus}
+            statuses={challenges.statuses}
+            isFinished={isFinished}
+            onPrev={challenges.goPrev}
+            onNext={challenges.goNext}
+          />
           <div className="h-56 shrink-0">
             <Query
               queryLines={queryLines}
@@ -102,8 +121,13 @@ export default function InnerJoinModule() {
               activeLineIndex={step === 0 ? 0 : step === 1 ? 1 : step === 2 ? 2 : step === 4 ? 3 : -1}
               onRun={() => runQuery()}
               onReset={resetQuery}
+              onPause={pauseQuery}
+              onStep={stepQuery}
               isPlaying={isPlaying}
               isFinished={isFinished}
+              isPaused={isPaused}
+              speed={speed}
+              onSpeedChange={setSpeed}
             />
           </div>
           {parseError && <div className="panel p-3 border-red-500/30 bg-red-500/5 text-red-400 text-xs font-mono">{parseError}</div>}

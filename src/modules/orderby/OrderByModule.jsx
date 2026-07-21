@@ -1,30 +1,59 @@
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
 import { Link } from "react-router-dom";
 import Table from "../../components/Table";
 import Query from "../../components/Query";
-import { CheckCircle2, Cpu, ArrowDownAZ, ArrowRight, Lightbulb, Trophy } from "lucide-react";
+import ChallengePanel from "../../components/ChallengePanel";
+import { CheckCircle2, Cpu, ArrowDownAZ, ArrowRight, Lightbulb } from "lucide-react";
 import { useExecutionEngine } from "../../hooks/useExecutionEngine";
+import { useChallenges } from "../../hooks/useChallenges";
+
+const CHALLENGES = [
+  {
+    id: "orderby-age-asc",
+    question: (<>Sort all students by their <code className="text-pink-400 text-xs">age</code> in ascending order (youngest first).</>),
+    hint: "ORDER BY age ASC",
+    validate: (rs) => rs.length === 5 && [19, 20, 21, 22, 23].every((v, i) => rs[i]?.age === v),
+  },
+  {
+    id: "orderby-name-asc",
+    question: (<>Sort the students alphabetically by <code className="text-pink-400 text-xs">name</code> from A to Z.</>),
+    hint: "ORDER BY name ASC",
+    validate: (rs) => {
+      if (!rs.length) return false;
+      for (let i = 1; i < rs.length; i++) { if (rs[i].name < rs[i-1].name) return false; }
+      return true;
+    },
+  },
+  {
+    id: "orderby-gpa-asc",
+    question: (<>Sort students by <code className="text-pink-400 text-xs">gpa</code> from lowest to highest (ascending).</>),
+    hint: "ORDER BY gpa ASC",
+    validate: (rs) => {
+      if (!rs.length) return false;
+      for (let i = 1; i < rs.length; i++) { if (rs[i].gpa < rs[i-1].gpa) return false; }
+      return true;
+    },
+  },
+];
 
 export default function OrderByModule() {
   const {
     queryInput, setQueryInput,
-    isPlaying, isFinished, step,
+    isPlaying, isPaused, isFinished, step,
     activeTable, tableData, parsedAST,
-    resultSetData, runQuery, resetQuery, parseError,
+    resultSetData, runQuery, resetQuery,
+    pauseQuery, stepQuery, speed, setSpeed, parseError,
   } = useExecutionEngine("SELECT *\nFROM students\nORDER BY gpa DESC;");
 
-  const [challengeCompleted, setChallengeCompleted] = useState(false);
+  const challenges = useChallenges(CHALLENGES);
 
   useEffect(() => {
-    if (isFinished && parsedAST && resultSetData.length > 0) {
-      // Validate: age ascending (19, 20, 21, 22, 23)
-      const correctOrder = [19, 20, 21, 22, 23];
-      const passed = resultSetData.length === 5 && resultSetData.every((r, idx) => r.age === correctOrder[idx]);
-      setChallengeCompleted(passed);
+    if (isFinished && resultSetData.length > 0) {
+      challenges.checkAnswer(resultSetData, parsedAST);
     } else if (!isFinished) {
-      setChallengeCompleted(false);
+      challenges.resetChallenge();
     }
-  }, [isFinished, parsedAST, resultSetData]);
+  }, [isFinished, resultSetData]);
 
   const queryLines = [
     <span key="1"><span className="text-pink-500 font-semibold">SELECT</span> *</span>,
@@ -78,23 +107,16 @@ export default function OrderByModule() {
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 min-h-[600px]">
         <div className="col-span-1 lg:col-span-4 flex flex-col gap-6">
-          <div className="panel p-4 bg-accent/5 border border-accent/20 flex flex-col gap-2">
-            <div className="text-xs font-semibold text-accent uppercase tracking-wider flex items-center gap-2">
-              <Trophy size={14} /> Challenge Goal
-            </div>
-            <p className="text-[13px] text-zinc-300">
-              Modify the query to sort all students by their <code className="text-pink-400 text-xs">age</code> in ascending order (youngest first).
-            </p>
-            {isFinished && (
-              <div className="mt-1 text-xs font-semibold">
-                {challengeCompleted ? (
-                  <span className="text-emerald-400 flex items-center gap-1">🎉 Challenge Passed! You got it right!</span>
-                ) : (
-                  <span className="text-amber-400 flex items-center gap-1">Try again! Make sure you sort by age (ascending is default).</span>
-                )}
-              </div>
-            )}
-          </div>
+          <ChallengePanel
+            current={challenges.current}
+            currentIdx={challenges.currentIdx}
+            total={challenges.total}
+            currentStatus={challenges.currentStatus}
+            statuses={challenges.statuses}
+            isFinished={isFinished}
+            onPrev={challenges.goPrev}
+            onNext={challenges.goNext}
+          />
           <div className="h-52 shrink-0">
             <Query
               queryLines={queryLines}
@@ -103,8 +125,13 @@ export default function OrderByModule() {
               activeLineIndex={step === 0 ? 0 : step === 1 ? 1 : step >= 2 && step <= 4 ? 2 : -1}
               onRun={() => runQuery()}
               onReset={resetQuery}
+              onPause={pauseQuery}
+              onStep={stepQuery}
               isPlaying={isPlaying}
               isFinished={isFinished}
+              isPaused={isPaused}
+              speed={speed}
+              onSpeedChange={setSpeed}
             />
           </div>
           {parseError && <div className="panel p-3 border-red-500/30 bg-red-500/5 text-red-400 text-xs font-mono">{parseError}</div>}

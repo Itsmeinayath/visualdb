@@ -1,32 +1,60 @@
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
 import { Link } from "react-router-dom";
 import Table from "../../components/Table";
 import Query from "../../components/Query";
-import { CheckCircle2, Cpu, FolderTree, ArrowRight, Lightbulb, Trophy } from "lucide-react";
+import ChallengePanel from "../../components/ChallengePanel";
+import { CheckCircle2, Cpu, FolderTree, ArrowRight, Lightbulb } from "lucide-react";
 import { useExecutionEngine } from "../../hooks/useExecutionEngine";
+import { useChallenges } from "../../hooks/useChallenges";
+
+const CHALLENGES = [
+  {
+    id: "groupby-max-gpa",
+    question: (<>Find the maximum GPA per major. Use <code className="text-pink-400 text-xs">MAX(gpa)</code> with <code className="text-pink-400 text-xs">GROUP BY major</code>.</>),
+    hint: "SELECT major, MAX(gpa) FROM students GROUP BY major;",
+    validate: (rs) => {
+      const keys = Object.keys(rs[0] || {});
+      return keys.includes("major") && keys.some(k => k.toUpperCase().includes("MAX")) && rs.length === 4;
+    },
+  },
+  {
+    id: "groupby-avg-gpa",
+    question: (<>Find the average GPA per major. Use <code className="text-pink-400 text-xs">AVG(gpa)</code>.</>),
+    hint: "SELECT major, AVG(gpa) FROM students GROUP BY major;",
+    validate: (rs) => {
+      const keys = Object.keys(rs[0] || {});
+      return keys.some(k => k.toUpperCase().includes("AVG")) && rs.length === 4;
+    },
+  },
+  {
+    id: "groupby-count-major",
+    question: (<>Count how many students are in each major using <code className="text-pink-400 text-xs">COUNT(*)</code> grouped by <code className="text-pink-400 text-xs">major</code>.</>),
+    hint: "SELECT major, COUNT(*) FROM students GROUP BY major;",
+    validate: (rs) => {
+      const keys = Object.keys(rs[0] || {});
+      return keys.includes("major") && keys.some(k => k.toUpperCase().includes("COUNT")) && rs.length === 4;
+    },
+  },
+];
 
 export default function GroupByModule() {
   const {
     queryInput, setQueryInput,
-    isPlaying, isFinished, step,
+    isPlaying, isPaused, isFinished, step,
     activeTable, tableData, parsedAST,
-    resultSetData, runQuery, resetQuery, parseError,
+    resultSetData, runQuery, resetQuery,
+    pauseQuery, stepQuery, speed, setSpeed, parseError,
   } = useExecutionEngine("SELECT major, COUNT(*)\nFROM students\nGROUP BY major;");
 
-  const [challengeCompleted, setChallengeCompleted] = useState(false);
+  const challenges = useChallenges(CHALLENGES);
 
   useEffect(() => {
-    if (isFinished && parsedAST && resultSetData.length > 0) {
-      // Validate: major column + some aggregate MAX column. ResultSet has 4 unique majors.
-      const keys = Object.keys(resultSetData[0]);
-      const hasMajor = keys.includes("major");
-      const hasMax = keys.some(k => k.toUpperCase().includes("MAX"));
-      const passed = hasMajor && hasMax && resultSetData.length === 4;
-      setChallengeCompleted(passed);
+    if (isFinished && resultSetData.length > 0) {
+      challenges.checkAnswer(resultSetData, parsedAST);
     } else if (!isFinished) {
-      setChallengeCompleted(false);
+      challenges.resetChallenge();
     }
-  }, [isFinished, parsedAST, resultSetData]);
+  }, [isFinished, resultSetData]);
 
   const queryLines = [
     <span key="1"><span className="text-pink-500 font-semibold">SELECT</span> major, <span className="text-pink-500 font-semibold">COUNT</span>(*)</span>,
@@ -80,23 +108,16 @@ export default function GroupByModule() {
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 min-h-[600px]">
         <div className="col-span-1 lg:col-span-4 flex flex-col gap-6">
-          <div className="panel p-4 bg-accent/5 border border-accent/20 flex flex-col gap-2">
-            <div className="text-xs font-semibold text-accent uppercase tracking-wider flex items-center gap-2">
-              <Trophy size={14} /> Challenge Goal
-            </div>
-            <p className="text-[13px] text-zinc-300">
-              Modify the query to find the maximum GPA per major (hint: use the <code className="text-pink-400 text-xs">MAX(gpa)</code> aggregate function).
-            </p>
-            {isFinished && (
-              <div className="mt-1 text-xs font-semibold">
-                {challengeCompleted ? (
-                  <span className="text-emerald-400 flex items-center gap-1">🎉 Challenge Passed! You got it right!</span>
-                ) : (
-                  <span className="text-amber-400 flex items-center gap-1">Try again! Make sure you select major, MAX(gpa) and GROUP BY major.</span>
-                )}
-              </div>
-            )}
-          </div>
+          <ChallengePanel
+            current={challenges.current}
+            currentIdx={challenges.currentIdx}
+            total={challenges.total}
+            currentStatus={challenges.currentStatus}
+            statuses={challenges.statuses}
+            isFinished={isFinished}
+            onPrev={challenges.goPrev}
+            onNext={challenges.goNext}
+          />
           <div className="h-52 shrink-0">
             <Query
               queryLines={queryLines}
@@ -105,8 +126,13 @@ export default function GroupByModule() {
               activeLineIndex={step === 0 ? 0 : step === 1 ? 1 : step >= 2 && step <= 4 ? 1 : step === 5 ? 2 : -1}
               onRun={() => runQuery()}
               onReset={resetQuery}
+              onPause={pauseQuery}
+              onStep={stepQuery}
               isPlaying={isPlaying}
               isFinished={isFinished}
+              isPaused={isPaused}
+              speed={speed}
+              onSpeedChange={setSpeed}
             />
           </div>
           {parseError && <div className="panel p-3 border-red-500/30 bg-red-500/5 text-red-400 text-xs font-mono">{parseError}</div>}
