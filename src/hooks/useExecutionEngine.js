@@ -279,7 +279,7 @@ export function useExecutionEngine(initialQuery = "") {
     }
 
     return () => clearTimeout(timeout);
-  }, [isPlaying, step, currentRowIdx, parsedAST, tableData]);
+  }, [isPlaying, step, currentRowIdx, currentRightRowIdx, parsedAST, tableData]);
 
   useEffect(() => {
     if (isFinished) {
