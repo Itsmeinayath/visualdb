@@ -146,6 +146,21 @@ export default function Layout() {
   const toggleTheme = () => {
     setTheme(prev => (prev === "dark" ? "light" : "dark"));
   };
+  const handleResetProgress = () => {
+    const confirmed = window.confirm(
+      "Are you sure you want to reset all challenge progress?"
+    );
+
+    if (!confirmed) return;
+
+    Object.keys(localStorage).forEach((key) => {
+      if (key.startsWith("completed_")) {
+        localStorage.removeItem(key);
+      }
+    });
+
+    window.dispatchEvent(new Event("completion-change"));
+  };
 
   return (
     <div className="flex h-screen w-full bg-background text-foreground overflow-hidden font-sans selection:bg-accent/30 selection:text-white">
@@ -193,6 +208,12 @@ export default function Layout() {
                 className="h-7 w-48 md:w-64 bg-muted/50 border border-border rounded-md pl-8 pr-3 text-[13px] text-foreground focus:outline-none focus:border-border focus:bg-muted transition-all placeholder:text-muted-foreground/60 shadow-inner"
               />
             </div>
+            <button
+              onClick={handleResetProgress}
+              className="h-7 px-3 rounded-md border border-border bg-muted/50 hover:bg-muted text-[12px] font-medium transition-all"
+            >
+              Reset Progress
+            </button>
             <button
               onClick={toggleTheme}
               className="h-7 w-7 rounded-md border border-border bg-muted/50 hover:bg-muted flex items-center justify-center text-muted-foreground hover:text-foreground transition-all cursor-pointer"
