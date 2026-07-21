@@ -350,7 +350,7 @@ export function useExecutionEngine(initialQuery = "") {
 }
 
 function projectRow(row, columnsAST) {
-  if (!columnsAST || (columnsAST.length === 1 && columnsAST[0].expr.type === 'star')) {
+  if (!columnsAST || (columnsAST.length === 1 && (columnsAST[0].expr.type === 'star' || columnsAST[0].expr.column === '*'))) {
     return row; // SELECT *
   }
   
