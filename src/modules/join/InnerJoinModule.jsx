@@ -125,12 +125,45 @@ export default function InnerJoinModule() {
                   </div>
                   <div className="bg-zinc-900 border border-zinc-800 p-3 rounded">
                     <div className="flex items-center gap-1.5 text-xs font-semibold text-zinc-300 mb-2">
-                      <Combine size={14} className="text-accent" /> Outer loop: student #{currentRowIdx + 1}
+                      <Combine size={14} className="text-accent" /> Nested Loop: student #{currentRowIdx + 1}
                     </div>
-                    {checkingCondition && currentRightRowIdx >= 0 && (
-                      <div className="text-zinc-500 text-[11px]">
-                        Checking against: {rightTableData[currentRightRowIdx]?.name || `course #${currentRightRowIdx + 1}`}<br />
-                        Do course_ids match?
+                    {currentRightRowIdx >= 0 && (
+                      <div className="flex flex-col gap-2 mt-2 pt-2 border-t border-zinc-800">
+                        <div className="flex items-center justify-between text-xs font-mono">
+                          <div className="flex flex-col bg-zinc-950 px-2 py-1 rounded border border-zinc-800">
+                            <span className="text-[10px] text-zinc-500">students.course_id</span>
+                            <span className="text-blue-400 font-bold">{tableData[currentRowIdx]?.course_id}</span>
+                          </div>
+                          
+                          <div className="text-zinc-500 font-semibold px-1">
+                            {checkingCondition ? (
+                              <span className="animate-pulse">== ?</span>
+                            ) : (
+                              tableData[currentRowIdx]?.course_id === rightTableData[currentRightRowIdx]?.course_id ? (
+                                <span className="text-emerald-400 font-bold">==</span>
+                              ) : (
+                                <span className="text-red-400 font-bold">!=</span>
+                              )
+                            )}
+                          </div>
+                          
+                          <div className="flex flex-col bg-zinc-950 px-2 py-1 rounded border border-zinc-800">
+                            <span className="text-[10px] text-zinc-500">courses.course_id</span>
+                            <span className="text-orange-400 font-bold">{rightTableData[currentRightRowIdx]?.course_id}</span>
+                          </div>
+                        </div>
+                        
+                        <div className="text-[11px] text-zinc-500 mt-1">
+                          {checkingCondition ? (
+                            <span className="text-zinc-400">Comparing keys...</span>
+                          ) : (
+                            tableData[currentRowIdx]?.course_id === rightTableData[currentRightRowIdx]?.course_id ? (
+                              <span className="text-emerald-400 font-semibold">Match! Merging rows.</span>
+                            ) : (
+                              <span className="text-red-400/80">No match. Skipping.</span>
+                            )
+                          )}
+                        </div>
                       </div>
                     )}
                   </div>
