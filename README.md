@@ -86,18 +86,10 @@ export default function MyNewModule() {
 
 We love contributions! Whether you're fixing a typo, adding a new mock dataset, or building an entirely new visualization module, your help is welcome. 
 
-### Development Setup
-
-1. Fork and clone the repository.
-2. Install dependencies:
-   ```bash
-   npm install
-   ```
-3. Start the development server:
-   ```bash
-   npm run dev
-   ```
-4. Create a new branch, make your changes, and submit a Pull Request!
+Please read our comprehensive **[Contributing Guide](CONTRIBUTING.md)** for details on:
+- How to set up the project locally
+- The architecture (how the Execution Engine and UI modules interact)
+- How to submit a Pull Request
 
 Check out our issues tab for tasks labeled `good first issue`.
 
@@ -113,7 +105,9 @@ Check out our issues tab for tasks labeled `good first issue`.
 - [x] GROUP BY (Hash Aggregation)
 - [x] Custom Query Playground (AST Parsing)
 - [x] INNER JOIN
-- [ ] LEFT JOIN
+- [x] LEFT JOIN
+- [x] Multiple Progressive Challenges per Module
+- [x] Execution Trace Play/Pause/Speed Controls
 
 **Version 2 (Database Design)**
 - [ ] Primary Keys & Foreign Keys
