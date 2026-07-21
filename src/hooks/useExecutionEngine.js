@@ -251,6 +251,29 @@ export function useExecutionEngine(initialQuery = "") {
           });
           return newResultSet;
         });
+      } else {
+        const hasGlobalAggregates = parsedAST.columns && parsedAST.columns.some(col => col.expr && col.expr.type === 'aggr_func');
+        if (hasGlobalAggregates) {
+          setResultSetData(prev => {
+            const newRow = {};
+            parsedAST.columns.forEach(col => {
+              if (col.expr.type === 'aggr_func') {
+                const aggrName = col.expr.name;
+                const argName = col.expr.args?.expr?.value || '*';
+                const alias = col.as || `${aggrName}(${argName})`;
+                newRow[alias] = evaluateAggregate(col.expr, prev);
+              } else if (col.expr.type === 'column_ref') {
+                const colName = col.expr.column;
+                const alias = col.as || colName;
+                newRow[alias] = prev[0]?.[colName];
+              } else {
+                const alias = col.as || col.expr.value;
+                newRow[alias] = col.expr.value;
+              }
+            });
+            return [newRow];
+          });
+        }
       }
       timeout = setTimeout(() => setStep(6), parsedAST.orderby ? 600 : 0);
     } else if (step === 6) {
