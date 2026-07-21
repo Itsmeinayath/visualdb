@@ -32,14 +32,6 @@ It is built for college students, educators, bootcamp attendees, and self-learne
 
 ---
 
-## 🌟 Our Grand Vision
-
-VisualDB is just the beginning. Our ultimate goal is to build an entire ecosystem of tools that make Computer Science visual. 
-
-Read our **[VisualCS Manifesto (VISION.md)](VISION.md)** to see where we are heading next (VisualGit, VisualDocker, VisualDSA, and more). If our mission resonates with you, we'd love for you to join us on this journey!
-
----
-
 ## 🛠️ Tech Stack
 
 VisualDB is a 100% client-side application. There is no backend server or real database. Everything runs directly in the browser!
@@ -87,6 +79,14 @@ export default function MyNewModule() {
   );
 }
 ```
+
+---
+
+## 🌟 Our Grand Vision
+
+VisualDB is just the beginning. Our ultimate goal is to build an entire ecosystem of tools that make Computer Science visual. 
+
+Read our **[VisualCS Manifesto (VISION.md)](VISION.md)** to see where we are heading next (VisualGit, VisualDocker, VisualDSA, and more). If our mission resonates with you, we'd love for you to join us on this journey!
 
 ---
 

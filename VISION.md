@@ -65,14 +65,4 @@ We are not "Another documentation website." We are **"The place where difficult 
 
 ---
 
-## The Strategy
-
-For the next **12 months**, ignore every shiny new idea.
-
-**Build VisualDB until it's something to be genuinely proud of.**
-
-When you reach a point where people start saying: *"Can you make one for Git?"* — that's when you know it's time. Because then you're not starting another random repository. You're expanding a trusted ecosystem.
-
-> You are gradually building a **new way of teaching computer science**.
-
 If this vision resonates with you, we'd love your help. Check out the [Contributing Guide](CONTRIBUTING.md) to get started on VisualDB.
