@@ -18,8 +18,18 @@
 
       gtag('config', 'G-2HNNVGX95E');
     </script>
+    <script>
+      (function() {
+        const theme = localStorage.getItem('theme') || 'dark';
+        if (theme === 'dark') {
+          document.documentElement.classList.add('dark');
+        } else {
+          document.documentElement.classList.remove('dark');
+        }
+      })();
+    </script>
   </head>
-  <body class="dark antialiased bg-background text-foreground">
+  <body class="antialiased bg-background text-foreground">
     <div id="root"></div>
     <script type="module" src="/src/main.jsx"></script>
   </body>

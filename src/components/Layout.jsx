@@ -1,6 +1,6 @@
 import { NavLink, Outlet, useLocation } from "react-router-dom";
 import { useState, useEffect } from "react";
-import { Database, Home, MousePointerClick, Filter, ArrowDownAZ, Search, Settings, TerminalSquare, Scissors, FolderTree, Combine, Menu, X, ChevronRight, Check, Layers, Tag } from "lucide-react";
+import { Database, Home, MousePointerClick, Filter, ArrowDownAZ, Search, Settings, TerminalSquare, Scissors, FolderTree, Combine, Menu, X, ChevronRight, Check, Layers, Tag, Sun, Moon } from "lucide-react";
 import { cn } from "../utils/cn";
 
 const links = [
@@ -39,20 +39,20 @@ function SidebarContent({ onClose }) {
 
   return (
     <>
-      <div className="h-12 px-4 border-b border-zinc-800/80 flex items-center gap-2 flex-shrink-0">
-        <div className="w-5 h-5 rounded flex items-center justify-center bg-zinc-100 text-zinc-900 shadow-sm shadow-white/10">
+      <div className="h-12 px-4 border-b border-border flex items-center gap-2 flex-shrink-0">
+        <div className="w-5 h-5 rounded flex items-center justify-center bg-foreground text-background shadow-sm">
           <Database size={12} strokeWidth={2.5} />
         </div>
-        <span className="font-medium text-[13px] tracking-tight text-zinc-100">VisualDB</span>
+        <span className="font-semibold text-[13px] tracking-tight text-foreground">VisualDB</span>
         {onClose && (
-          <button onClick={onClose} className="ml-auto text-zinc-400 hover:text-zinc-200 transition-colors md:hidden">
+          <button onClick={onClose} className="ml-auto text-muted-foreground hover:text-foreground transition-colors md:hidden">
             <X size={16} />
           </button>
         )}
       </div>
 
       <nav className="flex-1 py-4 px-2 space-y-[2px] overflow-y-auto">
-        <div className="text-[10px] font-semibold text-zinc-500 uppercase tracking-widest mb-1 px-3">Start Here</div>
+        <div className="text-[10px] font-semibold text-muted-foreground uppercase tracking-widest mb-1 px-3">Start Here</div>
 
         {/* Overview link */}
         <NavLink
@@ -64,8 +64,8 @@ function SidebarContent({ onClose }) {
             cn(
               "flex items-center gap-2.5 px-3 py-1.5 rounded-md text-[13px] font-medium transition-all duration-200 border border-transparent",
               isActive
-                ? "bg-zinc-900 text-zinc-100 border-zinc-800/50 shadow-sm"
-                : "text-zinc-400 hover:bg-zinc-900/50 hover:text-zinc-200"
+                ? "bg-muted text-foreground border-border shadow-sm font-semibold"
+                : "text-muted-foreground hover:bg-muted/50 hover:text-foreground"
             )
           }
         >
@@ -73,7 +73,7 @@ function SidebarContent({ onClose }) {
           Overview
         </NavLink>
 
-        <div className="text-[10px] font-semibold text-zinc-500 uppercase tracking-widest mt-4 mb-1 px-3">Learning Path</div>
+        <div className="text-[10px] font-semibold text-muted-foreground uppercase tracking-widest mt-4 mb-1 px-3">Learning Path</div>
 
         {links.filter(l => l.step !== null).map((link) => (
           <NavLink
@@ -84,8 +84,8 @@ function SidebarContent({ onClose }) {
               cn(
                 "flex items-center gap-2.5 px-3 py-2 rounded-md text-[13px] font-medium transition-all duration-200 border border-transparent group",
                 isActive
-                  ? "bg-zinc-900 text-zinc-100 border-zinc-800/50 shadow-sm"
-                  : "text-zinc-400 hover:bg-zinc-900/50 hover:text-zinc-200"
+                  ? "bg-muted text-foreground border-border shadow-sm font-semibold"
+                  : "text-muted-foreground hover:bg-muted/50 hover:text-foreground"
               )
             }
           >
@@ -93,7 +93,7 @@ function SidebarContent({ onClose }) {
               "w-5 h-5 rounded flex items-center justify-center text-[10px] font-bold flex-shrink-0 transition-all duration-200",
               completedPaths[link.to]
                 ? "bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 shadow-[0_0_8px_rgba(16,185,129,0.15)]"
-                : "bg-zinc-800/50 text-zinc-500 group-hover:text-zinc-300"
+                : "bg-muted text-muted-foreground group-hover:text-foreground border border-border/40"
             )}>
               {completedPaths[link.to] ? <Check size={10} strokeWidth={3} /> : link.step}
             </div>
@@ -105,7 +105,7 @@ function SidebarContent({ onClose }) {
           </NavLink>
         ))}
 
-        <div className="text-[10px] font-semibold text-zinc-500 uppercase tracking-widest mt-4 mb-1 px-3">Practice</div>
+        <div className="text-[10px] font-semibold text-muted-foreground uppercase tracking-widest mt-4 mb-1 px-3">Practice</div>
 
         <NavLink
           to="/playground"
@@ -114,8 +114,8 @@ function SidebarContent({ onClose }) {
             cn(
               "flex items-center gap-2.5 px-3 py-1.5 rounded-md text-[13px] font-medium transition-all duration-200 border border-transparent",
               isActive
-                ? "bg-zinc-900 text-zinc-100 border-zinc-800/50 shadow-sm"
-                : "text-zinc-400 hover:bg-zinc-900/50 hover:text-zinc-200"
+                ? "bg-muted text-foreground border-border shadow-sm font-semibold"
+                : "text-muted-foreground hover:bg-muted/50 hover:text-foreground"
             )
           }
         >
@@ -130,12 +130,28 @@ function SidebarContent({ onClose }) {
 
 export default function Layout() {
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [theme, setTheme] = useState(() => {
+    return localStorage.getItem("theme") || "dark";
+  });
+
+  useEffect(() => {
+    if (theme === "dark") {
+      document.documentElement.classList.add("dark");
+    } else {
+      document.documentElement.classList.remove("dark");
+    }
+    localStorage.setItem("theme", theme);
+  }, [theme]);
+
+  const toggleTheme = () => {
+    setTheme(prev => (prev === "dark" ? "light" : "dark"));
+  };
 
   return (
     <div className="flex h-screen w-full bg-background text-foreground overflow-hidden font-sans selection:bg-accent/30 selection:text-white">
 
       {/* Desktop Sidebar */}
-      <aside className="hidden md:flex w-[220px] border-r border-zinc-800/80 bg-zinc-950 flex-col flex-shrink-0">
+      <aside className="hidden md:flex w-[220px] border-r border-border bg-card flex-col flex-shrink-0">
         <SidebarContent />
       </aside>
 
@@ -143,7 +159,7 @@ export default function Layout() {
       {mobileOpen && (
         <div className="fixed inset-0 z-50 md:hidden">
           <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setMobileOpen(false)} />
-          <aside className="absolute left-0 top-0 h-full w-[260px] bg-zinc-950 border-r border-zinc-800 flex flex-col z-10 shadow-2xl">
+          <aside className="absolute left-0 top-0 h-full w-[260px] bg-card border-r border-border flex flex-col z-10 shadow-2xl">
             <SidebarContent onClose={() => setMobileOpen(false)} />
           </aside>
         </div>
@@ -152,31 +168,38 @@ export default function Layout() {
       {/* Main Content */}
       <main className="flex-1 flex flex-col min-w-0 bg-background relative">
         {/* Top Header */}
-        <header className="h-12 border-b border-zinc-800/80 flex items-center px-4 justify-between bg-zinc-950/80 backdrop-blur-md z-10 sticky top-0 shadow-sm">
+        <header className="h-12 border-b border-border flex items-center px-4 justify-between bg-card/85 backdrop-blur-md z-10 sticky top-0 shadow-sm">
           <div className="flex items-center gap-3">
             {/* Mobile hamburger */}
             <button
-              className="md:hidden text-zinc-400 hover:text-zinc-200 transition-colors"
+              className="md:hidden text-muted-foreground hover:text-foreground transition-colors"
               onClick={() => setMobileOpen(true)}
               aria-label="Open menu"
             >
               <Menu size={20} />
             </button>
-            <div className="flex items-center gap-2 text-[13px] text-zinc-500">
-              <span className="hover:text-zinc-300 cursor-pointer transition-colors hidden sm:block">Workspace</span>
+            <div className="flex items-center gap-2 text-[13px] text-muted-foreground">
+              <span className="hover:text-foreground cursor-pointer transition-colors hidden sm:block">Workspace</span>
               <ChevronRight size={12} className="opacity-40 hidden sm:block" />
-              <span className="text-zinc-300 font-medium">Interactive Learning</span>
+              <span className="text-foreground font-medium">Interactive Learning</span>
             </div>
           </div>
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-3">
             <div className="relative group hidden sm:block">
-              <Search size={14} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-zinc-500 group-focus-within:text-zinc-300 transition-colors" />
+              <Search size={14} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-muted-foreground group-focus-within:text-foreground/80 transition-colors" />
               <input
                 type="text"
                 placeholder="Search modules..."
-                className="h-7 w-48 md:w-64 bg-zinc-900/50 border border-zinc-800 rounded-md pl-8 pr-3 text-[13px] text-zinc-200 focus:outline-none focus:border-zinc-700 focus:bg-zinc-900 transition-all placeholder:text-zinc-600 shadow-inner"
+                className="h-7 w-48 md:w-64 bg-muted/50 border border-border rounded-md pl-8 pr-3 text-[13px] text-foreground focus:outline-none focus:border-border focus:bg-muted transition-all placeholder:text-muted-foreground/60 shadow-inner"
               />
             </div>
+            <button
+              onClick={toggleTheme}
+              className="h-7 w-7 rounded-md border border-border bg-muted/50 hover:bg-muted flex items-center justify-center text-muted-foreground hover:text-foreground transition-all cursor-pointer"
+              aria-label="Toggle theme"
+            >
+              {theme === "dark" ? <Sun size={14} /> : <Moon size={14} />}
+            </button>
           </div>
         </header>
 
