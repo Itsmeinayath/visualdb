@@ -124,16 +124,6 @@ function SidebarContent({ onClose }) {
           <span className="text-[9px] font-bold px-1.5 py-0.5 rounded-full text-rose-400 bg-rose-400/10 hidden lg:block">ADV</span>
         </NavLink>
       </nav>
-
-      <div className="p-3 mx-2 mb-2 rounded-lg border border-zinc-800/50 bg-zinc-900/30 flex items-center gap-3 text-[13px] text-zinc-400">
-        <div className="w-6 h-6 rounded-full bg-zinc-800 flex items-center justify-center border border-zinc-700">
-          <span className="text-[10px] text-zinc-300 font-bold">ST</span>
-        </div>
-        <div className="flex-1 flex flex-col min-w-0">
-          <span className="truncate font-medium text-zinc-200">Student Workspace</span>
-          <span className="text-[10px] text-zinc-500 truncate">Free Plan</span>
-        </div>
-      </div>
     </>
   );
 }
