@@ -10,6 +10,7 @@ const curriculum = [
   { to: "/having", label: "HAVING", desc: "Filter aggregated groups", step: 6, difficulty: "Intermediate", color: "text-amber-400", bg: "bg-amber-400/10 border-amber-400/20" },
   { to: "/innerjoin", label: "INNER JOIN", desc: "Merge matching rows from 2 tables", step: 7, difficulty: "Intermediate", color: "text-amber-400", bg: "bg-amber-400/10 border-amber-400/20" },
   { to: "/leftjoin", label: "LEFT JOIN", desc: "Include all rows from the left table", step: 8, difficulty: "Intermediate", color: "text-amber-400", bg: "bg-amber-400/10 border-amber-400/20" },
+  { to: "/distinct", label: "DISTINCT", desc: "Eliminate duplicate rows from results", step: 9, difficulty: "Intermediate", color: "text-amber-400", bg: "bg-amber-400/10 border-amber-400/20" },
   { to: "/playground", label: "Playground", desc: "Write your own queries freely", step: null, difficulty: "Practice", color: "text-rose-400", bg: "bg-rose-400/10 border-rose-400/20" },
 ];
 

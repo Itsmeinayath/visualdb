@@ -188,8 +188,8 @@ export default function LeftJoinModule() {
 
       <div className="flex items-center justify-between pt-2 border-t border-zinc-800">
         <Link to="/innerjoin" className="text-sm text-zinc-500 hover:text-zinc-300 transition-colors">← INNER JOIN</Link>
-        <Link to="/playground" className="inline-flex items-center gap-2 px-5 py-2.5 rounded-md bg-accent hover:bg-accent/90 text-white text-sm font-medium transition-all hover:scale-[1.02] group">
-          Go to Playground <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
+        <Link to="/distinct" className="inline-flex items-center gap-2 px-5 py-2.5 rounded-md bg-zinc-800 hover:bg-zinc-700 text-zinc-200 text-sm font-medium transition-all hover:scale-[1.02] group">
+          Next: DISTINCT <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
         </Link>
       </div>
     </div>

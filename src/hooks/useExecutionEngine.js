@@ -270,10 +270,26 @@ export function useExecutionEngine(initialQuery = "") {
       }
       timeout = setTimeout(() => setStep(7), parsedAST.limit ? 600 : 0);
     } else if (step === 7) {
-      if (parsedAST.limit && parsedAST.limit.value && parsedAST.limit.value.length > 0) {
-        const limitValue = parsedAST.limit.value[0].value;
-        setResultSetData(prev => prev.slice(0, limitValue));
-      }
+      setResultSetData(prev => {
+        let projected = prev.map(row => projectRow(row, parsedAST.columns));
+        
+        // Apply DISTINCT deduplication if requested
+        if (parsedAST.distinct === 'DISTINCT') {
+          const seen = new Set();
+          projected = projected.filter(row => {
+            const stringified = JSON.stringify(row);
+            if (seen.has(stringified)) return false;
+            seen.add(stringified);
+            return true;
+          });
+        }
+
+        if (parsedAST.limit && parsedAST.limit.value && parsedAST.limit.value.length > 0) {
+          const limitValue = parsedAST.limit.value[0].value;
+          projected = projected.slice(0, limitValue);
+        }
+        return projected;
+      });
       setIsPlaying(false);
       setIsFinished(true);
     }
@@ -308,4 +324,43 @@ export function useExecutionEngine(initialQuery = "") {
     runQuery,
     resetQuery
   };
+}
+
+function projectRow(row, columnsAST) {
+  if (!columnsAST || (columnsAST.length === 1 && columnsAST[0].expr.type === 'star')) {
+    return row; // SELECT *
+  }
+  
+  const projected = {};
+  columnsAST.forEach(col => {
+    const expr = col.expr;
+    const alias = col.as;
+    
+    if (expr.type === 'column_ref') {
+      const colName = expr.column;
+      const targetName = alias || colName;
+      
+      // Handle table prefix if present
+      if (expr.table) {
+        const prefixedKey = `${expr.table}.${colName}`;
+        if (prefixedKey in row) {
+          projected[targetName] = row[prefixedKey];
+          return;
+        }
+      }
+      projected[targetName] = row[colName];
+    } else if (expr.type === 'aggr_func') {
+      const aggrName = expr.name;
+      const argName = expr.args?.expr?.value || '*';
+      const key = alias || `${aggrName}(${argName})`;
+      if (key in row) {
+        projected[key] = row[key];
+      }
+    } else {
+      // Literal value
+      const key = alias || expr.value;
+      projected[key] = expr.value;
+    }
+  });
+  return projected;
 }

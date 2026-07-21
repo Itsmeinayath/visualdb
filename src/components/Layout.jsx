@@ -1,6 +1,6 @@
 import { NavLink, Outlet, useLocation } from "react-router-dom";
 import { useState, useEffect } from "react";
-import { Database, Home, MousePointerClick, Filter, ArrowDownAZ, Search, Settings, TerminalSquare, Scissors, FolderTree, Combine, Menu, X, ChevronRight, Check } from "lucide-react";
+import { Database, Home, MousePointerClick, Filter, ArrowDownAZ, Search, Settings, TerminalSquare, Scissors, FolderTree, Combine, Menu, X, ChevronRight, Check, Layers } from "lucide-react";
 import { cn } from "../utils/cn";
 
 const links = [
@@ -13,6 +13,7 @@ const links = [
   { to: "/having", label: "HAVING", icon: Filter, step: 6, difficulty: "Intermediate", diffColor: "text-amber-400 bg-amber-400/10" },
   { to: "/innerjoin", label: "INNER JOIN", icon: Combine, step: 7, difficulty: "Intermediate", diffColor: "text-amber-400 bg-amber-400/10" },
   { to: "/leftjoin", label: "LEFT JOIN", icon: Combine, step: 8, difficulty: "Intermediate", diffColor: "text-amber-400 bg-amber-400/10" },
+  { to: "/distinct", label: "DISTINCT", icon: Layers, step: 9, difficulty: "Intermediate", diffColor: "text-amber-400 bg-amber-400/10" },
   { to: "/playground", label: "Playground", icon: TerminalSquare, step: null, difficulty: "Advanced", diffColor: "text-rose-400 bg-rose-400/10" },
 ];
 

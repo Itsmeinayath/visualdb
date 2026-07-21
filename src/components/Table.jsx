@@ -76,20 +76,25 @@ export default function Table({
                     )}>
                       {idx + 1}
                     </td>
-                    {columns.map((col) => (
-                      <td 
-                        key={col} 
-                        className={cn(
-                          "px-3 py-1.5 border-r border-border last:border-r-0 whitespace-nowrap transition-colors",
-                          isHighlighted ? "text-emerald-50 font-medium" : "text-muted-foreground group-hover:text-foreground/80",
-                          highlightedColumns.includes(col) ? "font-semibold text-foreground" : ""
-                        )}
-                      >
-                        {row[col] === null || row[col] === undefined
-                          ? <span className="text-red-400/70 font-mono text-[11px] italic">NULL</span>
-                          : row[col]}
-                      </td>
-                    ))}
+                    {columns.map((col) => {
+                      const isCellEvaluating = highlightedRows.includes(row.id || idx) && highlightedColumns.includes(col) && highlightedRows.length === 1;
+                      
+                      return (
+                        <td 
+                          key={col} 
+                          className={cn(
+                            "px-3 py-1.5 border-r border-border last:border-r-0 whitespace-nowrap transition-all duration-200",
+                            isHighlighted ? "text-emerald-50 font-medium" : "text-muted-foreground group-hover:text-foreground/80",
+                            highlightedColumns.includes(col) ? "font-semibold text-foreground bg-muted/10" : "",
+                            isCellEvaluating ? "bg-accent/20 text-accent font-bold animate-pulse border-accent border-2 shadow-[0_0_12px_rgba(99,102,241,0.2)]" : ""
+                          )}
+                        >
+                          {row[col] === null || row[col] === undefined
+                            ? <span className="text-red-400/70 font-mono text-[11px] italic">NULL</span>
+                            : row[col]}
+                        </td>
+                      );
+                    })}
                   </motion.tr>
                 );
               })}

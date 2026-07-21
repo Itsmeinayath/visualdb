@@ -3,6 +3,13 @@ export const evaluateCondition = (ast, row) => {
   if (!ast) return true;
   
   if (ast.type === 'binary_expr') {
+    if (ast.operator === 'AND') {
+      return evaluateCondition(ast.left, row) && evaluateCondition(ast.right, row);
+    }
+    if (ast.operator === 'OR') {
+      return evaluateCondition(ast.left, row) || evaluateCondition(ast.right, row);
+    }
+
     const leftVal = resolveValue(ast.left, row);
     const rightVal = resolveValue(ast.right, row);
     
@@ -13,8 +20,6 @@ export const evaluateCondition = (ast, row) => {
       case '<': return leftVal < rightVal;
       case '>=': return leftVal >= rightVal;
       case '<=': return leftVal <= rightVal;
-      case 'AND': return evaluateCondition(ast.left, row) && evaluateCondition(ast.right, row);
-      case 'OR': return evaluateCondition(ast.left, row) || evaluateCondition(ast.right, row);
       default: return true;
     }
   }
@@ -74,6 +79,13 @@ export const evaluateHavingCondition = (ast, groupRows) => {
   if (!ast) return true;
   
   if (ast.type === 'binary_expr') {
+    if (ast.operator === 'AND') {
+      return evaluateHavingCondition(ast.left, groupRows) && evaluateHavingCondition(ast.right, groupRows);
+    }
+    if (ast.operator === 'OR') {
+      return evaluateHavingCondition(ast.left, groupRows) || evaluateHavingCondition(ast.right, groupRows);
+    }
+
     const leftVal = resolveHavingValue(ast.left, groupRows);
     const rightVal = resolveHavingValue(ast.right, groupRows);
     
@@ -84,8 +96,6 @@ export const evaluateHavingCondition = (ast, groupRows) => {
       case '<': return leftVal < rightVal;
       case '>=': return leftVal >= rightVal;
       case '<=': return leftVal <= rightVal;
-      case 'AND': return evaluateHavingCondition(ast.left, groupRows) && evaluateHavingCondition(ast.right, groupRows);
-      case 'OR': return evaluateHavingCondition(ast.left, groupRows) || evaluateHavingCondition(ast.right, groupRows);
       default: return true;
     }
   }
