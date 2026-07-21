@@ -21,6 +21,7 @@ export default function SelectModule() {
     runQuery,
     resetQuery,
     parseError,
+    parsedAST,
   } = useExecutionEngine("SELECT *\nFROM students;");
 
   const [challengeCompleted, setChallengeCompleted] = useState(false);

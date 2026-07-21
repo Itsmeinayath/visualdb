@@ -21,6 +21,7 @@ export default function WhereModule() {
     runQuery,
     resetQuery,
     parseError,
+    parsedAST,
   } = useExecutionEngine("SELECT *\nFROM students\nWHERE age > 20;");
 
   const [challengeCompleted, setChallengeCompleted] = useState(false);
