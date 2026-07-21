@@ -11,6 +11,7 @@ import HavingModule from "./modules/groupby/HavingModule";
 import InnerJoinModule from "./modules/join/InnerJoinModule";
 import LeftJoinModule from "./modules/join/LeftJoinModule";
 import DistinctModule from "./modules/distinct/DistinctModule";
+import AliasesModule from "./modules/aliases/AliasesModule";
 
 function App() {
   return (
@@ -27,6 +28,7 @@ function App() {
           <Route path="orderby" element={<OrderByModule />} />
           <Route path="limit" element={<LimitModule />} />
           <Route path="distinct" element={<DistinctModule />} />
+          <Route path="aliases" element={<AliasesModule />} />
           <Route path="playground" element={<PlaygroundModule />} />
         </Route>
       </Routes>
