@@ -1,5 +1,7 @@
+import { useState } from "react";
 import { cn } from "../utils/cn";
-import { Play, RotateCcw, Terminal, PencilLine, Lock, Pause, SkipForward, Gauge } from "lucide-react";
+import { Play, RotateCcw, Terminal, PencilLine, Lock, Pause, SkipForward, Gauge,Copy,
+  Check, } from "lucide-react";
 
 const SPEED_OPTIONS = [
   { label: "0.5×", value: 0.5 },
@@ -24,22 +26,56 @@ export default function Query({
   onSpeedChange,
 }) {
   const isEditable = !isPlaying && !isFinished;
+  const [copied, setCopied] = useState(false);
+
+  const handleCopy = async () => {
+    try {
+      await navigator.clipboard.writeText(value || queryLines.join("\n"));
+      setCopied(true);
+      setTimeout(() => {
+        setCopied(false);
+      }, 1500);
+    } catch (err) {
+      console.error("Copy failed", err);
+    }
+  };
 
   return (
     <div className="panel overflow-hidden flex flex-col border border-border h-full">
       {/* Editor Header */}
-      <div className="bg-zinc-950 px-3 py-2 border-b border-border flex items-center gap-2">
-        <Terminal size={14} className="text-zinc-500" />
-        <span className="text-xs font-mono text-zinc-400">query.sql</span>
-        <span className="ml-auto flex items-center gap-1 text-[10px] font-medium">
-          {isEditable ? (
-            <span className="text-emerald-400 flex items-center gap-1"><PencilLine size={10} /> Editable</span>
-          ) : isPaused ? (
-            <span className="text-amber-400 flex items-center gap-1"><Pause size={10} /> Paused</span>
-          ) : (
-            <span className="text-zinc-500 flex items-center gap-1"><Lock size={10} /> Running...</span>
-          )}
-        </span>
+      <div className="bg-zinc-950 px-3 py-2 border-b border-border flex items-center justify-between gap-2">
+        <div className="flex items-center gap-2">
+          <Terminal size={14} className="text-zinc-500" />
+          <span className="text-xs font-mono text-zinc-400">query.sql</span>
+        </div>
+        <div className="flex items-center gap-2">
+          <button
+            onClick={handleCopy}
+            className="flex items-center gap-1 px-2 py-1 rounded text-xs text-zinc-300 hover:bg-zinc-800 hover:text-zinc-100 transition cursor-pointer"
+          >
+            {copied ? (
+              <>
+                <Check size={14} className="text-emerald-500" />
+                <span className="text-[11px]">Copied!</span>
+              </>
+            ) : (
+              <>
+                <Copy size={14} className="text-zinc-400" />
+                <span className="text-[11px]">Copy</span>
+              </>
+            )}
+          </button>
+
+          <span className="text-[10px] font-medium ml-1">
+            {isEditable ? (
+              <span className="text-emerald-400 flex items-center gap-1"><PencilLine size={10} /> Editable</span>
+            ) : isPaused ? (
+              <span className="text-amber-400 flex items-center gap-1"><Pause size={10} /> Paused</span>
+            ) : (
+              <span className="text-zinc-500 flex items-center gap-1"><Lock size={10} /> Running...</span>
+            )}
+          </span>
+        </div>
       </div>
 
       {/* Body — editable textarea when idle, highlighted lines during animation */}
