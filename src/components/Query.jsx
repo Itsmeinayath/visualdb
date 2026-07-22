@@ -1,5 +1,5 @@
 import { cn } from "../utils/cn";
-import { Play, RotateCcw, Terminal, PencilLine, Lock, Pause, SkipForward, Gauge } from "lucide-react";
+import { Play, RotateCcw, Terminal, PencilLine, Lock, Pause, SkipForward, Gauge, Trash2 } from "lucide-react";
 
 const SPEED_OPTIONS = [
   { label: "0.5×", value: 0.5 },
@@ -40,6 +40,15 @@ export default function Query({
             <span className="text-zinc-500 flex items-center gap-1"><Lock size={10} /> Running...</span>
           )}
         </span>
+        {isEditable && value && (
+          <button
+            onClick={() => onChange?.("")}
+            className="text-zinc-500 hover:text-zinc-300 transition-colors p-0.5 rounded hover:bg-zinc-800"
+            title="Clear editor"
+          >
+            <Trash2 size={13} />
+          </button>
+        )}
       </div>
 
       {/* Body — editable textarea when idle, highlighted lines during animation */}
