@@ -105,6 +105,10 @@ Check out our issues tab for tasks labeled `good first issue`.
 
 ## 🗺️ Roadmap
 
+We have huge plans for new modules, custom CSV uploads, execution metrics, and more. 
+
+👉 **[View the full Feature Roadmap (ROADMAP.md)](ROADMAP.md)** to see what we are building next (and what you can help us build!).
+
 **Version 1 (Current Focus)**
 - [x] SELECT
 - [x] WHERE (Filtering)
