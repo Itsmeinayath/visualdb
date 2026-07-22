@@ -18,3 +18,11 @@ export const getTable = (tableName) => {
   }
   return DB[tableName];
 };
+
+export const addTable = (tableName, data) => {
+  DB[tableName] = data;
+};
+
+export const getAvailableTables = () => {
+  return Object.keys(DB);
+};

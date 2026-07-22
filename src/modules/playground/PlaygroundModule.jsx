@@ -6,6 +6,8 @@ import Prism from "prismjs";
 import "prismjs/components/prism-sql";
 import "prismjs/themes/prism-tomorrow.css";
 import { useExecutionEngine } from "../../hooks/useExecutionEngine";
+import CsvUploader from "../../components/CsvUploader";
+import { getAvailableTables } from "../../engine/database";
 
 const Editor = EditorModule.default || EditorModule;
 
@@ -26,6 +28,12 @@ export default function PlaygroundModule() {
     runQuery
   } = useExecutionEngine("SELECT *\nFROM students\nWHERE age > 20;");
 
+  const [availableTables, setAvailableTables] = useState(() => getAvailableTables());
+
+  const handleUploadSuccess = (tableName) => {
+    setAvailableTables(getAvailableTables());
+  };
+
   const highlightCode = (code) => {
     return Prism.highlight(code, Prism.languages.sql, "sql");
   };
@@ -37,16 +45,21 @@ export default function PlaygroundModule() {
           <h1 className="text-3xl font-bold mb-2 tracking-tight text-foreground flex items-center gap-3">
             Interactive Playground
           </h1>
-          <p className="text-zinc-400 text-[15px] max-w-3xl leading-relaxed font-light">
+          <p className="text-zinc-400 text-[15px] max-w-3xl leading-relaxed font-light mt-2">
             Write your own queries with real-time syntax highlighting and watch the execution engine process them. 
-            Available tables: <code className="text-blue-400 font-medium">students</code>, <code className="text-blue-400 font-medium">employees</code>, <code className="text-blue-400 font-medium">orders</code>.
+            <br/>Available tables: {availableTables.map((t, i) => (
+              <span key={t}>
+                <code className="text-blue-400 font-medium">{t}</code>
+                {i < availableTables.length - 1 ? ", " : "."}
+              </span>
+            ))}
           </p>
         </div>
       </header>
 
       <div className="h-[650px] grid grid-cols-1 lg:grid-cols-12 gap-8 relative z-10">
         <div className="col-span-1 lg:col-span-4 flex flex-col gap-6">
-          
+          <CsvUploader onUploadSuccess={handleUploadSuccess} />
           <div className={cn(
             "panel overflow-hidden flex flex-col h-56 shrink-0 relative transition-all duration-300",
             isPlaying ? "border-zinc-500 shadow-sm shadow-white/5" : "border-zinc-800"
