@@ -1,6 +1,6 @@
 import { NavLink, Outlet, useLocation } from "react-router-dom";
 import { useState, useEffect } from "react";
-import { Database, Home, MousePointerClick, Filter, ArrowDownAZ, Search, Settings, TerminalSquare, Scissors, FolderTree, Combine, Menu, X, ChevronRight, Check, Layers, Tag, Sun, Moon, RefreshCw } from "lucide-react";
+import { Database, Home, MousePointerClick, Filter, ArrowDownAZ, Search, Settings, TerminalSquare, Scissors, FolderTree, Combine, Menu, X, ChevronRight, Check, Layers, Tag, Sun, Moon, RefreshCw, Merge } from "lucide-react";
 import { cn } from "../utils/cn";
 
 const links = [
