@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { cn } from "../utils/cn";
-import { Play, RotateCcw, Terminal, PencilLine, Lock, Pause, SkipForward, Gauge,Copy,
-  Check, } from "lucide-react";
+import { Play, RotateCcw, Terminal, PencilLine, Lock, Pause, SkipForward, Gauge, Trash2, Copy, Check } from "lucide-react";
 
 const SPEED_OPTIONS = [
   { label: "0.5×", value: 0.5 },
@@ -49,6 +48,15 @@ export default function Query({
           <span className="text-xs font-mono text-zinc-400">query.sql</span>
         </div>
         <div className="flex items-center gap-2">
+          {isEditable && value && (
+            <button
+              onClick={() => onChange?.("")}
+              className="flex items-center gap-1 px-2 py-1 rounded text-xs text-zinc-400 hover:bg-zinc-800 hover:text-zinc-200 transition cursor-pointer"
+              title="Clear editor"
+            >
+              <Trash2 size={13} />
+            </button>
+          )}
           <button
             onClick={handleCopy}
             className="flex items-center gap-1 px-2 py-1 rounded text-xs text-zinc-300 hover:bg-zinc-800 hover:text-zinc-100 transition cursor-pointer"
