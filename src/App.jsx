@@ -12,6 +12,7 @@ import InnerJoinModule from "./modules/join/InnerJoinModule";
 import LeftJoinModule from "./modules/join/LeftJoinModule";
 import DistinctModule from "./modules/distinct/DistinctModule";
 import AliasesModule from "./modules/aliases/AliasesModule";
+import UnionModule from "./modules/union/UnionModule";
 
 function App() {
   return (
@@ -30,6 +31,7 @@ function App() {
           <Route path="distinct" element={<DistinctModule />} />
           <Route path="aliases" element={<AliasesModule />} />
           <Route path="playground" element={<PlaygroundModule />} />
+          <Route path="union" element={<UnionModule />} />
         </Route>
       </Routes>
     </Router>
