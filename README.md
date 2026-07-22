@@ -103,6 +103,14 @@ Check out our issues tab for tasks labeled `good first issue`.
 
 ---
 
+## 🌟 Contributors
+
+A massive thank you to the developers who have already contributed features to VisualDB:
+- [**@Pooja250588**](https://github.com/Pooja250588) (Reset Progress, Copy to Clipboard)
+- [**@imabhirajj**](https://github.com/imabhirajj) (Dark/Light toggle & CSS Improvements)
+- [**@Karim-Ashraf1**](https://github.com/Karim-Ashraf1) (UNION Visualization Module)
+- And to everyone else submitting PRs and reporting issues!
+
 ## 🗺️ Roadmap
 
 We have huge plans for new modules, custom CSV uploads, execution metrics, and more. 
