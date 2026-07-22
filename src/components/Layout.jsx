@@ -163,22 +163,6 @@ export default function Layout() {
     window.dispatchEvent(new Event("completion-change"));
   };
 
-  const handleResetProgress = () => {
-  const confirmed = window.confirm(
-    "Are you sure you want to reset all challenge progress?"
-  );
-
-  if (!confirmed) return;
-
-  Object.keys(localStorage).forEach((key) => {
-    if (key.startsWith("completed_")) {
-      localStorage.removeItem(key);
-    }
-  });
-
-  window.dispatchEvent(new Event("completion-change"));
-};
-
   return (
     <div className="flex h-screen w-full bg-background text-foreground overflow-hidden font-sans">
 
@@ -233,13 +217,6 @@ export default function Layout() {
               title="Reset progress"
             >
               <RefreshCw size={14} />
-            </button>
-
-            <button
-              onClick={handleResetProgress}
-              className="h-7 px-3 rounded-md border border-border bg-muted/50 hover:bg-muted text-[12px] font-medium transition-all"
-            >
-              Reset Progress
             </button>
             <button
               onClick={toggleTheme}
