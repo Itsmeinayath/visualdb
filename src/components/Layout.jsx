@@ -212,11 +212,9 @@ export default function Layout() {
 
             <button
               onClick={handleResetProgress}
-              className="h-7 w-7 rounded-md border border-border bg-muted/50 hover:bg-muted flex items-center justify-center text-muted-foreground hover:text-foreground transition-all cursor-pointer"
-              aria-label="Reset progress"
-              title="Reset progress"
+              className="h-7 px-3 rounded-md border border-border bg-muted/50 hover:bg-muted text-[12px] font-medium transition-all"
             >
-              <RefreshCw size={14} />
+              Reset Progress
             </button>
             <button
               onClick={toggleTheme}
