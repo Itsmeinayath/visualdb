@@ -1,3 +1,4 @@
+import { useState } from "react";
 import Table from "../../components/Table";
 import { CheckCircle2, XCircle, Terminal, Cpu, Play, Database } from "lucide-react";
 import { cn } from "../../utils/cn";
