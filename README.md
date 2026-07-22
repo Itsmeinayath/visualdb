@@ -82,6 +82,14 @@ export default function MyNewModule() {
 
 ---
 
+## 🌟 Our Grand Vision
+
+VisualDB is just the beginning. Our ultimate goal is to build an entire ecosystem of tools that make Computer Science visual. 
+
+Read our **[VisualCS Manifesto (VISION.md)](VISION.md)** to see where we are heading next (VisualGit, VisualDocker, VisualDSA, and more). If our mission resonates with you, we'd love for you to join us on this journey!
+
+---
+
 ## 🤝 Contributing
 
 We love contributions! Whether you're fixing a typo, adding a new mock dataset, or building an entirely new visualization module, your help is welcome. 
@@ -96,6 +104,10 @@ Check out our issues tab for tasks labeled `good first issue`.
 ---
 
 ## 🗺️ Roadmap
+
+We have huge plans for new modules, custom CSV uploads, execution metrics, and more. 
+
+👉 **[View the full Feature Roadmap (ROADMAP.md)](ROADMAP.md)** to see what we are building next (and what you can help us build!).
 
 **Version 1 (Current Focus)**
 - [x] SELECT

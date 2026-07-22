@@ -15,6 +15,7 @@ const links = [
   { to: "/leftjoin", label: "LEFT JOIN", icon: Combine, step: 8, difficulty: "Intermediate", diffColor: "text-amber-400 bg-amber-400/10" },
   { to: "/distinct", label: "DISTINCT", icon: Layers, step: 9, difficulty: "Intermediate", diffColor: "text-amber-400 bg-amber-400/10" },
   { to: "/aliases", label: "ALIASES (AS)", icon: Tag, step: 10, difficulty: "Intermediate", diffColor: "text-amber-400 bg-amber-400/10" },
+  { to: "/union", label: "UNION", icon: Merge, step: 11, difficulty: "Intermediate", diffColor: "text-amber-400 bg-amber-400/10" },
   { to: "/playground", label: "Playground", icon: TerminalSquare, step: null, difficulty: "Advanced", diffColor: "text-rose-400 bg-rose-400/10" },
 ];
 
@@ -146,6 +147,21 @@ export default function Layout() {
   const toggleTheme = () => {
     setTheme(prev => (prev === "dark" ? "light" : "dark"));
   };
+  const handleResetProgress = () => {
+    const confirmed = window.confirm(
+      "Are you sure you want to reset all challenge progress?"
+    );
+
+    if (!confirmed) return;
+
+    Object.keys(localStorage).forEach((key) => {
+      if (key.startsWith("completed_")) {
+        localStorage.removeItem(key);
+      }
+    });
+
+    window.dispatchEvent(new Event("completion-change"));
+  };
 
   const handleResetProgress = () => {
   const confirmed = window.confirm(
@@ -219,6 +235,12 @@ export default function Layout() {
               <RefreshCw size={14} />
             </button>
 
+            <button
+              onClick={handleResetProgress}
+              className="h-7 px-3 rounded-md border border-border bg-muted/50 hover:bg-muted text-[12px] font-medium transition-all"
+            >
+              Reset Progress
+            </button>
             <button
               onClick={toggleTheme}
               className="h-7 w-7 rounded-md border border-border bg-muted/50 hover:bg-muted flex items-center justify-center text-muted-foreground hover:text-foreground transition-all cursor-pointer"
