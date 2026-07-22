@@ -17,6 +17,19 @@ export function useChallenges(challenges) {
   const currentStatus = statuses[currentIdx];
   const allPassed = statuses.every((s) => s === "pass");
 
+  useEffect(() => {
+    const handleCompletionChange = () => {
+      const path = window.location.pathname;
+      if (localStorage.getItem("completed_" + path) !== "true") {
+        setStatuses(challenges.map(() => "idle"));
+        setCurrentIdx(0);
+      }
+    };
+
+    window.addEventListener("completion-change", handleCompletionChange);
+    return () => window.removeEventListener("completion-change", handleCompletionChange);
+  }, [challenges]);
+
   const checkAnswer = (resultSetData, parsedAST) => {
     const passed = current.validate(resultSetData, parsedAST);
     setStatuses((prev) => {
