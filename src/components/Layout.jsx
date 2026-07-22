@@ -1,6 +1,6 @@
 import { NavLink, Outlet, useLocation } from "react-router-dom";
 import { useState, useEffect } from "react";
-import { Database, Home, MousePointerClick, Filter, ArrowDownAZ, Search, Settings, TerminalSquare, Scissors, FolderTree, Combine, Menu, X, ChevronRight, Check, Layers, Tag, Sun, Moon } from "lucide-react";
+import { Database, Home, MousePointerClick, Filter, ArrowDownAZ, Search, Settings, TerminalSquare, Scissors, FolderTree, Combine, Menu, X, ChevronRight, Check, Layers, Tag, Sun, Moon, RefreshCw } from "lucide-react";
 import { cn } from "../utils/cn";
 
 const links = [
@@ -39,7 +39,7 @@ function SidebarContent({ onClose }) {
 
   return (
     <>
-      <div className="h-12 px-4 border-b border-border flex items-center gap-2 flex-shrink-0">
+      <div className="h-12 px-4 border-b border-border flex items-center gap-2 shrink-0">
         <div className="w-5 h-5 rounded flex items-center justify-center bg-foreground text-background shadow-sm">
           <Database size={12} strokeWidth={2.5} />
         </div>
@@ -51,7 +51,7 @@ function SidebarContent({ onClose }) {
         )}
       </div>
 
-      <nav className="flex-1 py-4 px-2 space-y-[2px] overflow-y-auto">
+      <nav className="flex-1 py-4 px-2 space-y-0.5 overflow-y-auto">
         <div className="text-[10px] font-semibold text-muted-foreground uppercase tracking-widest mb-1 px-3">Start Here</div>
 
         {/* Overview link */}
@@ -90,14 +90,14 @@ function SidebarContent({ onClose }) {
             }
           >
             <div className={cn(
-              "w-5 h-5 rounded flex items-center justify-center text-[10px] font-bold flex-shrink-0 transition-all duration-200",
+              "w-5 h-5 rounded flex items-center justify-center text-[10px] font-bold shrink-0 transition-all duration-200",
               completedPaths[link.to]
                 ? "bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 shadow-[0_0_8px_rgba(16,185,129,0.15)]"
                 : "bg-muted text-muted-foreground group-hover:text-foreground border border-border/40"
             )}>
               {completedPaths[link.to] ? <Check size={10} strokeWidth={3} /> : link.step}
             </div>
-            <link.icon size={13} strokeWidth={2.5} className="flex-shrink-0" />
+            <link.icon size={13} strokeWidth={2.5} className="shrink-0" />
             <span className="flex-1">{link.label}</span>
             <span className={cn("text-[9px] font-bold px-1.5 py-0.5 rounded-full hidden lg:block", link.diffColor)}>
               {link.difficulty === "Beginner" ? "BGN" : link.difficulty === "Intermediate" ? "INT" : "ADV"}
@@ -147,11 +147,27 @@ export default function Layout() {
     setTheme(prev => (prev === "dark" ? "light" : "dark"));
   };
 
+  const handleResetProgress = () => {
+  const confirmed = window.confirm(
+    "Are you sure you want to reset all challenge progress?"
+  );
+
+  if (!confirmed) return;
+
+  Object.keys(localStorage).forEach((key) => {
+    if (key.startsWith("completed_")) {
+      localStorage.removeItem(key);
+    }
+  });
+
+  window.dispatchEvent(new Event("completion-change"));
+};
+
   return (
-    <div className="flex h-screen w-full bg-background text-foreground overflow-hidden font-sans selection:bg-accent/30 selection:text-white">
+    <div className="flex h-screen w-full bg-background text-foreground overflow-hidden font-sans">
 
       {/* Desktop Sidebar */}
-      <aside className="hidden md:flex w-[220px] border-r border-border bg-card flex-col flex-shrink-0">
+      <aside className="hidden md:flex w-55 border-r border-border bg-card flex-col shrink-0">
         <SidebarContent />
       </aside>
 
@@ -159,7 +175,7 @@ export default function Layout() {
       {mobileOpen && (
         <div className="fixed inset-0 z-50 md:hidden">
           <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setMobileOpen(false)} />
-          <aside className="absolute left-0 top-0 h-full w-[260px] bg-card border-r border-border flex flex-col z-10 shadow-2xl">
+          <aside className="absolute left-0 top-0 h-full w-65 bg-card border-r border-border flex flex-col z-10 shadow-2xl">
             <SidebarContent onClose={() => setMobileOpen(false)} />
           </aside>
         </div>
@@ -193,15 +209,28 @@ export default function Layout() {
                 className="h-7 w-48 md:w-64 bg-muted/50 border border-border rounded-md pl-8 pr-3 text-[13px] text-foreground focus:outline-none focus:border-border focus:bg-muted transition-all placeholder:text-muted-foreground/60 shadow-inner"
               />
             </div>
+
+            <button
+              onClick={handleResetProgress}
+              className="h-7 w-7 rounded-md border border-border bg-muted/50 hover:bg-muted flex items-center justify-center text-muted-foreground hover:text-foreground transition-all cursor-pointer"
+              aria-label="Reset progress"
+              title="Reset progress"
+            >
+              <RefreshCw size={14} />
+            </button>
+
             <button
               onClick={toggleTheme}
               className="h-7 w-7 rounded-md border border-border bg-muted/50 hover:bg-muted flex items-center justify-center text-muted-foreground hover:text-foreground transition-all cursor-pointer"
               aria-label="Toggle theme"
+              title="Toggle theme"
             >
               {theme === "dark" ? <Sun size={14} /> : <Moon size={14} />}
             </button>
           </div>
         </header>
+
+        
 
         {/* Page Content */}
         <div className="flex-1 overflow-y-auto">

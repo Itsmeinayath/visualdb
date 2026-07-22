@@ -405,6 +405,26 @@ export function useExecutionEngine(initialQuery = "") {
     }
   }, [isFinished]);
 
+  useEffect(() => {
+    const handleCompletionChange = () => {
+      const path = window.location.pathname;
+      if (localStorage.getItem("completed_" + path) !== "true") {
+        setIsFinished(false);
+        setIsPlaying(false);
+        setIsPaused(false);
+        setStep(-1);
+        setCurrentRowIdx(-1);
+        setHighlightedRows([]);
+        setCheckingCondition(false);
+        setResultSetData([]);
+        setCurrentRightRowIdx(-1);
+      }
+    };
+
+    window.addEventListener("completion-change", handleCompletionChange);
+    return () => window.removeEventListener("completion-change", handleCompletionChange);
+  }, []);
+
   return {
     queryInput,
     setQueryInput,

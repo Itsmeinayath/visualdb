@@ -30,6 +30,8 @@
     --accent: #6366f1;
     --danger: #ef4444;
     --success: #10b981;
+    --selection-bg: #6366f1;
+    --selection-fg: #ffffff;
   }
 
   .dark {
@@ -45,10 +47,44 @@
     --accent: #6366f1;
     --danger: #ef4444;
     --success: #10b981;
+    --selection-bg: #6366f1;
+    --selection-fg: #ffffff;
   }
 
   * {
     border-color: var(--border);
+  }
+
+  /* Global text selection — high contrast indigo highlight across light and dark themes */
+  ::selection {
+    background-color: var(--selection-bg);
+    color: var(--selection-fg);
+  }
+
+  ::-moz-selection {
+    background-color: var(--selection-bg);
+    color: var(--selection-fg);
+  }
+
+  /* Code editors and text inputs explicit selection rule */
+  textarea::selection,
+  input::selection,
+  pre::selection,
+  code::selection,
+  .query-textarea::selection,
+  .npm__react-simple-code-editor__textarea::selection {
+    background-color: var(--selection-bg);
+    color: var(--selection-fg);
+  }
+
+  textarea::-moz-selection,
+  input::-moz-selection,
+  pre::-moz-selection,
+  code::-moz-selection,
+  .query-textarea::-moz-selection,
+  .npm__react-simple-code-editor__textarea::-moz-selection {
+    background-color: var(--selection-bg);
+    color: var(--selection-fg);
   }
 
   body {
@@ -78,11 +114,16 @@
 
 @layer utilities {
   .panel {
-    @apply bg-[var(--card)] border border-[var(--border)] rounded-lg shadow-sm;
+    background-color: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 0.5rem;
+    box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
   }
   
   .dark .panel {
-    @apply bg-[var(--card)] border border-[var(--border)] shadow-none;
+    background-color: var(--card);
+    border: 1px solid var(--border);
+    box-shadow: none;
   }
   
   /* SaaS glowing grid background */
@@ -97,15 +138,5 @@
   .dark .bg-grid-pattern {
     background-image: linear-gradient(to right, rgba(255, 255, 255, 0.05) 1px, transparent 1px),
                       linear-gradient(to bottom, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
-  }
-
-  /* Query editor text selection — clearly visible indigo highlight */
-  .query-textarea::selection {
-    background-color: rgba(99, 102, 241, 0.35);
-    color: #fff;
-  }
-  .query-textarea::-moz-selection {
-    background-color: rgba(99, 102, 241, 0.35);
-    color: #fff;
   }
 }
