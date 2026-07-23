@@ -108,7 +108,7 @@ export default function SelectModule() {
   ];
 
   return (
-    <div className="flex flex-col lg:flex-row h-full w-full overflow-hidden bg-background">
+    <div className="flex flex-col lg:flex-row w-full overflow-hidden bg-background" style={{ height: 'calc(100vh - 3rem)' }}>
       {/* COLUMN 1: Theory & Challenges */}
       <div className="w-full lg:w-[30%] h-full border-r border-border flex flex-col bg-card/30 overflow-y-auto shrink-0">
         <div className="p-5 flex flex-col gap-6">

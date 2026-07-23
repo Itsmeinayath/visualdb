@@ -427,7 +427,7 @@ export default function Layout() {
         )}
 
         {/* Page Content */}
-        <main className="flex-1 overflow-hidden relative bg-background">
+        <main className="flex-1 overflow-y-auto relative bg-background">
           <Outlet />
         </main>
       </div>
