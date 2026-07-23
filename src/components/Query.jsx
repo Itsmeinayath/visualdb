@@ -43,18 +43,6 @@ export default function Query({
     return () => window.removeEventListener("keydown", handler);
   }, [isEditable, isFinished, onRun]);
 
-  const handleCopy = async () => {
-    try {
-      await navigator.clipboard.writeText(value || queryLines.join("\n"));
-      setCopied(true);
-      setTimeout(() => {
-        setCopied(false);
-      }, 1500);
-    } catch (err) {
-      console.error("Copy failed", err);
-    }
-  };
-
   // Generate syntax-highlighted lines dynamically from the user's input
   const displayLines = (value || "").split("\n").map((lineText, idx) => {
     const html = Prism.highlight(lineText, Prism.languages.sql, "sql");
@@ -79,22 +67,6 @@ export default function Query({
               <Trash2 size={13} />
             </button>
           )}
-          <button
-            onClick={handleCopy}
-            className="flex items-center gap-1 px-2 py-1 rounded text-xs text-zinc-300 hover:bg-zinc-800 hover:text-zinc-100 transition cursor-pointer"
-          >
-            {copied ? (
-              <>
-                <Check size={14} className="text-emerald-500" />
-                <span className="text-[11px]">Copied!</span>
-              </>
-            ) : (
-              <>
-                <Copy size={14} className="text-zinc-400" />
-                <span className="text-[11px]">Copy</span>
-              </>
-            )}
-          </button>
 
           <span className="text-[10px] font-medium ml-1">
             {isEditable ? (
