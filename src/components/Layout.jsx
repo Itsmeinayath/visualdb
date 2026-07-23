@@ -157,15 +157,8 @@ function SidebarContent({ onClose }) {
 
   return (
     <>
-      <div className="h-12 px-4 border-b border-border flex items-center gap-2 shrink-0">
-        <div className="w-5 h-5 rounded flex items-center justify-center bg-foreground text-background shadow-sm">
-          <Database size={12} strokeWidth={2.5} />
-        </div>
-
-        <span className="font-semibold text-[13px] tracking-tight text-foreground">
-          VisualDB
-        </span>
-
+      <div className="md:hidden h-12 px-4 border-b border-border flex items-center gap-2 shrink-0">
+        <span className="font-semibold text-[13px] tracking-tight text-foreground">Menu</span>
         {onClose && (
           <button
             type="button"
@@ -325,110 +318,119 @@ export default function Layout() {
   };
 
   return (
-    <div className="flex h-screen w-full bg-background text-foreground overflow-hidden font-sans">
-      {/* Desktop Sidebar */}
-      <aside 
-        className={cn(
-          "hidden md:flex border-r border-border bg-card flex-col shrink-0 transition-all duration-300 overflow-hidden",
-          sidebarOpen ? "w-55" : "w-0 border-r-0"
+    <div className="flex flex-col h-screen w-full bg-background text-foreground overflow-hidden font-sans">
+      {/* Top Header (Full Width) */}
+      <header className="h-12 border-b border-border flex items-center px-4 justify-between bg-card/85 backdrop-blur-md z-20 relative shadow-sm shrink-0">
+        <div className="flex items-center gap-3">
+          <button
+            type="button"
+            className="text-muted-foreground hover:text-foreground transition-colors"
+            onClick={() => {
+              if (window.innerWidth < 768) {
+                setMobileOpen(true);
+              } else {
+                setSidebarOpen(!sidebarOpen);
+              }
+            }}
+            aria-label="Toggle menu"
+          >
+            <Menu size={20} />
+          </button>
+
+          <div className="flex items-center gap-2">
+            <div className="w-5 h-5 rounded flex items-center justify-center bg-foreground text-background shadow-sm">
+              <Database size={12} strokeWidth={2.5} />
+            </div>
+            <span className="font-semibold text-[13px] tracking-tight text-foreground hidden sm:block">
+              VisualDB
+            </span>
+          </div>
+
+          <div className="h-4 w-px bg-border mx-2 hidden sm:block" />
+
+          <div className="flex items-center gap-2 text-[13px] text-muted-foreground">
+            <span className="hover:text-foreground cursor-pointer transition-colors hidden sm:block">
+              Workspace
+            </span>
+
+            <ChevronRight
+              size={12}
+              className="opacity-40 hidden sm:block"
+            />
+
+            <span className="text-foreground font-medium">
+              Interactive Learning
+            </span>
+          </div>
+        </div>
+
+        <div className="flex items-center gap-3">
+          <div className="relative group hidden sm:block">
+            <Search
+              size={14}
+              className="absolute left-2.5 top-1/2 -translate-y-1/2 text-muted-foreground group-focus-within:text-foreground/80 transition-colors"
+            />
+
+            <input
+              type="text"
+              placeholder="Search modules..."
+              className="h-7 w-48 md:w-64 bg-muted/50 border border-border rounded-md pl-8 pr-3 text-[13px] text-foreground focus:outline-none focus:border-border focus:bg-muted transition-all placeholder:text-muted-foreground/60 shadow-inner"
+            />
+          </div>
+
+          <button
+            type="button"
+            onClick={handleResetProgress}
+            className="h-7 px-3 rounded-md border border-border bg-muted/50 hover:bg-muted text-[12px] font-medium transition-all"
+          >
+            Reset Progress
+          </button>
+
+          <button
+            type="button"
+            onClick={toggleTheme}
+            className="h-7 w-7 rounded-md border border-border bg-muted/50 hover:bg-muted flex items-center justify-center text-muted-foreground hover:text-foreground transition-all cursor-pointer"
+            aria-label="Toggle theme"
+            title="Toggle theme"
+          >
+            {theme === "dark" ? <Sun size={14} /> : <Moon size={14} />}
+          </button>
+        </div>
+      </header>
+
+      {/* Main App Body */}
+      <div className="flex flex-1 overflow-hidden relative">
+        {/* Desktop Sidebar */}
+        <aside 
+          className={cn(
+            "hidden md:flex border-r border-border bg-card flex-col shrink-0 transition-all duration-300 overflow-hidden h-full z-10",
+            sidebarOpen ? "w-55" : "w-0 border-r-0"
+          )}
+        >
+          <div className="w-55 h-full flex flex-col">
+            <SidebarContent />
+          </div>
+        </aside>
+
+        {/* Mobile Sidebar Overlay */}
+        {mobileOpen && (
+          <div className="fixed inset-0 z-50 md:hidden">
+            <div
+              className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+              onClick={() => setMobileOpen(false)}
+            />
+
+            <aside className="absolute left-0 top-0 h-full w-65 bg-card border-r border-border flex flex-col z-10 shadow-2xl">
+              <SidebarContent onClose={() => setMobileOpen(false)} />
+            </aside>
+          </div>
         )}
-      >
-        <div className="w-55 h-full">
-          <SidebarContent />
-        </div>
-      </aside>
-
-      {/* Mobile Sidebar Overlay */}
-      {mobileOpen && (
-        <div className="fixed inset-0 z-50 md:hidden">
-          <div
-            className="absolute inset-0 bg-black/60 backdrop-blur-sm"
-            onClick={() => setMobileOpen(false)}
-          />
-
-          <aside className="absolute left-0 top-0 h-full w-65 bg-card border-r border-border flex flex-col z-10 shadow-2xl">
-            <SidebarContent onClose={() => setMobileOpen(false)} />
-          </aside>
-        </div>
-      )}
-
-      {/* Main Content */}
-      <main className="flex-1 flex flex-col min-w-0 bg-background relative">
-        {/* Top Header */}
-        <header className="h-12 border-b border-border flex items-center px-4 justify-between bg-card/85 backdrop-blur-md z-10 sticky top-0 shadow-sm">
-          <div className="flex items-center gap-3">
-            <button
-              type="button"
-              className="text-muted-foreground hover:text-foreground transition-colors"
-              onClick={() => {
-                if (window.innerWidth < 768) {
-                  setMobileOpen(true);
-                } else {
-                  setSidebarOpen(!sidebarOpen);
-                }
-              }}
-              aria-label="Toggle menu"
-            >
-              <Menu size={20} />
-            </button>
-
-            <div className="flex items-center gap-2 text-[13px] text-muted-foreground">
-              <span className="hover:text-foreground cursor-pointer transition-colors hidden sm:block">
-                Workspace
-              </span>
-
-              <ChevronRight
-                size={12}
-                className="opacity-40 hidden sm:block"
-              />
-
-              <span className="text-foreground font-medium">
-                Interactive Learning
-              </span>
-            </div>
-          </div>
-
-          <div className="flex items-center gap-3">
-            <div className="relative group hidden sm:block">
-              <Search
-                size={14}
-                className="absolute left-2.5 top-1/2 -translate-y-1/2 text-muted-foreground group-focus-within:text-foreground/80 transition-colors"
-              />
-
-              <input
-                type="text"
-                placeholder="Search modules..."
-                className="h-7 w-48 md:w-64 bg-muted/50 border border-border rounded-md pl-8 pr-3 text-[13px] text-foreground focus:outline-none focus:border-border focus:bg-muted transition-all placeholder:text-muted-foreground/60 shadow-inner"
-              />
-            </div>
-
-            <button
-              type="button"
-              onClick={handleResetProgress}
-              className="h-7 px-3 rounded-md border border-border bg-muted/50 hover:bg-muted text-[12px] font-medium transition-all"
-            >
-              Reset Progress
-            </button>
-
-            <button
-              type="button"
-              onClick={toggleTheme}
-              className="h-7 w-7 rounded-md border border-border bg-muted/50 hover:bg-muted flex items-center justify-center text-muted-foreground hover:text-foreground transition-all cursor-pointer"
-              aria-label="Toggle theme"
-              title="Toggle theme"
-            >
-              {theme === "dark" ? <Sun size={14} /> : <Moon size={14} />}
-            </button>
-          </div>
-        </header>
 
         {/* Page Content */}
-        <div className="flex-1 overflow-y-auto">
-          <div className="h-full">
-            <Outlet />
-          </div>
-        </div>
-      </main>
+        <main className="flex-1 overflow-hidden relative bg-background">
+          <Outlet />
+        </main>
+      </div>
 
       <ConfirmModal
         isOpen={isResetModalOpen}
