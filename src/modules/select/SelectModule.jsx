@@ -1,9 +1,9 @@
-import { useEffect } from "react";
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import Table from "../../components/Table";
 import Query from "../../components/Query";
 import ChallengePanel from "../../components/ChallengePanel";
-import { CheckCircle2, Terminal, ArrowRight, Lightbulb, Trophy } from "lucide-react";
+import { CheckCircle2, Cpu, FileSearch, ArrowRight, Lightbulb, ChevronUp, BookOpen } from "lucide-react";
 import { useExecutionEngine } from "../../hooks/useExecutionEngine";
 import { useChallenges } from "../../hooks/useChallenges";
 
@@ -85,6 +85,14 @@ export default function SelectModule() {
   } = useExecutionEngine("SELECT *\nFROM students;");
 
   const challenges = useChallenges(CHALLENGES);
+  const [showTheory, setShowTheory] = useState(true);
+
+  // Auto-collapse theory when playing
+  useEffect(() => {
+    if (isPlaying && showTheory) {
+      setShowTheory(false);
+    }
+  }, [isPlaying]);
 
   useEffect(() => {
     if (isFinished && resultSetData.length > 0) {
@@ -103,46 +111,56 @@ export default function SelectModule() {
     <div className="flex flex-col p-6 md:p-8 max-w-7xl mx-auto gap-8">
       
       {/* Header */}
-      <div className="flex flex-col gap-4">
-        <div className="flex items-center gap-2 text-sm text-zinc-500">
-          <span className="bg-emerald-400/10 text-emerald-400 text-[10px] font-bold px-2 py-0.5 rounded-full border border-emerald-400/20">Step 1 · Beginner</span>
-        </div>
-        <header>
-          <h1 className="text-3xl font-bold mb-3 tracking-tight">The SELECT Statement</h1>
-          <p className="text-muted-foreground text-base max-w-3xl leading-relaxed">
-            The foundation of all SQL queries. The <code className="mx-1 px-1.5 py-0.5 rounded bg-muted text-foreground border border-border text-sm font-mono">SELECT</code> statement tells the database <strong>which columns</strong> you want to see, and <code className="mx-1 px-1.5 py-0.5 rounded bg-muted text-foreground border border-border text-sm font-mono">FROM</code> tells it <strong>which table</strong> those columns live in.
-          </p>
-        </header>
+      <div className="flex items-center justify-between">
+        <span className="bg-emerald-400/10 text-emerald-400 text-[10px] font-bold px-2 py-0.5 rounded-full border border-emerald-400/20">Step 1 · Beginner</span>
+        <button 
+          onClick={() => setShowTheory(!showTheory)} 
+          className="text-xs text-zinc-400 hover:text-zinc-200 flex items-center gap-1.5 transition-colors bg-zinc-900/50 hover:bg-zinc-800 px-2 py-1 rounded border border-zinc-800"
+        >
+          {showTheory ? <ChevronUp size={14} /> : <BookOpen size={14} />} 
+          {showTheory ? "Hide Lesson Theory" : "Show Lesson Theory"}
+        </button>
+      </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div className="panel p-5 bg-zinc-900/50">
-            <h3 className="font-semibold text-sm flex items-center gap-2 text-zinc-300 mb-3">
-              <BookIcon /> The Concept
-            </h3>
-            <p className="text-sm text-zinc-400 leading-relaxed mb-3">
-              Think of a database table like a spreadsheet with rows and columns. <code className="text-pink-400 text-xs">SELECT *</code> means "give me every column" — the asterisk (<code className="text-accent text-xs">*</code>) is a shortcut for "everything".
+      {showTheory && (
+        <div className="flex flex-col gap-4 animate-in fade-in slide-in-from-top-2 duration-300">
+          <header>
+            <h1 className="text-3xl font-bold mb-3 tracking-tight">The SELECT Statement</h1>
+            <p className="text-muted-foreground text-base max-w-3xl leading-relaxed">
+              The foundation of all SQL queries. The <code className="mx-1 px-1.5 py-0.5 rounded bg-muted text-foreground border border-border text-sm font-mono">SELECT</code> statement tells the database <strong>which columns</strong> you want to see, and <code className="mx-1 px-1.5 py-0.5 rounded bg-muted text-foreground border border-border text-sm font-mono">FROM</code> tells it <strong>which table</strong> those columns live in.
             </p>
-            <p className="text-sm text-zinc-400 leading-relaxed">
-              You can also list specific columns: <code className="text-pink-400 text-xs">SELECT name, age</code> would only return those two columns, hiding the rest.
-            </p>
-          </div>
-          <div className="panel p-5 bg-zinc-900/50">
-            <h3 className="font-semibold text-sm flex items-center gap-2 text-zinc-300 mb-3">
-              <CodeIcon /> Syntax Examples
-            </h3>
-            <div className="flex flex-col gap-3 font-mono text-[13px]">
-              <div className="bg-zinc-950 p-3 rounded border border-border">
-                <span className="text-zinc-500 block text-xs mb-1">-- Return all columns</span>
-                <span className="text-pink-500">SELECT</span> * <span className="text-pink-500">FROM</span> <span className="text-blue-400">students</span>;
-              </div>
-              <div className="bg-zinc-950 p-3 rounded border border-border">
-                <span className="text-zinc-500 block text-xs mb-1">-- Return specific columns only</span>
-                <span className="text-pink-500">SELECT</span> name, age <span className="text-pink-500">FROM</span> <span className="text-blue-400">students</span>;
+          </header>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="panel p-5 bg-zinc-900/50">
+              <h3 className="font-semibold text-sm flex items-center gap-2 text-zinc-300 mb-3">
+                <BookIcon /> The Concept
+              </h3>
+              <p className="text-sm text-zinc-400 leading-relaxed mb-3">
+                Think of a database table like a spreadsheet with rows and columns. <code className="text-pink-400 text-xs">SELECT *</code> means "give me every column" — the asterisk (<code className="text-accent text-xs">*</code>) is a shortcut for "everything".
+              </p>
+              <p className="text-sm text-zinc-400 leading-relaxed">
+                You can also list specific columns: <code className="text-pink-400 text-xs">SELECT name, age</code> would only return those two columns, hiding the rest.
+              </p>
+            </div>
+            <div className="panel p-5 bg-zinc-900/50">
+              <h3 className="font-semibold text-sm flex items-center gap-2 text-zinc-300 mb-3">
+                <CodeIcon /> Syntax Examples
+              </h3>
+              <div className="flex flex-col gap-3 font-mono text-[13px]">
+                <div className="bg-zinc-950 p-3 rounded border border-border">
+                  <span className="text-zinc-500 block text-xs mb-1">-- Return all columns</span>
+                  <span className="text-pink-500">SELECT</span> * <span className="text-pink-500">FROM</span> <span className="text-blue-400">students</span>;
+                </div>
+                <div className="bg-zinc-950 p-3 rounded border border-border">
+                  <span className="text-zinc-500 block text-xs mb-1">-- Return specific columns only</span>
+                  <span className="text-pink-500">SELECT</span> name, age <span className="text-pink-500">FROM</span> <span className="text-blue-400">students</span>;
+                </div>
               </div>
             </div>
           </div>
         </div>
-      </div>
+      )}
 
       <div className="h-px w-full bg-border" />
 

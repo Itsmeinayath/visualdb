@@ -1,9 +1,9 @@
-import { useEffect } from "react";
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import Table from "../../components/Table";
 import Query from "../../components/Query";
 import ChallengePanel from "../../components/ChallengePanel";
-import { CheckCircle2, XCircle, Terminal, Cpu, ArrowRight, Lightbulb } from "lucide-react";
+import { CheckCircle2, XCircle, Terminal, Cpu, ArrowRight, Lightbulb, ChevronUp, BookOpen } from "lucide-react";
 import { useExecutionEngine } from "../../hooks/useExecutionEngine";
 import { useChallenges } from "../../hooks/useChallenges";
 
@@ -53,6 +53,14 @@ export default function WhereModule() {
   } = useExecutionEngine("SELECT *\nFROM students\nWHERE age > 20;");
 
   const challenges = useChallenges(CHALLENGES);
+  const [showTheory, setShowTheory] = useState(true);
+
+  // Auto-collapse theory when playing
+  useEffect(() => {
+    if (isPlaying && showTheory) {
+      setShowTheory(false);
+    }
+  }, [isPlaying]);
 
   useEffect(() => {
     if (isFinished && resultSetData.length > 0) {
@@ -71,42 +79,52 @@ export default function WhereModule() {
   return (
     <div className="flex flex-col p-6 md:p-8 max-w-7xl mx-auto gap-8">
 
-      <div className="flex flex-col gap-4">
-        <div className="flex items-center gap-2">
-          <span className="bg-emerald-400/10 text-emerald-400 text-[10px] font-bold px-2 py-0.5 rounded-full border border-emerald-400/20">Step 2 · Beginner</span>
-        </div>
-        <header>
-          <h1 className="text-3xl font-bold mb-3 tracking-tight">The WHERE Clause</h1>
-          <p className="text-muted-foreground text-base max-w-3xl leading-relaxed">
-            The <code className="mx-1 px-1.5 py-0.5 rounded bg-muted text-foreground border border-border text-sm font-mono">WHERE</code> clause is a filter. The engine checks your condition against <strong>every single row</strong> in the table. Rows that pass go into the Result Set. Rows that fail are discarded.
-          </p>
-        </header>
+      <div className="flex items-center justify-between">
+        <span className="bg-amber-400/10 text-amber-400 text-[10px] font-bold px-2 py-0.5 rounded-full border border-amber-400/20">Step 2 · Beginner</span>
+        <button 
+          onClick={() => setShowTheory(!showTheory)} 
+          className="text-xs text-zinc-400 hover:text-zinc-200 flex items-center gap-1.5 transition-colors bg-zinc-900/50 hover:bg-zinc-800 px-2 py-1 rounded border border-zinc-800"
+        >
+          {showTheory ? <ChevronUp size={14} /> : <BookOpen size={14} />} 
+          {showTheory ? "Hide Lesson Theory" : "Show Lesson Theory"}
+        </button>
+      </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div className="panel p-5 bg-zinc-900/50">
-            <h3 className="font-semibold text-sm text-zinc-300 mb-3">The Concept</h3>
-            <p className="text-sm text-zinc-400 leading-relaxed mb-3">
-              Think of <code className="text-pink-400 text-xs">WHERE</code> like a bouncer at a door checking IDs. The engine walks up to each row and asks: <em>"Does this row's age pass the condition age &gt; 20?"</em>
+      {showTheory && (
+        <div className="flex flex-col gap-4 animate-in fade-in slide-in-from-top-2 duration-300">
+          <header>
+            <h1 className="text-3xl font-bold mb-3 tracking-tight">The WHERE Clause</h1>
+            <p className="text-muted-foreground text-base max-w-3xl leading-relaxed">
+              The <code className="mx-1 px-1.5 py-0.5 rounded bg-muted text-foreground border border-border text-sm font-mono">WHERE</code> clause is a filter. The engine checks your condition against <strong>every single row</strong> in the table. Rows that pass go into the Result Set. Rows that fail are discarded.
             </p>
-            <p className="text-sm text-zinc-400 leading-relaxed">
-              If the answer is <strong className="text-emerald-400">True</strong>, the row is allowed in. If it's <strong className="text-red-400">False</strong>, the row is skipped entirely.
-            </p>
-          </div>
-          <div className="panel p-5 bg-zinc-900/50">
-            <h3 className="font-semibold text-sm text-zinc-300 mb-3">Syntax Examples</h3>
-            <div className="flex flex-col gap-3 font-mono text-[13px]">
-              <div className="bg-zinc-950 p-3 rounded border border-border">
-                <span className="text-zinc-500 block text-xs mb-1">-- Filter by number comparison</span>
-                <span className="text-pink-500">SELECT</span> * <span className="text-pink-500">FROM</span> <span className="text-blue-400">students</span> <span className="text-pink-500">WHERE</span> age <span className="text-orange-400">&gt; 20</span>;
-              </div>
-              <div className="bg-zinc-950 p-3 rounded border border-border">
-                <span className="text-zinc-500 block text-xs mb-1">-- Filter by exact text match</span>
-                <span className="text-pink-500">SELECT</span> * <span className="text-pink-500">FROM</span> <span className="text-blue-400">students</span> <span className="text-pink-500">WHERE</span> major = <span className="text-green-400">'CS'</span>;
+          </header>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="panel p-5 bg-zinc-900/50">
+              <h3 className="font-semibold text-sm text-zinc-300 mb-3">The Concept</h3>
+              <p className="text-sm text-zinc-400 leading-relaxed mb-3">
+                Think of <code className="text-pink-400 text-xs">WHERE</code> like a bouncer at a door checking IDs. The engine walks up to each row and asks: <em>"Does this row's age pass the condition age &gt; 20?"</em>
+              </p>
+              <p className="text-sm text-zinc-400 leading-relaxed">
+                If the answer is <strong className="text-emerald-400">True</strong>, the row is allowed in. If it's <strong className="text-red-400">False</strong>, the row is skipped entirely.
+              </p>
+            </div>
+            <div className="panel p-5 bg-zinc-900/50">
+              <h3 className="font-semibold text-sm text-zinc-300 mb-3">Syntax Examples</h3>
+              <div className="flex flex-col gap-3 font-mono text-[13px]">
+                <div className="bg-zinc-950 p-3 rounded border border-border">
+                  <span className="text-zinc-500 block text-xs mb-1">-- Filter by number comparison</span>
+                  <span className="text-pink-500">SELECT</span> * <span className="text-pink-500">FROM</span> <span className="text-blue-400">students</span> <span className="text-pink-500">WHERE</span> age <span className="text-orange-400">&gt; 20</span>;
+                </div>
+                <div className="bg-zinc-950 p-3 rounded border border-border">
+                  <span className="text-zinc-500 block text-xs mb-1">-- Filter by exact text match</span>
+                  <span className="text-pink-500">SELECT</span> * <span className="text-pink-500">FROM</span> <span className="text-blue-400">students</span> <span className="text-pink-500">WHERE</span> major = <span className="text-green-400">'CS'</span>;
+                </div>
               </div>
             </div>
           </div>
         </div>
-      </div>
+      )}
 
       <div className="h-px w-full bg-border" />
       <div className="flex items-center gap-2 -mb-4">

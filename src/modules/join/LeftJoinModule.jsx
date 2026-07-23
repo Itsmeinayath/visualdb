@@ -1,9 +1,10 @@
-import { useEffect } from "react";
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import Table from "../../components/Table";
 import Query from "../../components/Query";
 import ChallengePanel from "../../components/ChallengePanel";
-import { CheckCircle2, Cpu, Combine, ArrowRight, Lightbulb } from "lucide-react";
+import SchemaDiagram from "../../components/SchemaDiagram";
+import { CheckCircle2, Cpu, Combine, ArrowRight, Lightbulb, ChevronUp, BookOpen } from "lucide-react";
 import { useExecutionEngine } from "../../hooks/useExecutionEngine";
 import { useChallenges } from "../../hooks/useChallenges";
 
@@ -44,6 +45,14 @@ export default function LeftJoinModule() {
   } = useExecutionEngine("SELECT *\nFROM students\nLEFT JOIN courses\n  ON students.course_id = courses.course_id;");
 
   const challenges = useChallenges(CHALLENGES);
+  const [showTheory, setShowTheory] = useState(true);
+
+  // Auto-collapse theory when playing
+  useEffect(() => {
+    if (isPlaying && showTheory) {
+      setShowTheory(false);
+    }
+  }, [isPlaying]);
 
   useEffect(() => {
     if (isFinished && resultSetData.length > 0) {
@@ -63,37 +72,57 @@ export default function LeftJoinModule() {
   return (
     <div className="flex flex-col p-6 md:p-8 max-w-7xl mx-auto gap-8">
 
-      <div className="flex flex-col gap-4">
-        <span className="bg-amber-400/10 text-amber-400 text-[10px] font-bold px-2 py-0.5 rounded-full border border-amber-400/20 self-start">Step 8 · Intermediate</span>
-        <header>
-          <h1 className="text-3xl font-bold mb-3 tracking-tight">The LEFT JOIN</h1>
-          <p className="text-muted-foreground text-base max-w-3xl leading-relaxed">
-            <code className="mx-1 px-1.5 py-0.5 rounded bg-muted text-foreground border border-border text-sm font-mono">LEFT JOIN</code> is like INNER JOIN, but with a crucial guarantee: <strong>every row from the left table is always returned</strong> — even if there's no matching row in the right table. When no match is found, the right-side columns are filled with <code className="mx-1 px-1.5 py-0.5 rounded bg-muted text-red-400 border border-border text-sm font-mono">NULL</code>.
-          </p>
-        </header>
+      <div className="flex items-center justify-between">
+        <span className="bg-amber-400/10 text-amber-400 text-[10px] font-bold px-2 py-0.5 rounded-full border border-amber-400/20">Step 8 · Intermediate</span>
+        <button 
+          onClick={() => setShowTheory(!showTheory)} 
+          className="text-xs text-zinc-400 hover:text-zinc-200 flex items-center gap-1.5 transition-colors bg-zinc-900/50 hover:bg-zinc-800 px-2 py-1 rounded border border-zinc-800"
+        >
+          {showTheory ? <ChevronUp size={14} /> : <BookOpen size={14} />} 
+          {showTheory ? "Hide Lesson Theory" : "Show Lesson Theory"}
+        </button>
+      </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div className="panel p-5 bg-zinc-900/50">
-            <h3 className="font-semibold text-sm text-zinc-300 mb-3">INNER JOIN vs LEFT JOIN</h3>
-            <div className="flex flex-col gap-2 text-sm text-zinc-400">
-              <div className="flex items-start gap-2">
-                <span className="text-red-400 font-bold mt-0.5">✗</span>
-                <span><strong className="text-zinc-300">INNER JOIN:</strong> A student with no matching course is completely excluded from the results.</span>
-              </div>
-              <div className="flex items-start gap-2 mt-1">
-                <span className="text-emerald-400 font-bold mt-0.5">✓</span>
-                <span><strong className="text-zinc-300">LEFT JOIN:</strong> A student with no matching course still appears in the results — their course columns are filled with <code className="text-red-400 text-xs">NULL</code>.</span>
+      {showTheory && (
+        <div className="flex flex-col gap-4 animate-in fade-in slide-in-from-top-2 duration-300">
+          <header>
+            <h1 className="text-3xl font-bold mb-3 tracking-tight">The LEFT JOIN</h1>
+            <p className="text-muted-foreground text-base max-w-3xl leading-relaxed">
+              <code className="mx-1 px-1.5 py-0.5 rounded bg-muted text-foreground border border-border text-sm font-mono">LEFT JOIN</code> is like INNER JOIN, but with a crucial guarantee: <strong>every row from the left table is always returned</strong> — even if there's no matching row in the right table. When no match is found, the right-side columns are filled with <code className="mx-1 px-1.5 py-0.5 rounded bg-muted text-red-400 border border-border text-sm font-mono">NULL</code>.
+            </p>
+          </header>
+
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <div className="panel p-5 bg-zinc-900/50">
+              <h3 className="font-semibold text-sm text-zinc-300 mb-3">INNER JOIN vs LEFT JOIN</h3>
+              <div className="flex flex-col gap-2 text-sm text-zinc-400">
+                <div className="flex items-start gap-2">
+                  <span className="text-red-400 font-bold mt-0.5">✗</span>
+                  <span><strong className="text-zinc-300">INNER JOIN:</strong> A student with no matching course is completely excluded from the results.</span>
+                </div>
+                <div className="flex items-start gap-2 mt-1">
+                  <span className="text-emerald-400 font-bold mt-0.5">✓</span>
+                  <span><strong className="text-zinc-300">LEFT JOIN:</strong> A student with no matching course still appears in the results — their course columns are filled with <code className="text-red-400 text-xs">NULL</code>.</span>
+                </div>
               </div>
             </div>
-          </div>
-          <div className="panel p-5 bg-zinc-900/50">
-            <h3 className="font-semibold text-sm text-zinc-300 mb-3">Real-world Use Case</h3>
-            <p className="text-sm text-zinc-400 leading-relaxed">
-              Use LEFT JOIN when you want to see <strong>all records from one table</strong>, regardless of whether there are related records in another. Example: "Show me all students, and if they have a course, show that too. If not, that's fine."
-            </p>
+            
+            <div className="panel p-5 bg-zinc-900/50">
+              <h3 className="font-semibold text-sm text-zinc-300 mb-3">Real-world Use Case</h3>
+              <p className="text-sm text-zinc-400 leading-relaxed">
+                Use LEFT JOIN when you want to see <strong>all records from one table</strong>, regardless of whether there are related records in another. Example: "Show me all students, and if they have a course, show that too. If not, that's fine."
+              </p>
+            </div>
+
+            <SchemaDiagram 
+              leftTable="students"
+              rightTable="courses"
+              leftKey="course_id"
+              rightKey="course_id"
+            />
           </div>
         </div>
-      </div>
+      )}
 
       <div className="h-px w-full bg-border" />
       <div className="flex items-center gap-2 -mb-4">
