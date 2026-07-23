@@ -286,6 +286,7 @@ function SidebarContent({ onClose }) {
 
 export default function Layout() {
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [sidebarOpen, setSidebarOpen] = useState(true);
   const [isResetModalOpen, setIsResetModalOpen] = useState(false);
 
   const [theme, setTheme] = useState(() => {
@@ -326,8 +327,15 @@ export default function Layout() {
   return (
     <div className="flex h-screen w-full bg-background text-foreground overflow-hidden font-sans">
       {/* Desktop Sidebar */}
-      <aside className="hidden md:flex w-55 border-r border-border bg-card flex-col shrink-0">
-        <SidebarContent />
+      <aside 
+        className={cn(
+          "hidden md:flex border-r border-border bg-card flex-col shrink-0 transition-all duration-300 overflow-hidden",
+          sidebarOpen ? "w-55" : "w-0 border-r-0"
+        )}
+      >
+        <div className="w-55 h-full">
+          <SidebarContent />
+        </div>
       </aside>
 
       {/* Mobile Sidebar Overlay */}
@@ -351,9 +359,15 @@ export default function Layout() {
           <div className="flex items-center gap-3">
             <button
               type="button"
-              className="md:hidden text-muted-foreground hover:text-foreground transition-colors"
-              onClick={() => setMobileOpen(true)}
-              aria-label="Open menu"
+              className="text-muted-foreground hover:text-foreground transition-colors"
+              onClick={() => {
+                if (window.innerWidth < 768) {
+                  setMobileOpen(true);
+                } else {
+                  setSidebarOpen(!sidebarOpen);
+                }
+              }}
+              aria-label="Toggle menu"
             >
               <Menu size={20} />
             </button>
