@@ -26,13 +26,15 @@ export default function PlaygroundModule() {
     highlightedRows,
     checkingCondition,
     resultSetData,
-    runQuery
+    runQuery,
+    previewTable
   } = useExecutionEngine("SELECT *\nFROM students\nWHERE age > 20;");
 
   const [availableTables, setAvailableTables] = useState(() => getAvailableTables());
 
   const handleUploadSuccess = (tableName) => {
     setAvailableTables(getAvailableTables());
+    previewTable(tableName);
   };
 
   const highlightCode = (code) => {

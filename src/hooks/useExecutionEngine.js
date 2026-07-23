@@ -113,6 +113,25 @@ export function useExecutionEngine(initialQuery = "") {
     }
   };
 
+  const previewTable = (tableName) => {
+    try {
+      setActiveTable(tableName);
+      setTableData(getTable(tableName));
+      setQueryInput(`SELECT *\nFROM ${tableName};`);
+      
+      // Reset execution states
+      setIsPlaying(false);
+      setIsPaused(false);
+      setIsFinished(false);
+      setStep(-1);
+      setCurrentRowIdx(-1);
+      setHighlightedRows([]);
+      setResultSetData([]);
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
   const resetQuery = () => {
     setIsPlaying(false);
     setIsPaused(false);
