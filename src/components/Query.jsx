@@ -1,6 +1,9 @@
 import { useState, useEffect } from "react";
 import { cn } from "../utils/cn";
 import { Play, RotateCcw, Terminal, PencilLine, Lock, Pause, SkipForward, Gauge, Trash2, Copy, Check } from "lucide-react";
+import Prism from "prismjs";
+import "prismjs/components/prism-sql";
+import "prismjs/themes/prism-tomorrow.css";
 
 const SPEED_OPTIONS = [
   { label: "0.5×", value: 0.5 },
@@ -51,6 +54,12 @@ export default function Query({
       console.error("Copy failed", err);
     }
   };
+
+  // Generate syntax-highlighted lines dynamically from the user's input
+  const displayLines = (value || "").split("\n").map((lineText, idx) => {
+    const html = Prism.highlight(lineText, Prism.languages.sql, "sql");
+    return <span key={idx} dangerouslySetInnerHTML={{ __html: html }} />;
+  });
 
   return (
     <div className="panel overflow-hidden flex flex-col border border-border h-full">
@@ -110,7 +119,7 @@ export default function Query({
         />
       ) : (
         <div className="bg-zinc-950 flex-1 p-4 font-mono text-[13px] leading-relaxed flex flex-col overflow-hidden">
-          {queryLines.map((line, idx) => (
+          {displayLines.map((line, idx) => (
             <div
               key={idx}
               className={cn(
