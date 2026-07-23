@@ -101,6 +101,8 @@ export default function Query({
               <span className="text-emerald-400 flex items-center gap-1"><PencilLine size={10} /> Editable</span>
             ) : isPaused ? (
               <span className="text-amber-400 flex items-center gap-1"><Pause size={10} /> Paused</span>
+            ) : isFinished ? (
+              <span className="text-blue-400 flex items-center gap-1"><Check size={10} /> Finished</span>
             ) : (
               <span className="text-zinc-500 flex items-center gap-1"><Lock size={10} /> Running...</span>
             )}
