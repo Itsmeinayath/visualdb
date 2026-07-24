@@ -3,7 +3,8 @@ import { Link } from "react-router-dom";
 import Table from "../../components/Table";
 import Query from "../../components/Query";
 import ChallengePanel from "../../components/ChallengePanel";
-import { CheckCircle2, Cpu, FileSearch, ArrowRight, Lightbulb, ChevronUp, BookOpen } from "lucide-react";
+import { CheckCircle2, Cpu, FileSearch, ArrowRight, Lightbulb, ChevronUp, BookOpen, Code as CodeIcon, Book as BookIcon } from "lucide-react";
+import ModuleLayout from "../../components/ModuleLayout";
 import { useExecutionEngine } from "../../hooks/useExecutionEngine";
 import { useChallenges } from "../../hooks/useChallenges";
 
@@ -108,9 +109,8 @@ export default function SelectModule() {
   ];
 
   return (
-    <div className="flex flex-col lg:flex-row w-full overflow-hidden bg-background" style={{ height: 'calc(100vh - 3rem)' }}>
-      {/* COLUMN 1: Theory & Challenges */}
-      <div className="w-full lg:w-[30%] h-full border-r border-border flex flex-col bg-card/30 overflow-y-auto shrink-0">
+    <ModuleLayout
+      theoryContent={
         <div className="p-5 flex flex-col gap-6">
           <header className="flex flex-col gap-2">
             <div className="flex items-center gap-2">
@@ -186,101 +186,87 @@ export default function SelectModule() {
             </Link>
           </div>
         </div>
-      </div>
-
-      {/* COLUMN 2: Editor & Trace */}
-      <div className="w-full lg:w-[35%] h-full flex flex-col bg-zinc-950 border-r border-border shrink-0">
-        
-        {/* Top: Query Editor */}
-        <div className="shrink-0 h-[280px] flex flex-col border-b border-border bg-zinc-900/30">
-          <div className="px-3 py-2 border-b border-border bg-zinc-900/50 flex items-center justify-between">
-            <span className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider flex items-center gap-1.5">
-              <CodeIcon size={12} /> Query Editor
-            </span>
+      }
+      editorContent={
+        <>
+          {/* Top: Query Editor */}
+          <div className="shrink-0 h-[280px] flex flex-col border-b border-border bg-zinc-900/30">
+            <div className="px-3 py-2 border-b border-border bg-zinc-900/50 flex items-center justify-between">
+              <span className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider flex items-center gap-1.5">
+                <CodeIcon size={12} /> Query Editor
+              </span>
+            </div>
+            <div className="flex-1 p-3 overflow-hidden relative">
+              <Query
+                queryLines={queryLines}
+                value={queryInput}
+                onChange={setQueryInput}
+                activeLineIndex={step === 0 ? 0 : step === 1 ? 1 : step >= 2 ? 0 : -1}
+                onRun={() => runQuery()}
+                onReset={resetQuery}
+                onPause={pauseQuery}
+                onStep={stepQuery}
+                isPlaying={isPlaying}
+                isFinished={isFinished}
+                isPaused={isPaused}
+                speed={speed}
+                onSpeedChange={setSpeed}
+              />
+              {parseError && (
+                <div className="absolute bottom-3 left-3 right-3 panel p-2 border-red-500/30 bg-red-500/5 text-red-400 text-[10px] font-mono">
+                  {parseError}
+                </div>
+              )}
+            </div>
           </div>
-          <div className="flex-1 p-3 overflow-hidden relative">
-            <Query
-              queryLines={queryLines}
-              value={queryInput}
-              onChange={setQueryInput}
-              activeLineIndex={step === 0 ? 0 : step === 1 ? 1 : step >= 2 ? 0 : -1}
-              onRun={() => runQuery()}
-              onReset={resetQuery}
-              onPause={pauseQuery}
-              onStep={stepQuery}
-              isPlaying={isPlaying}
-              isFinished={isFinished}
-              isPaused={isPaused}
-              speed={speed}
-              onSpeedChange={setSpeed}
+          
+          {/* Bottom: Execution Trace */}
+          <div className="flex-1 flex flex-col min-h-0 bg-zinc-950/50">
+            <div className="px-3 py-2 border-b border-border bg-zinc-900/50 flex flex-col">
+               <div className="flex items-center gap-1.5 mb-1">
+                 <Cpu size={12} className="text-muted-foreground" />
+                 <span className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider">Execution Trace</span>
+               </div>
+               <span className="text-[9px] text-zinc-500 leading-tight">Shows how the SQL engine thinks step-by-step.</span>
+            </div>
+            <div className="flex-1 p-3 font-mono text-[10px] overflow-y-auto flex flex-col gap-1.5">
+              {step === -1 && <div className="text-muted-foreground">Ready. Click "Run Query" to start the animation.</div>}
+              {step >= 0 && <div className="text-zinc-400">↳ Reading your query...</div>}
+              {step >= 1 && <div className="text-zinc-300">↳ Found the <span className="text-blue-400">students</span> table.</div>}
+              {step >= 4 && <div className="text-accent">↳ Scanning rows... ({currentRowIdx + 1} of {tableData.length})</div>}
+              {isPaused && <div className="text-amber-400">⏸ Paused — click Step to advance one row, or Resume to continue.</div>}
+              {isFinished && <div className="text-emerald-400 font-medium flex items-center gap-1 mt-1"><CheckCircle2 size={12} /> Done! {resultSetData.length} rows returned.</div>}
+            </div>
+          </div>
+        </>
+      }
+      dataContent={
+        <>
+          <div className="flex flex-col gap-2 shrink-0">
+            <Table
+              data={tableData}
+              title={`Source table: ${activeTable}`}
+              highlightedRows={step >= 4 && currentRowIdx >= 0 ? [tableData[currentRowIdx]?.id || currentRowIdx] : []}
+              highlightedColumns={parsedAST?.columns !== '*' ? parsedAST?.columns?.map(c => c.expr?.column) : []}
             />
-            {parseError && (
-              <div className="absolute bottom-3 left-3 right-3 panel p-2 border-red-500/30 bg-red-500/5 text-red-400 text-[10px] font-mono">
-                {parseError}
+          </div>
+          <div className="flex flex-col gap-2 shrink-0">
+            {resultSetData.length > 0 || isFinished ? (
+              <Table 
+                data={resultSetData} 
+                title="Result Set (Output)" 
+                highlightedRows={step >= 4 && currentRowIdx >= 0 ? [resultSetData[resultSetData.length - 1]?.id || resultSetData.length - 1] : []}
+              />
+            ) : (
+              <div className="panel h-[150px] flex items-center justify-center text-muted-foreground text-xs font-mono border-dashed bg-zinc-950/30">
+                <div className="flex items-center gap-2">
+                  <FileSearch size={16} /> Result Set will appear here
+                </div>
               </div>
             )}
           </div>
-        </div>
-        
-        {/* Bottom: Execution Trace */}
-        <div className="flex-1 flex flex-col min-h-0 bg-zinc-950/50">
-          <div className="px-3 py-2 border-b border-border bg-zinc-900/50 flex flex-col">
-             <div className="flex items-center gap-1.5 mb-1">
-               <Cpu size={12} className="text-muted-foreground" />
-               <span className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider">Execution Trace</span>
-             </div>
-             <span className="text-[9px] text-zinc-500 leading-tight">Shows how the SQL engine thinks step-by-step.</span>
-          </div>
-          <div className="flex-1 p-3 font-mono text-[10px] overflow-y-auto flex flex-col gap-1.5">
-            {step === -1 && <div className="text-muted-foreground">Ready. Click "Run Query" to start the animation.</div>}
-            {step >= 0 && <div className="text-zinc-400">↳ Reading your query...</div>}
-            {step >= 1 && <div className="text-zinc-300">↳ Found the <span className="text-blue-400">students</span> table.</div>}
-            {step >= 4 && <div className="text-accent">↳ Scanning rows... ({currentRowIdx + 1} of {tableData.length})</div>}
-            {isPaused && <div className="text-amber-400">⏸ Paused — click Step to advance one row, or Resume to continue.</div>}
-            {isFinished && <div className="text-emerald-400 font-medium flex items-center gap-1 mt-1"><CheckCircle2 size={12} /> Done! {resultSetData.length} rows returned.</div>}
-          </div>
-        </div>
-      </div>
-
-      {/* COLUMN 3: Tables */}
-      <div className="flex-1 h-full flex flex-col overflow-y-auto p-4 gap-4 bg-zinc-950/20 relative min-w-[350px]">
-        <div className="flex flex-col gap-2 shrink-0">
-          <Table
-            data={tableData}
-            title={`Source table: ${activeTable}`}
-            highlightedRows={
-              step === 4 && checkingCondition
-                ? [tableData[currentRowIdx]?.id || tableData[currentRowIdx]?.order_id || currentRowIdx]
-                : []
-            }
-          />
-        </div>
-        
-        <div className="flex-1 flex flex-col gap-2">
-          {resultSetData.length > 0 || isFinished ? (
-            <Table data={resultSetData} title="Result Set" />
-          ) : (
-            <div className="panel h-[250px] w-full flex items-center justify-center text-zinc-500 font-mono text-[11px] border-dashed border-2">
-              Result Set will appear here after execution
-            </div>
-          )}
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function BookIcon() {
-  return (
-    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" /><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" />
-    </svg>
-  );
-}
-function CodeIcon() {
-  return (
-    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-      <polyline points="16 18 22 12 16 6" /><polyline points="8 6 2 12 8 18" />
-    </svg>
+        </>
+      }
+    />
   );
 }
