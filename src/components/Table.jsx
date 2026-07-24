@@ -30,7 +30,7 @@ export default function Table({
       {/* Table Grid */}
       <div className="overflow-auto bg-background flex-1">
         <table className="w-full text-sm text-left border-collapse">
-          <thead className="text-xs text-muted-foreground bg-muted/30 sticky top-0 z-20 shadow-[0_1px_0_var(--border)]">
+          <thead className="text-xs text-muted-foreground bg-muted sticky top-0 z-20 shadow-[0_1px_0_var(--border)] backdrop-blur-sm">
             <tr>
               <th className="w-12 px-3 py-1.5 border-r border-border font-mono font-medium text-center">
                 #
@@ -57,10 +57,9 @@ export default function Table({
                 return (
                   <motion.tr
                     key={row.id || idx}
-                    initial={{ opacity: 0, y: -4 }}
+                    initial={{ opacity: 0}}
                     animate={{ 
                       opacity: isDiscarded ? 0.3 : 1, 
-                      y: 0,
                     }}
                     transition={springConfig}
                     className={cn(
