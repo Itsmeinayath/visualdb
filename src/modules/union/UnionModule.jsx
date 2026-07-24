@@ -3,7 +3,8 @@ import { Link } from "react-router-dom";
 import Table from "../../components/Table";
 import Query from "../../components/Query";
 import ChallengePanel from "../../components/ChallengePanel";
-import { CheckCircle2, Cpu, Layers, ArrowRight, Lightbulb, Merge } from "lucide-react";
+import { CheckCircle2, Cpu, Layers, ArrowRight, Lightbulb, Merge , Code as CodeIcon, Book as BookIcon } from "lucide-react";
+import ModuleLayout from "../../components/ModuleLayout";
 import { Parser } from "node-sql-parser";
 import { getTable } from "../../engine/database";
 import { useChallenges } from "../../hooks/useChallenges";
@@ -244,51 +245,43 @@ export default function UnionModule() {
   const activeLineIndex = step === 0 ? 0 : step === 1 ? 1 : step === 2 ? 1 : step === 3 ? 4 : -1;
 
   return (
-    <div className="flex flex-col p-6 md:p-8 max-w-7xl mx-auto gap-8">
-
-      <div className="flex flex-col gap-4">
-        <span className="bg-amber-400/10 text-amber-400 text-[10px] font-bold px-2 py-0.5 rounded-full border border-amber-400/20 self-start">Step 11 · Intermediate</span>
-        <header>
-          <h1 className="text-3xl font-bold mb-3 tracking-tight">The UNION Operator</h1>
-          <p className="text-muted-foreground text-base max-w-3xl leading-relaxed">
-            <code className="mx-1 px-1.5 py-0.5 rounded bg-muted text-foreground border border-border text-sm font-mono">UNION</code> combines the result sets of two or more <code className="text-pink-400 text-xs">SELECT</code> statements into a single result set. It <strong>removes duplicate rows</strong> by default. Use <code className="mx-1 px-1.5 py-0.5 rounded bg-muted text-foreground border border-border text-sm font-mono">UNION ALL</code> if you want to keep duplicates.
-          </p>
-        </header>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div className="panel p-5 bg-zinc-900/50">
-            <h3 className="font-semibold text-sm text-zinc-300 mb-3">The Concept (Set Operation)</h3>
-            <p className="text-sm text-zinc-400 leading-relaxed mb-3">
-              UNION is a <strong>set operation</strong> that stacks two result sets on top of each other. Both SELECT statements must return the <strong>same number of columns</strong> with compatible data types.
+    <ModuleLayout
+      theoryContent={
+        <>
+<div className="p-5 flex flex-col gap-6">
+          <header className="flex flex-col gap-2">
+            <span className="bg-amber-400/10 text-amber-400 text-[10px] font-bold px-2 py-0.5 rounded-full border border-amber-400/20 self-start">Step 11 · Intermediate</span>
+            <h1 className="text-3xl font-bold tracking-tight">The UNION Operator</h1>
+            <p className="text-muted-foreground text-sm leading-relaxed">
+              <code className="mx-1 px-1.5 py-0.5 rounded bg-muted text-foreground border border-border text-xs font-mono">UNION</code> combines the result sets of two or more <code className="text-pink-400 text-xs">SELECT</code> statements into a single result set. It <strong>removes duplicate rows</strong> by default. Use <code className="mx-1 px-1.5 py-0.5 rounded bg-muted text-foreground border border-border text-xs font-mono">UNION ALL</code> if you want to keep duplicates.
             </p>
-            <p className="text-sm text-zinc-400 leading-relaxed">
-              By default, UNION performs <strong>deduplication</strong>. It compares rows from both sets and removes any duplicates, similar to how DISTINCT works.
-            </p>
-          </div>
-          <div className="panel p-5 bg-zinc-900/50">
-            <h3 className="font-semibold text-sm text-zinc-300 mb-3">UNION vs UNION ALL</h3>
-            <div className="flex flex-col gap-2 text-sm text-zinc-400">
-              <div className="flex items-start gap-2">
-                <span className="text-emerald-400 font-bold mt-0.5">✓</span>
-                <span><strong className="text-zinc-300">UNION:</strong> Removes duplicate rows. Slower because it must compare and deduplicate.</span>
-              </div>
-              <div className="flex items-start gap-2 mt-1">
-                <span className="text-blue-400 font-bold mt-0.5">⚡</span>
-                <span><strong className="text-zinc-300">UNION ALL:</strong> Keeps all rows including duplicates. Faster with no deduplication needed.</span>
+          </header>
+
+          <div className="flex flex-col gap-3">
+            <div className="panel p-4 bg-zinc-900/50">
+              <h3 className="font-semibold text-sm text-zinc-300 mb-2">The Concept (Set Operation)</h3>
+              <p className="text-xs text-zinc-400 leading-relaxed mb-2">
+                UNION is a <strong>set operation</strong> that stacks two result sets on top of each other. Both SELECT statements must return the <strong>same number of columns</strong> with compatible data types.
+              </p>
+              <p className="text-xs text-zinc-400 leading-relaxed">
+                By default, UNION performs <strong>deduplication</strong>. It compares rows from both sets and removes any duplicates, similar to how DISTINCT works.
+              </p>
+            </div>
+            <div className="panel p-4 bg-zinc-900/50">
+              <h3 className="font-semibold text-sm text-zinc-300 mb-2">UNION vs UNION ALL</h3>
+              <div className="flex flex-col gap-2 text-xs text-zinc-400">
+                <div className="flex items-start gap-2">
+                  <span className="text-emerald-400 font-bold mt-0.5">✓</span>
+                  <span><strong className="text-zinc-300">UNION:</strong> Removes duplicate rows. Slower because it must compare and deduplicate.</span>
+                </div>
+                <div className="flex items-start gap-2 mt-1">
+                  <span className="text-blue-400 font-bold mt-0.5">⚡</span>
+                  <span><strong className="text-zinc-300">UNION ALL:</strong> Keeps all rows including duplicates. Faster with no deduplication needed.</span>
+                </div>
               </div>
             </div>
           </div>
-        </div>
-      </div>
 
-      <div className="h-px w-full bg-border" />
-      <div className="flex items-center gap-2 -mb-4">
-        <h2 className="text-lg font-bold">Live Execution Trace</h2>
-        <span className="px-2 py-0.5 rounded-full bg-accent/10 text-accent text-xs font-semibold">Set Operation Simulation</span>
-      </div>
-
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 min-h-[700px]">
-        <div className="col-span-1 lg:col-span-4 flex flex-col gap-6">
           <ChallengePanel
             current={challenges.current}
             currentIdx={challenges.currentIdx}
@@ -299,34 +292,79 @@ export default function UnionModule() {
             onPrev={challenges.goPrev}
             onNext={challenges.goNext}
           />
-          <div className="h-56 shrink-0">
-            <Query
-              queryLines={queryLines}
-              value={queryInput}
-              onChange={setQueryInput}
-              activeLineIndex={activeLineIndex}
-              onRun={() => runQuery()}
-              onReset={resetQuery}
-              onPause={pauseQuery}
-              onStep={stepQuery}
-              isPlaying={isPlaying}
-              isFinished={isFinished}
-              isPaused={isPaused}
-              speed={speed}
-              onSpeedChange={setSpeed}
-            />
-          </div>
-          {parseError && <div className="panel p-3 border-red-500/30 bg-red-500/5 text-red-400 text-xs font-mono">{parseError}</div>}
-          <div className="panel p-4 flex flex-col gap-4">
-            <div className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider flex items-center gap-2 border-b border-border pb-2">
-              <Cpu size={14} /> What's happening
+
+          {isFinished && (
+            <div className="panel p-4 bg-amber-400/5 border border-amber-400/20">
+              <div className="flex items-start gap-3">
+                <Lightbulb size={16} className="text-amber-400 mt-0.5 flex-shrink-0" />
+                <div>
+                  <div className="font-semibold text-amber-300 text-sm mb-1">Key Takeaway</div>
+                  <p className="text-xs text-zinc-400 leading-relaxed">
+                    {(() => {
+                      const sNames = getTable("students").map((r) => r.name);
+                      const tNames = getTable("teachers").map((r) => r.name);
+                      const overlaps = sNames.filter((n) => tNames.includes(n));
+                      const overlapText = overlaps.length > 0 ? overlaps.join(" and ") : "none";
+                      return parsedAST?.set_op?.toUpperCase() === "UNION ALL"
+                        ? `UNION ALL kept all rows including duplicates, ${overlapText} appear twice.`
+                        : `UNION automatically removed duplicates, ${overlapText} appeared in both tables but only appear once.`;
+                    })()} Both SELECT statements must return the same number of columns with compatible types.
+                  </p>
+                </div>
+              </div>
             </div>
-            <div className="h-44 flex flex-col justify-start font-mono text-[13px] gap-1 overflow-y-auto">
-              {step === -1 && <div className="text-zinc-500 text-center pt-4">Ready.</div>}
+          )}
+
+          <div className="flex items-center justify-between pt-3 border-t border-zinc-800 mt-1">
+            <Link to="/aliases" className="text-xs text-zinc-500 hover:text-zinc-300 transition-colors flex items-center gap-1">
+              ← ALIASES
+            </Link>
+            <Link
+              to="/innerjoin"
+              className="inline-flex items-center gap-2 px-4 py-2 rounded bg-zinc-800 hover:bg-zinc-700 text-zinc-200 text-xs font-medium transition-all hover:scale-[1.02] group"
+            >
+              Next: INNER JOIN
+              <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
+            </Link>
+          </div>
+        </div>
+        </>
+      }
+      editorContent={
+        <>
+{/* COLUMN 2: Editor & Trace */}
+      <div className="w-full lg:w-[35%] h-full flex flex-col bg-zinc-950 border-r border-border shrink-0">
+        <div className="h-[55%] flex flex-col border-b border-border">
+          <Query
+            queryLines={queryLines}
+            value={queryInput}
+            onChange={setQueryInput}
+            activeLineIndex={activeLineIndex}
+            onRun={() => runQuery()}
+            onReset={resetQuery}
+            onPause={pauseQuery}
+            onStep={stepQuery}
+            isPlaying={isPlaying}
+            isFinished={isFinished}
+            isPaused={isPaused}
+            speed={speed}
+            onSpeedChange={setSpeed}
+          />
+        </div>
+
+        {parseError ? (
+          <div className="p-4 bg-red-500/5 text-red-400 text-xs font-mono">{parseError}</div>
+        ) : (
+          <div className="h-[45%] flex flex-col bg-zinc-950/50">
+            <div className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider flex items-center gap-2 px-4 py-3 border-b border-border bg-zinc-900/30">
+              <Cpu size={14} /> Execution Trace
+            </div>
+            <div className="flex-1 p-4 font-mono text-xs gap-1.5 overflow-y-auto flex flex-col leading-relaxed">
+              {step === -1 && <div className="text-zinc-500 pt-2">Ready.</div>}
               {step === 0 && <div className="text-zinc-300 animate-pulse">Reading your UNION query...</div>}
               {step === 1 && <div className="text-zinc-300 animate-pulse">Loaded left table: <span className="text-blue-400">students</span></div>}
               {step === 2 && (
-                <div className="flex flex-col gap-3">
+                <div className="flex flex-col gap-2 mt-2">
                   <div className="text-accent flex items-center gap-2 animate-pulse">
                     <div className="w-3 h-3 rounded-full border border-accent border-t-transparent animate-spin" />
                     Scanning students...
@@ -342,7 +380,7 @@ export default function UnionModule() {
                 </div>
               )}
               {step === 3 && (
-                <div className="flex flex-col gap-3">
+                <div className="flex flex-col gap-2 mt-2">
                   <div className="text-accent flex items-center gap-2 animate-pulse">
                     <div className="w-3 h-3 rounded-full border border-accent border-t-transparent animate-spin" />
                     Scanning teachers...
@@ -358,7 +396,7 @@ export default function UnionModule() {
                 </div>
               )}
               {step === 4 && (
-                <div className="flex flex-col gap-3">
+                <div className="flex flex-col gap-2 mt-2">
                   <div className="text-accent flex items-center gap-2 animate-pulse">
                     <div className="w-3 h-3 rounded-full border border-accent border-t-transparent animate-spin" />
                     {parsedAST?.set_op?.toUpperCase() === "UNION ALL" ? "Combining results (keeping duplicates)..." : "Combining & deduplicating..."}
@@ -374,70 +412,45 @@ export default function UnionModule() {
                 </div>
               )}
               {isFinished && (
-                <div className="text-emerald-400 font-medium flex flex-col gap-1">
-                  <div className="flex items-center gap-2"><CheckCircle2 size={16} /> UNION complete!</div>
+                <div className="text-emerald-400 font-medium flex flex-col gap-1 mt-2">
+                  <div className="flex items-center gap-2"><CheckCircle2 size={14} /> UNION complete!</div>
                   <div className="text-zinc-500 text-xs">{resultData.length} rows in final result set.</div>
                 </div>
               )}
             </div>
           </div>
-        </div>
-
-        <div className="col-span-1 lg:col-span-8 flex flex-col gap-6">
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 h-[280px]">
-            <Table
-              data={studentsTable}
-              title="Left: students"
-              highlightedRows={highlightedStudentRow !== -1 ? [studentsTable[highlightedStudentRow]?.id || highlightedStudentRow] : []}
-              highlightedColumns={["name"]}
-            />
-            <Table
-              data={teachersTable}
-              title="Right: teachers"
-              highlightedRows={highlightedTeacherRow !== -1 ? [teachersTable[highlightedTeacherRow]?.id || highlightedTeacherRow] : []}
-              highlightedColumns={["name"]}
-            />
-          </div>
-          <div className="flex-1 min-h-[280px]">
-            {resultData.length > 0 || isFinished ? (
-              <Table data={resultData} title={`Result Set: ${parsedAST?.set_op?.toUpperCase() === "UNION ALL" ? "all rows (duplicates kept)" : "unique rows only"}`} highlightedColumns={["name"]} />
-            ) : (
-              <div className="panel h-full w-full flex items-center justify-center text-zinc-500 font-mono text-sm border-dashed border-2">
-                Combined rows will appear here
-              </div>
-            )}
-          </div>
-        </div>
+        )}
       </div>
-
-      {isFinished && (
-        <div className="panel p-5 bg-amber-400/5 border border-amber-400/20">
-          <div className="flex items-start gap-3">
-            <Lightbulb size={18} className="text-amber-400 mt-0.5 flex-shrink-0" />
-            <div>
-              <div className="font-semibold text-amber-300 mb-1">Key Takeaway</div>
-              <p className="text-sm text-zinc-400 leading-relaxed">
-                {(() => {
-                  const sNames = getTable("students").map((r) => r.name);
-                  const tNames = getTable("teachers").map((r) => r.name);
-                  const overlaps = sNames.filter((n) => tNames.includes(n));
-                  const overlapText = overlaps.length > 0 ? overlaps.join(" and ") : "none";
-                  return parsedAST?.set_op?.toUpperCase() === "UNION ALL"
-                    ? `UNION ALL kept all rows including duplicates, ${overlapText} appear twice.`
-                    : `UNION automatically removed duplicates, ${overlapText} appeared in both tables but only appear once.`;
-                })()} Both SELECT statements must return the same number of columns with compatible types.
-              </p>
+        </>
+      }
+      dataContent={
+        <>
+<div className="flex-1 flex flex-col min-h-[150px] shrink-0">
+          <Table
+            data={studentsTable}
+            title="Left: students"
+            highlightedRows={highlightedStudentRow !== -1 ? [studentsTable[highlightedStudentRow]?.id || highlightedStudentRow] : []}
+            highlightedColumns={["name"]}
+          />
+        </div>
+        <div className="flex-1 flex flex-col min-h-[150px] shrink-0">
+          <Table
+            data={teachersTable}
+            title="Right: teachers"
+            highlightedRows={highlightedTeacherRow !== -1 ? [teachersTable[highlightedTeacherRow]?.id || highlightedTeacherRow] : []}
+            highlightedColumns={["name"]}
+          />
+        </div>
+        <div className="flex-1 flex flex-col min-h-[250px] shrink-0">
+          {resultData.length > 0 || isFinished ? (
+            <Table data={resultData} title={`Result Set: ${parsedAST?.set_op?.toUpperCase() === "UNION ALL" ? "all rows (duplicates kept)" : "unique rows only"}`} highlightedColumns={["name"]} />
+          ) : (
+            <div className="panel h-full w-full flex items-center justify-center text-zinc-500 font-mono text-xs border-dashed border-2">
+              Combined rows will appear here
             </div>
-          </div>
+          )}
         </div>
-      )}
-
-      <div className="flex items-center justify-between pt-2 border-t border-zinc-800">
-        <Link to="/aliases" className="text-sm text-zinc-500 hover:text-zinc-300 transition-colors">← ALIASES</Link>
-        <Link to="/playground" className="inline-flex items-center gap-2 px-5 py-2.5 rounded-md bg-zinc-800 hover:bg-zinc-700 text-zinc-200 text-sm font-medium transition-all hover:scale-[1.02] group">
-          Next: Playground <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
-        </Link>
-      </div>
-    </div>
-  );
+        </>
+      }
+    />  );
 }

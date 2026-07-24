@@ -7,7 +7,8 @@ export default function Table({
   title = "table", 
   highlightedRows = [], 
   discardedRows = [],
-  highlightedColumns = []
+  highlightedColumns = [],
+  idPrefix = ""
 }) {
   if (!data || data.length === 0) return null;
   
@@ -28,7 +29,7 @@ export default function Table({
       </div>
       
       {/* Table Grid */}
-      <div className="overflow-auto bg-background flex-1">
+      <div className="overflow-auto bg-background flex-1" id={idPrefix ? `${idPrefix}-container` : undefined}>
         <table className="w-full text-sm text-left border-collapse">
           <thead className="text-xs text-muted-foreground bg-muted/30 sticky top-0 z-20 shadow-[0_1px_0_var(--border)]">
             <tr>
@@ -53,10 +54,12 @@ export default function Table({
               {data.map((row, idx) => {
                 const isHighlighted = highlightedRows.includes(row.id || idx);
                 const isDiscarded = discardedRows.includes(row.id || idx);
+                const rowId = idPrefix ? `${idPrefix}-row-${row.id || idx}` : undefined;
                 
                 return (
                   <motion.tr
                     key={row.id || idx}
+                    id={rowId}
                     initial={{ opacity: 0, y: -4 }}
                     animate={{ 
                       opacity: isDiscarded ? 0.3 : 1, 

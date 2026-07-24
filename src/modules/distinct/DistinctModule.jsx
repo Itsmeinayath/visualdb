@@ -1,9 +1,10 @@
-import { useEffect } from "react";
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import Table from "../../components/Table";
 import Query from "../../components/Query";
 import ChallengePanel from "../../components/ChallengePanel";
-import { CheckCircle2, Cpu, Layers, ArrowRight, Lightbulb } from "lucide-react";
+import { CheckCircle2, Cpu, Layers, ArrowRight, Lightbulb, ChevronUp, BookOpen , Code as CodeIcon, Book as BookIcon } from "lucide-react";
+import ModuleLayout from "../../components/ModuleLayout";
 import { useExecutionEngine } from "../../hooks/useExecutionEngine";
 import { useChallenges } from "../../hooks/useChallenges";
 
@@ -39,6 +40,7 @@ export default function DistinctModule() {
 
   const challenges = useChallenges(CHALLENGES);
 
+
   useEffect(() => {
     if (isFinished && resultSetData.length > 0) {
       challenges.checkAnswer(resultSetData, parsedAST);
@@ -53,47 +55,39 @@ export default function DistinctModule() {
   ];
 
   return (
-    <div className="flex flex-col p-6 md:p-8 max-w-7xl mx-auto gap-8">
-
-      <div className="flex flex-col gap-4">
-        <span className="bg-amber-400/10 text-amber-400 text-[10px] font-bold px-2 py-0.5 rounded-full border border-amber-400/20 self-start">Step 9 · Intermediate</span>
-        <header>
-          <h1 className="text-3xl font-bold mb-3 tracking-tight">The DISTINCT Keyword</h1>
-          <p className="text-muted-foreground text-base max-w-3xl leading-relaxed">
-            The <code className="mx-1 px-1.5 py-0.5 rounded bg-muted text-foreground border border-border text-sm font-mono">DISTINCT</code> keyword is used inside the <code className="text-pink-400 text-xs">SELECT</code> clause to eliminate duplicate rows from your results. It guarantees that every row returned in the final result set is completely unique.
-          </p>
-        </header>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div className="panel p-5 bg-zinc-900/50">
-            <h3 className="font-semibold text-sm text-zinc-300 mb-3">The Concept</h3>
-            <p className="text-sm text-zinc-400 leading-relaxed mb-3">
-              When a database engine evaluates a query with <code className="text-pink-400 text-xs">DISTINCT</code>, it processes each row and compares it against an internal **Deduplication Buffer** (often a Hash Set) in memory.
+    <ModuleLayout
+      theoryContent={
+        <>
+<div className="p-5 flex flex-col gap-6">
+          <header className="flex flex-col gap-2">
+            <span className="bg-amber-400/10 text-amber-400 text-[10px] font-bold px-2 py-0.5 rounded-full border border-amber-400/20 self-start">Step 9 · Intermediate</span>
+            <h1 className="text-3xl font-bold tracking-tight">The DISTINCT Keyword</h1>
+            <p className="text-muted-foreground text-sm leading-relaxed">
+              The <code className="mx-1 px-1.5 py-0.5 rounded bg-muted text-foreground border border-border text-xs font-mono">DISTINCT</code> keyword is used inside the <code className="text-pink-400 text-xs">SELECT</code> clause to eliminate duplicate rows from your results. It guarantees that every row returned in the final result set is completely unique.
             </p>
-            <p className="text-sm text-zinc-400 leading-relaxed">
-              If the projected values of a row have already been seen in the buffer, the row is discarded. If they are new, they are added to both the buffer and the final Result Set.
-            </p>
-          </div>
-          <div className="panel p-5 bg-zinc-900/50">
-            <h3 className="font-semibold text-sm text-zinc-300 mb-3">Syntax Examples</h3>
-            <div className="flex flex-col gap-3 font-mono text-[13px]">
-              <div className="bg-zinc-950 p-3 rounded border border-border">
-                <span className="text-zinc-500 block text-xs mb-1">-- Find all unique major names</span>
-                <span className="text-pink-500">SELECT DISTINCT</span> major <span className="text-pink-500">FROM</span> <span className="text-blue-400">students</span>;
+          </header>
+
+          <div className="flex flex-col gap-3">
+            <div className="panel p-4 bg-zinc-900/50">
+              <h3 className="font-semibold text-sm text-zinc-300 mb-2">The Concept</h3>
+              <p className="text-xs text-zinc-400 leading-relaxed mb-2">
+                When a database engine evaluates a query with <code className="text-pink-400 text-xs">DISTINCT</code>, it processes each row and compares it against an internal **Deduplication Buffer** (often a Hash Set) in memory.
+              </p>
+              <p className="text-xs text-zinc-400 leading-relaxed">
+                If the projected values of a row have already been seen in the buffer, the row is discarded. If they are new, they are added to both the buffer and the final Result Set.
+              </p>
+            </div>
+            <div className="panel p-4 bg-zinc-900/50">
+              <h3 className="font-semibold text-sm text-zinc-300 mb-2">Syntax Examples</h3>
+              <div className="flex flex-col gap-2 font-mono text-[11px]">
+                <div className="bg-zinc-950 p-2 rounded border border-border">
+                  <span className="text-zinc-500 block text-[10px] mb-1">-- Find all unique major names</span>
+                  <span className="text-pink-500">SELECT DISTINCT</span> major <span className="text-pink-500">FROM</span> <span className="text-blue-400">students</span>;
+                </div>
               </div>
             </div>
           </div>
-        </div>
-      </div>
 
-      <div className="h-px w-full bg-border" />
-      <div className="flex items-center gap-2 -mb-4">
-        <h2 className="text-lg font-bold">Live Execution Trace</h2>
-        <span className="px-2 py-0.5 rounded-full bg-accent/10 text-accent text-xs font-semibold">Interactive — try DISTINCT!</span>
-      </div>
-
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 min-h-[600px]">
-        <div className="col-span-1 lg:col-span-4 flex flex-col gap-6">
           <ChallengePanel
             current={challenges.current}
             currentIdx={challenges.currentIdx}
@@ -104,35 +98,72 @@ export default function DistinctModule() {
             onPrev={challenges.goPrev}
             onNext={challenges.goNext}
           />
-          <div className="h-52 shrink-0">
-            <Query
-              queryLines={queryLines}
-              value={queryInput}
-              onChange={setQueryInput}
-              activeLineIndex={step === 0 ? 0 : step === 1 ? 1 : step >= 2 && step <= 4 ? 0 : -1}
-              onRun={() => runQuery()}
-              onReset={resetQuery}
-              onPause={pauseQuery}
-              onStep={stepQuery}
-              isPlaying={isPlaying}
-              isFinished={isFinished}
-              isPaused={isPaused}
-              speed={speed}
-              onSpeedChange={setSpeed}
-            />
-          </div>
-          {parseError && <div className="panel p-3 border-red-500/30 bg-red-500/5 text-red-400 text-xs font-mono">{parseError}</div>}
-          <div className="panel p-4 flex flex-col gap-4">
-            <div className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider flex items-center gap-2 border-b border-border pb-2">
-              <Cpu size={14} /> What's happening
+
+          {isFinished && (
+            <div className="panel p-4 bg-amber-400/5 border border-amber-400/20">
+              <div className="flex items-start gap-3">
+                <Lightbulb size={16} className="text-amber-400 mt-0.5 flex-shrink-0" />
+                <div>
+                  <div className="font-semibold text-amber-300 text-sm mb-1">Key Takeaway</div>
+                  <p className="text-xs text-zinc-400 leading-relaxed">
+                    Notice that the original students table has 5 rows (2 with 'Computer Science'). When using <code className="text-pink-400 text-xs">DISTINCT</code>, the duplicates are removed, returning only 4 rows. If you write the query without `DISTINCT`, all 5 rows are returned.
+                  </p>
+                </div>
+              </div>
             </div>
-            <div className="h-36 flex flex-col justify-start font-mono text-[13px] gap-1">
-              {step === -1 && <div className="text-zinc-500 text-center pt-4">Ready.</div>}
+          )}
+
+          <div className="flex items-center justify-between pt-3 border-t border-zinc-800 mt-1">
+            <Link to="/leftjoin" className="text-xs text-zinc-500 hover:text-zinc-300 transition-colors flex items-center gap-1">
+              ← LEFT JOIN
+            </Link>
+            <Link
+              to="/aliases"
+              className="inline-flex items-center gap-2 px-4 py-2 rounded bg-zinc-800 hover:bg-zinc-700 text-zinc-200 text-xs font-medium transition-all hover:scale-[1.02] group"
+            >
+              Next: ALIASES
+              <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
+            </Link>
+          </div>
+        </div>
+        </>
+      }
+      editorContent={
+        <>
+{/* COLUMN 2: Editor & Trace */}
+      <div className="w-full lg:w-[35%] h-full flex flex-col bg-zinc-950 border-r border-border shrink-0">
+        <div className="h-1/2 flex flex-col border-b border-border">
+          <Query
+            queryLines={queryLines}
+            value={queryInput}
+            onChange={setQueryInput}
+            activeLineIndex={step === 0 ? 0 : step === 1 ? 1 : step >= 2 && step <= 4 ? 0 : -1}
+            onRun={() => runQuery()}
+            onReset={resetQuery}
+            onPause={pauseQuery}
+            onStep={stepQuery}
+            isPlaying={isPlaying}
+            isFinished={isFinished}
+            isPaused={isPaused}
+            speed={speed}
+            onSpeedChange={setSpeed}
+          />
+        </div>
+
+        {parseError ? (
+          <div className="p-4 bg-red-500/5 text-red-400 text-xs font-mono">{parseError}</div>
+        ) : (
+          <div className="h-1/2 flex flex-col bg-zinc-950/50">
+            <div className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider flex items-center gap-2 px-4 py-3 border-b border-border bg-zinc-900/30">
+              <Cpu size={14} /> Execution Trace
+            </div>
+            <div className="flex-1 p-4 font-mono text-xs gap-1.5 overflow-y-auto flex flex-col leading-relaxed">
+              {step === -1 && <div className="text-zinc-500 pt-2">Ready.</div>}
               {step === 0 && <div className="text-zinc-300 animate-pulse">Reading query...</div>}
               {step === 1 && <div className="text-zinc-300 animate-pulse">Scanning the <span className="text-blue-400">students</span> table...</div>}
               {step >= 2 && step <= 4 && <div className="text-zinc-300 animate-pulse">Loading rows into memory...</div>}
               {step === 7 && parsedAST.distinct === 'DISTINCT' && (
-                <div className="flex flex-col gap-3">
+                <div className="flex flex-col gap-2 mt-2">
                   <div className="text-accent flex items-center gap-2 animate-pulse">
                     <div className="w-3 h-3 rounded-full border border-accent border-t-transparent animate-spin" />
                     Deduplicating rows...
@@ -145,51 +176,32 @@ export default function DistinctModule() {
                 </div>
               )}
               {isFinished && (
-                <div className="text-emerald-400 font-medium flex flex-col gap-1">
-                  <div className="flex items-center gap-2"><CheckCircle2 size={16} /> Query execution complete!</div>
+                <div className="text-emerald-400 font-medium flex flex-col gap-1 mt-2">
+                  <div className="flex items-center gap-2"><CheckCircle2 size={14} /> Query execution complete!</div>
                   <div className="text-zinc-500 text-xs">Returned {resultSetData.length} unique rows.</div>
                 </div>
               )}
             </div>
           </div>
-        </div>
-
-        <div className="col-span-1 lg:col-span-8 flex flex-col gap-6 overflow-hidden">
-          <div className="flex-1 overflow-hidden min-h-[220px]">
-            <Table data={tableData} title={`Source table: ${activeTable}`} highlightedColumns={["major"]} />
-          </div>
-          <div className="flex-1 overflow-hidden min-h-[220px]">
-            {resultSetData.length > 0 || isFinished ? (
-              <Table data={resultSetData} title="Result Set" highlightedColumns={["major"]} />
-            ) : (
-              <div className="panel h-full w-full flex items-center justify-center text-zinc-500 font-mono text-sm border-dashed border-2">
-                Unique rows will appear here
-              </div>
-            )}
-          </div>
-        </div>
+        )}
       </div>
-
-      {isFinished && (
-        <div className="panel p-5 bg-amber-400/5 border border-amber-400/20">
-          <div className="flex items-start gap-3">
-            <Lightbulb size={18} className="text-amber-400 mt-0.5 flex-shrink-0" />
-            <div>
-              <div className="font-semibold text-amber-300 mb-1">Key Takeaway</div>
-              <p className="text-sm text-zinc-400 leading-relaxed">
-                Notice that the original students table has 5 rows (2 with 'Computer Science'). When using <code className="text-pink-400 text-xs">DISTINCT</code>, the duplicates are removed, returning only 4 rows. If you write the query without `DISTINCT`, all 5 rows are returned.
-              </p>
+        </>
+      }
+      dataContent={
+        <>
+<div className="flex-1 flex flex-col min-h-[250px] shrink-0">
+          <Table data={tableData} title={`Source table: ${activeTable}`} highlightedColumns={["major"]} />
+        </div>
+        <div className="flex-1 flex flex-col min-h-[250px] shrink-0">
+          {resultSetData.length > 0 || isFinished ? (
+            <Table data={resultSetData} title="Result Set" highlightedColumns={["major"]} />
+          ) : (
+            <div className="panel h-full w-full flex items-center justify-center text-zinc-500 font-mono text-xs border-dashed border-2">
+              Unique rows will appear here
             </div>
-          </div>
+          )}
         </div>
-      )}
-
-      <div className="flex items-center justify-between pt-2 border-t border-zinc-800">
-        <Link to="/leftjoin" className="text-sm text-zinc-500 hover:text-zinc-300 transition-colors">← LEFT JOIN</Link>
-        <Link to="/aliases" className="inline-flex items-center gap-2 px-5 py-2.5 rounded-md bg-zinc-800 hover:bg-zinc-700 text-zinc-200 text-sm font-medium transition-all hover:scale-[1.02] group">
-          Next: ALIASES <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
-        </Link>
-      </div>
-    </div>
-  );
+        </>
+      }
+    />  );
 }

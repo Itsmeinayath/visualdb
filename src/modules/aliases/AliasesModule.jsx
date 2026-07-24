@@ -3,7 +3,8 @@ import { Link } from "react-router-dom";
 import Table from "../../components/Table";
 import Query from "../../components/Query";
 import ChallengePanel from "../../components/ChallengePanel";
-import { CheckCircle2, Cpu, Tag, ArrowRight, Lightbulb } from "lucide-react";
+import { CheckCircle2, Cpu, Tag, ArrowRight, Lightbulb , Code as CodeIcon, Book as BookIcon } from "lucide-react";
+import ModuleLayout from "../../components/ModuleLayout";
 import { useExecutionEngine } from "../../hooks/useExecutionEngine";
 import { useChallenges } from "../../hooks/useChallenges";
 
@@ -56,48 +57,40 @@ export default function AliasesModule() {
   ];
 
   return (
-    <div className="flex flex-col p-6 md:p-8 max-w-7xl mx-auto gap-8">
-
-      <div className="flex flex-col gap-4">
-        <span className="bg-amber-400/10 text-amber-400 text-[10px] font-bold px-2 py-0.5 rounded-full border border-amber-400/20 self-start">Step 10 · Intermediate</span>
-        <header>
-          <h1 className="text-3xl font-bold mb-3 tracking-tight">Column & Table Aliases</h1>
-          <p className="text-muted-foreground text-base max-w-3xl leading-relaxed">
-            The <code className="mx-1 px-1.5 py-0.5 rounded bg-muted text-foreground border border-border text-sm font-mono">AS</code> keyword is used to rename a column or table temporarily in the query results. These renames are called **aliases**, and they help make query output headers cleaner and more readable.
-          </p>
-        </header>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div className="panel p-5 bg-zinc-900/50">
-            <h3 className="font-semibold text-sm text-zinc-300 mb-3">The Concept</h3>
-            <p className="text-sm text-zinc-400 leading-relaxed mb-3">
-              When the database engine projects columns (selects them for output), it looks at the `columns` AST node. If an alias is defined via `AS`, the engine outputs the column using the new name as the header key.
+    <ModuleLayout
+      theoryContent={
+        <>
+<div className="p-5 flex flex-col gap-6">
+          <header className="flex flex-col gap-2">
+            <span className="bg-amber-400/10 text-amber-400 text-[10px] font-bold px-2 py-0.5 rounded-full border border-amber-400/20 self-start">Step 10 · Intermediate</span>
+            <h1 className="text-3xl font-bold tracking-tight">Column & Table Aliases</h1>
+            <p className="text-muted-foreground text-sm leading-relaxed">
+              The <code className="mx-1 px-1.5 py-0.5 rounded bg-muted text-foreground border border-border text-xs font-mono">AS</code> keyword is used to rename a column or table temporarily in the query results. These renames are called **aliases**, and they help make query output headers cleaner and more readable.
             </p>
-            <p className="text-sm text-zinc-400 leading-relaxed">
-              Aliases are also vital when using **aggregate functions** (e.g. `COUNT(*) AS total_students`), so the final column name doesn't default to a weird system string.
-            </p>
-          </div>
-          <div className="panel p-5 bg-zinc-900/50">
-            <h3 className="font-semibold text-sm text-zinc-300 mb-3">Syntax Examples</h3>
-            <div className="flex flex-col gap-3 font-mono text-[13px]">
-              <div className="bg-zinc-950 p-3 rounded border border-border">
-                <span className="text-zinc-500 block text-xs mb-1">-- Rename name and age</span>
-                <span className="text-pink-500">SELECT</span> name <span className="text-pink-500">AS</span> student_name, age <span className="text-pink-500">AS</span> years<br/>
-                <span className="text-pink-500">FROM</span> students;
+          </header>
+
+          <div className="flex flex-col gap-3">
+            <div className="panel p-4 bg-zinc-900/50">
+              <h3 className="font-semibold text-sm text-zinc-300 mb-2">The Concept</h3>
+              <p className="text-xs text-zinc-400 leading-relaxed mb-2">
+                When the database engine projects columns (selects them for output), it looks at the `columns` AST node. If an alias is defined via `AS`, the engine outputs the column using the new name as the header key.
+              </p>
+              <p className="text-xs text-zinc-400 leading-relaxed">
+                Aliases are also vital when using **aggregate functions** (e.g. `COUNT(*) AS total_students`), so the final column name doesn't default to a weird system string.
+              </p>
+            </div>
+            <div className="panel p-4 bg-zinc-900/50">
+              <h3 className="font-semibold text-sm text-zinc-300 mb-2">Syntax Examples</h3>
+              <div className="flex flex-col gap-2 font-mono text-[11px]">
+                <div className="bg-zinc-950 p-2 rounded border border-border">
+                  <span className="text-zinc-500 block text-[10px] mb-1">-- Rename name and age</span>
+                  <span className="text-pink-500">SELECT</span> name <span className="text-pink-500">AS</span> student_name, age <span className="text-pink-500">AS</span> years<br/>
+                  <span className="text-pink-500">FROM</span> students;
+                </div>
               </div>
             </div>
           </div>
-        </div>
-      </div>
 
-      <div className="h-px w-full bg-border" />
-      <div className="flex items-center gap-2 -mb-4">
-        <h2 className="text-lg font-bold">Live Execution Trace</h2>
-        <span className="px-2 py-0.5 rounded-full bg-accent/10 text-accent text-xs font-semibold">Interactive — try renaming fields!</span>
-      </div>
-
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 min-h-[600px]">
-        <div className="col-span-1 lg:col-span-4 flex flex-col gap-6">
           <ChallengePanel
             current={challenges.current}
             currentIdx={challenges.currentIdx}
@@ -108,35 +101,72 @@ export default function AliasesModule() {
             onPrev={challenges.goPrev}
             onNext={challenges.goNext}
           />
-          <div className="h-52 shrink-0">
-            <Query
-              queryLines={queryLines}
-              value={queryInput}
-              onChange={setQueryInput}
-              activeLineIndex={step === 0 ? 0 : step === 1 ? 1 : step >= 2 && step <= 4 ? 0 : -1}
-              onRun={() => runQuery()}
-              onReset={resetQuery}
-              onPause={pauseQuery}
-              onStep={stepQuery}
-              isPlaying={isPlaying}
-              isFinished={isFinished}
-              isPaused={isPaused}
-              speed={speed}
-              onSpeedChange={setSpeed}
-            />
-          </div>
-          {parseError && <div className="panel p-3 border-red-500/30 bg-red-500/5 text-red-400 text-xs font-mono">{parseError}</div>}
-          <div className="panel p-4 flex flex-col gap-4">
-            <div className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider flex items-center gap-2 border-b border-border pb-2">
-              <Cpu size={14} /> What's happening
+
+          {isFinished && (
+            <div className="panel p-4 bg-amber-400/5 border border-amber-400/20">
+              <div className="flex items-start gap-3">
+                <Lightbulb size={16} className="text-amber-400 mt-0.5 flex-shrink-0" />
+                <div>
+                  <div className="font-semibold text-amber-300 text-sm mb-1">Key Takeaway</div>
+                  <p className="text-xs text-zinc-400 leading-relaxed">
+                    Aliases are purely cosmetic—they do not affect how the database filters or sorts rows internally. They only modify the final presentation headers so your applications receive cleaner key names.
+                  </p>
+                </div>
+              </div>
             </div>
-            <div className="h-36 flex flex-col justify-start font-mono text-[13px] gap-1">
-              {step === -1 && <div className="text-zinc-500 text-center pt-4">Ready.</div>}
+          )}
+
+          <div className="flex items-center justify-between pt-3 border-t border-zinc-800 mt-1">
+            <Link to="/distinct" className="text-xs text-zinc-500 hover:text-zinc-300 transition-colors flex items-center gap-1">
+              ← DISTINCT
+            </Link>
+            <Link
+              to="/union"
+              className="inline-flex items-center gap-2 px-4 py-2 rounded bg-zinc-800 hover:bg-zinc-700 text-zinc-200 text-xs font-medium transition-all hover:scale-[1.02] group"
+            >
+              Next: UNION
+              <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
+            </Link>
+          </div>
+        </div>
+        </>
+      }
+      editorContent={
+        <>
+{/* COLUMN 2: Editor & Trace */}
+      <div className="w-full lg:w-[35%] h-full flex flex-col bg-zinc-950 border-r border-border shrink-0">
+        <div className="h-1/2 flex flex-col border-b border-border">
+          <Query
+            queryLines={queryLines}
+            value={queryInput}
+            onChange={setQueryInput}
+            activeLineIndex={step === 0 ? 0 : step === 1 ? 1 : step >= 2 && step <= 4 ? 0 : -1}
+            onRun={() => runQuery()}
+            onReset={resetQuery}
+            onPause={pauseQuery}
+            onStep={stepQuery}
+            isPlaying={isPlaying}
+            isFinished={isFinished}
+            isPaused={isPaused}
+            speed={speed}
+            onSpeedChange={setSpeed}
+          />
+        </div>
+
+        {parseError ? (
+          <div className="p-4 bg-red-500/5 text-red-400 text-xs font-mono">{parseError}</div>
+        ) : (
+          <div className="h-1/2 flex flex-col bg-zinc-950/50">
+            <div className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider flex items-center gap-2 px-4 py-3 border-b border-border bg-zinc-900/30">
+              <Cpu size={14} /> Execution Trace
+            </div>
+            <div className="flex-1 p-4 font-mono text-xs gap-1.5 overflow-y-auto flex flex-col leading-relaxed">
+              {step === -1 && <div className="text-zinc-500 pt-2">Ready.</div>}
               {step === 0 && <div className="text-zinc-300 animate-pulse">Reading query...</div>}
               {step === 1 && <div className="text-zinc-300 animate-pulse">Scanning the <span className="text-blue-400">students</span> table...</div>}
               {step >= 2 && step <= 4 && <div className="text-zinc-300 animate-pulse">Loading rows...</div>}
               {step === 7 && (
-                <div className="flex flex-col gap-3">
+                <div className="flex flex-col gap-2 mt-2">
                   <div className="text-accent flex items-center gap-2 animate-pulse">
                     <div className="w-3 h-3 rounded-full border border-accent border-t-transparent animate-spin" />
                     Projecting results...
@@ -149,51 +179,32 @@ export default function AliasesModule() {
                 </div>
               )}
               {isFinished && (
-                <div className="text-emerald-400 font-medium flex flex-col gap-1">
-                  <div className="flex items-center gap-2"><CheckCircle2 size={16} /> Query execution complete!</div>
+                <div className="text-emerald-400 font-medium flex flex-col gap-1 mt-2">
+                  <div className="flex items-center gap-2"><CheckCircle2 size={14} /> Query execution complete!</div>
                   <div className="text-zinc-500 text-xs">Mapped results to the requested aliases.</div>
                 </div>
               )}
             </div>
           </div>
-        </div>
-
-        <div className="col-span-1 lg:col-span-8 flex flex-col gap-6 overflow-hidden">
-          <div className="flex-1 overflow-hidden min-h-[220px]">
-            <Table data={tableData} title={`Source table: ${activeTable}`} highlightedColumns={["name", "gpa", "major"]} />
-          </div>
-          <div className="flex-1 overflow-hidden min-h-[220px]">
-            {resultSetData.length > 0 || isFinished ? (
-              <Table data={resultSetData} title="Result Set (with custom headers)" />
-            ) : (
-              <div className="panel h-full w-full flex items-center justify-center text-zinc-500 font-mono text-sm border-dashed border-2">
-                Aliased output will appear here
-              </div>
-            )}
-          </div>
-        </div>
+        )}
       </div>
-
-      {isFinished && (
-        <div className="panel p-5 bg-amber-400/5 border border-amber-400/20">
-          <div className="flex items-start gap-3">
-            <Lightbulb size={18} className="text-amber-400 mt-0.5 flex-shrink-0" />
-            <div>
-              <div className="font-semibold text-amber-300 mb-1">Key Takeaway</div>
-              <p className="text-sm text-zinc-400 leading-relaxed">
-                Aliases are purely cosmetic—they do not affect how the database filters or sorts rows internally. They only modify the final presentation headers so your applications receive cleaner key names.
-              </p>
+        </>
+      }
+      dataContent={
+        <>
+<div className="flex-1 flex flex-col min-h-[250px] shrink-0">
+          <Table data={tableData} title={`Source table: ${activeTable}`} highlightedColumns={["name", "gpa", "major"]} />
+        </div>
+        <div className="flex-1 flex flex-col min-h-[250px] shrink-0">
+          {resultSetData.length > 0 || isFinished ? (
+            <Table data={resultSetData} title="Result Set (with custom headers)" />
+          ) : (
+            <div className="panel h-full w-full flex items-center justify-center text-zinc-500 font-mono text-xs border-dashed border-2">
+              Aliased output will appear here
             </div>
-          </div>
+          )}
         </div>
-      )}
-
-      <div className="flex items-center justify-between pt-2 border-t border-zinc-800">
-        <Link to="/distinct" className="text-sm text-zinc-500 hover:text-zinc-300 transition-colors">← DISTINCT</Link>
-        <Link to="/union" className="inline-flex items-center gap-2 px-5 py-2.5 rounded-md bg-zinc-800 hover:bg-zinc-700 text-zinc-200 text-sm font-medium transition-all hover:scale-[1.02] group">
-          Next: UNION <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
-        </Link>
-      </div>
-    </div>
-  );
+        </>
+      }
+    />  );
 }
