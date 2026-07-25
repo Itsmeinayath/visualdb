@@ -1,0 +1,7 @@
+[
+  { "id": 101, "name": "Sarah Connor", "department": "Security", "salary": 85000, "years_active": 5 },
+  { "id": 102, "name": "John Smith", "department": "Engineering", "salary": 92000, "years_active": 3 },
+  { "id": 103, "name": "Emily Chen", "department": "Marketing", "salary": 68000, "years_active": 1 },
+  { "id": 104, "name": "Michael Chang", "department": "Engineering", "salary": 110000, "years_active": 8 },
+  { "id": 105, "name": "Jessica Day", "department": "Education", "salary": 55000, "years_active": 4 }
+]

@@ -1,0 +1,142 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-display: "Inter", system-ui, -apple-system, sans-serif;
+  --font-mono: "Fira Code", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+
+  /* Strict Zinc / Linear Aesthetic */
+  --color-zinc-950: #09090b;
+  --color-zinc-900: #18181b;
+  --color-zinc-800: #27272a;
+  --color-zinc-400: #a1a1aa;
+  
+  /* Accent: Stripe/Linear Indigo */
+  --color-accent-indigo: #6366f1;
+  --color-accent-indigo-light: #818cf8;
+}
+
+@layer base {
+  :root {
+    --background: #ffffff;
+    --foreground: #09090b;
+    --card: #ffffff;
+    --card-foreground: #09090b;
+    --border: #e4e4e7;
+    --primary: #18181b;
+    --primary-foreground: #ffffff;
+    --muted: #f4f4f5;
+    --muted-foreground: #71717a;
+    --accent: #6366f1;
+    --danger: #ef4444;
+    --success: #10b981;
+    --selection-bg: #6366f1;
+    --selection-fg: #ffffff;
+  }
+
+  .dark {
+    --background: #09090b; /* zinc-950 */
+    --foreground: #fafafa; /* zinc-50 */
+    --card: #09090b; 
+    --card-foreground: #fafafa;
+    --border: #27272a; /* zinc-800 */
+    --primary: #fafafa;
+    --primary-foreground: #09090b;
+    --muted: #18181b; /* zinc-900 */
+    --muted-foreground: #a1a1aa; /* zinc-400 */
+    --accent: #6366f1;
+    --danger: #ef4444;
+    --success: #10b981;
+    --selection-bg: #6366f1;
+    --selection-fg: #ffffff;
+  }
+
+  * {
+    border-color: var(--border);
+  }
+
+  /* Global text selection — high contrast indigo highlight across light and dark themes */
+  ::selection {
+    background-color: var(--selection-bg);
+    color: var(--selection-fg);
+  }
+
+  ::-moz-selection {
+    background-color: var(--selection-bg);
+    color: var(--selection-fg);
+  }
+
+  /* Code editors and text inputs explicit selection rule */
+  textarea::selection,
+  input::selection,
+  pre::selection,
+  code::selection,
+  .query-textarea::selection,
+  .npm__react-simple-code-editor__textarea::selection {
+    background-color: var(--selection-bg);
+    color: var(--selection-fg);
+  }
+
+  textarea::-moz-selection,
+  input::-moz-selection,
+  pre::-moz-selection,
+  code::-moz-selection,
+  .query-textarea::-moz-selection,
+  .npm__react-simple-code-editor__textarea::-moz-selection {
+    background-color: var(--selection-bg);
+    color: var(--selection-fg);
+  }
+
+  body {
+    background-color: var(--background);
+    color: var(--foreground);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  /* Scrollbar for SaaS look */
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: var(--border);
+    border-radius: 4px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: var(--muted-foreground);
+  }
+}
+
+@layer utilities {
+  .panel {
+    background-color: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 0.5rem;
+    box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  }
+  
+  .dark .panel {
+    background-color: var(--card);
+    border: 1px solid var(--border);
+    box-shadow: none;
+  }
+  
+  /* SaaS glowing grid background */
+  .bg-grid-pattern {
+    background-size: 40px 40px;
+    background-image: linear-gradient(to right, rgba(0, 0, 0, 0.04) 1px, transparent 1px),
+                      linear-gradient(to bottom, rgba(0, 0, 0, 0.04) 1px, transparent 1px);
+    mask-image: linear-gradient(to bottom, transparent, black 10%, black 90%, transparent);
+    -webkit-mask-image: linear-gradient(to bottom, transparent, black 10%, black 90%, transparent);
+  }
+  
+  .dark .bg-grid-pattern {
+    background-image: linear-gradient(to right, rgba(255, 255, 255, 0.05) 1px, transparent 1px),
+                      linear-gradient(to bottom, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+  }
+}

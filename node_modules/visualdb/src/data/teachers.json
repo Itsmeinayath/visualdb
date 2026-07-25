@@ -1,0 +1,7 @@
+[
+  { "id": 1, "name": "Karim Ashraf", "department": "CS", "years_experience": 10 },
+  { "id": 2, "name": "Doaa Shawky", "department": "Math", "years_experience": 8 },
+  { "id": 3, "name": "Bob Smith", "department": "Physics", "years_experience": 15 },
+  { "id": 4, "name": "Ali Zidan", "department": "Biology", "years_experience": 12 },
+  { "id": 5, "name": "Evan Wright", "department": "CS", "years_experience": 20 }
+]
