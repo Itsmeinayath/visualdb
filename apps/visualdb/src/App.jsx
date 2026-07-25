@@ -1,4 +1,5 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { Analytics } from "@vercel/analytics/react";
 import Layout from "./components/Layout";
 import Home from "./pages/Home";
 import SelectModule from "./modules/select/SelectModule";
@@ -34,6 +35,7 @@ function App() {
           <Route path="union" element={<UnionModule />} />
         </Route>
       </Routes>
+      <Analytics />
     </Router>
   );
 }

@@ -8,5 +8,8 @@
   "scripts": {
     "dev": "npm run dev --workspaces --if-present",
     "build": "npm run build --workspaces --if-present"
+  },
+  "dependencies": {
+    "@vercel/analytics": "^2.0.1"
   }
 }
