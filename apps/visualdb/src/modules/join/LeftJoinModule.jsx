@@ -265,7 +265,7 @@ export default function LeftJoinModule() {
           />
         </div>
         
-        {currentRowIdx !== -1 && currentRightRowIdx !== -1 && (
+        {currentRowIdx !== -1 && currentRightRowIdx !== -1 && currentRowIdx < tableData.length && currentRightRowIdx < rightTableData.length && (
           <Xarrow
             start={`left-row-${tableData[currentRowIdx]?.id || currentRowIdx}`}
             end={`right-row-${rightTableData[currentRightRowIdx]?.course_id || currentRightRowIdx}`}
