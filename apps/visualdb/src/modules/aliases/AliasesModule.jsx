@@ -38,7 +38,7 @@ export default function AliasesModule() {
     isPlaying, isPaused, isFinished, step,
     activeTable, tableData, parsedAST,
     resultSetData, runQuery, resetQuery,
-    pauseQuery, stepQuery, speed, setSpeed, parseError,
+    pauseQuery, stepQuery, speed, setSpeed, parseError, queryScore,
   } = useExecutionEngine("SELECT name AS student_name, gpa AS score\nFROM students;");
 
   const challenges = useChallenges(CHALLENGES);
@@ -149,6 +149,7 @@ export default function AliasesModule() {
             isPaused={isPaused}
             speed={speed}
             onSpeedChange={setSpeed}
+            queryScore={queryScore}
           />
         </div>
 

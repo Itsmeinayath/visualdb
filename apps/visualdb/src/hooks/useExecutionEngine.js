@@ -25,6 +25,7 @@ export function useExecutionEngine(initialQuery = "") {
   const [tableData, setTableData] = useState([]);
   const [parsedAST, setParsedAST] = useState(null);
   const [parseError, setParseError] = useState(null);
+  const [queryScore, setQueryScore] = useState(null);
 
   const [highlightedRows, setHighlightedRows] = useState([]);
   const [checkingCondition, setCheckingCondition] = useState(false);
@@ -99,6 +100,7 @@ export function useExecutionEngine(initialQuery = "") {
       setParseError(null);
 
       // Start Animation
+      import("../utils/sounds").then((m) => m.sounds.playBoot());
       setIsPlaying(true);
       setIsPaused(false);
       setIsFinished(false);
@@ -108,7 +110,16 @@ export function useExecutionEngine(initialQuery = "") {
       setHasMatchInInnerLoop(false);
       setHighlightedRows([]);
       setResultSetData([]);
+
+      // Calculate Query Efficiency Score
+      let score = "A-Tier";
+      if (!ast.where) score = "Warning: High Memory Overhead (No WHERE clause)";
+      if (ast.columns && ast.columns.length === 1 && ast.columns[0].expr?.type === "star") score = "B-Tier (Select *)";
+      if (ast.from && ast.from.length > 1) score = "S-Tier (Optimized JOIN)";
+      setQueryScore(score);
+
     } catch (err) {
+      import("../utils/sounds").then((m) => m.sounds.playError());
       setParseError(err.message || "Syntax error in SQL query.");
     }
   };
@@ -143,6 +154,7 @@ export function useExecutionEngine(initialQuery = "") {
     setHighlightedRows([]);
     setResultSetData([]);
     setParseError(null);
+    setQueryScore(null);
     stepResolveRef.current = null;
   };
 
@@ -224,6 +236,7 @@ export function useExecutionEngine(initialQuery = "") {
                 : true;
 
               if (isMatch) {
+                import("../utils/sounds").then((m) => m.sounds.playNodeConnect());
                 setHasMatchInInnerLoop(true);
                 const passesWhere = parsedAST.where
                   ? evaluateCondition(parsedAST.where, combinedRow)
@@ -281,6 +294,7 @@ export function useExecutionEngine(initialQuery = "") {
               : true;
 
             if (isMatch) {
+              import("../utils/sounds").then((m) => m.sounds.playNodeConnect());
               setHighlightedRows((prev) => [
                 ...prev,
                 leftRow.id || leftRow.order_id || currentRowIdx,
@@ -408,7 +422,9 @@ export function useExecutionEngine(initialQuery = "") {
           projected = projected.slice(0, limitValue);
         }
         return projected;
+        return projected;
       });
+      import("../utils/sounds").then((m) => m.sounds.playSuccess());
       setIsPlaying(false);
       setIsFinished(true);
     }
@@ -463,6 +479,7 @@ export function useExecutionEngine(initialQuery = "") {
     resultSetData,
     speed,
     setSpeed,
+    queryScore,
     runQuery,
     resetQuery,
     pauseQuery,

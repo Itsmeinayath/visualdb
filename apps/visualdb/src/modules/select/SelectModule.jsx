@@ -211,6 +211,7 @@ export default function SelectModule() {
                 isPaused={isPaused}
                 speed={speed}
                 onSpeedChange={setSpeed}
+            queryScore={queryScore}
               />
               {parseError && (
                 <div className="absolute bottom-3 left-3 right-3 panel p-2 border-red-500/30 bg-red-500/5 text-red-400 text-[10px] font-mono">

@@ -43,7 +43,7 @@ export default function InnerJoinModule() {
     currentRowIdx, currentRightRowIdx,
     parsedAST, resultSetData, checkingCondition,
     runQuery, resetQuery,
-    pauseQuery, stepQuery, speed, setSpeed, parseError,
+    pauseQuery, stepQuery, speed, setSpeed, parseError, queryScore,
   } = useExecutionEngine("SELECT *\nFROM students\nINNER JOIN courses\n  ON students.course_id = courses.course_id;");
 
   const challenges = useChallenges(CHALLENGES);
@@ -164,6 +164,7 @@ export default function InnerJoinModule() {
             isPaused={isPaused}
             speed={speed}
             onSpeedChange={setSpeed}
+            queryScore={queryScore}
           />
         </div>
 
@@ -258,9 +259,10 @@ export default function InnerJoinModule() {
           <Table
             data={rightTableData}
             title="Right: courses"
-            highlightedRows={currentRightRowIdx !== -1 ? [rightTableData[currentRightRowIdx]?.course_id || currentRightRowIdx] : []}
+            highlightedRows={currentRightRowIdx !== -1 ? [rightTableData[currentRightRowIdx]?.course_id ?? currentRightRowIdx] : []}
             highlightedColumns={["course_id"]}
             idPrefix="right"
+            primaryKey="course_id"
           />
         </div>
         

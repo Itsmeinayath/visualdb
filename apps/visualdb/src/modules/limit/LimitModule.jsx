@@ -35,7 +35,7 @@ export default function LimitModule() {
     isPlaying, isPaused, isFinished, step,
     activeTable, tableData, parsedAST,
     resultSetData, runQuery, resetQuery,
-    pauseQuery, stepQuery, speed, setSpeed, parseError,
+    pauseQuery, stepQuery, speed, setSpeed, parseError, queryScore,
   } = useExecutionEngine("SELECT *\nFROM students\nORDER BY gpa DESC\nLIMIT 3;");
 
   const challenges = useChallenges(CHALLENGES);
@@ -154,6 +154,7 @@ export default function LimitModule() {
             isPaused={isPaused}
             speed={speed}
             onSpeedChange={setSpeed}
+            queryScore={queryScore}
           />
         </div>
 

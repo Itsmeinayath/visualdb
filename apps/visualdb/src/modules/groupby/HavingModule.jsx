@@ -35,7 +35,7 @@ export default function HavingModule() {
     isPlaying, isPaused, isFinished, step,
     activeTable, tableData, parsedAST,
     resultSetData, runQuery, resetQuery,
-    pauseQuery, stepQuery, speed, setSpeed, parseError,
+    pauseQuery, stepQuery, speed, setSpeed, parseError, queryScore,
   } = useExecutionEngine("SELECT major, COUNT(*)\nFROM students\nGROUP BY major\nHAVING COUNT(*) > 1;");
 
   const challenges = useChallenges(CHALLENGES);
@@ -149,6 +149,7 @@ export default function HavingModule() {
             isPaused={isPaused}
             speed={speed}
             onSpeedChange={setSpeed}
+            queryScore={queryScore}
           />
         </div>
 

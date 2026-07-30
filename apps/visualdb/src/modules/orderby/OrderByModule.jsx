@@ -43,7 +43,7 @@ export default function OrderByModule() {
     isPlaying, isPaused, isFinished, step,
     activeTable, tableData, parsedAST,
     resultSetData, runQuery, resetQuery,
-    pauseQuery, stepQuery, speed, setSpeed, parseError,
+    pauseQuery, stepQuery, speed, setSpeed, parseError, queryScore,
   } = useExecutionEngine("SELECT *\nFROM students\nORDER BY gpa DESC;");
 
   const challenges = useChallenges(CHALLENGES);
@@ -159,6 +159,7 @@ export default function OrderByModule() {
             isPaused={isPaused}
             speed={speed}
             onSpeedChange={setSpeed}
+            queryScore={queryScore}
           />
         </div>
 

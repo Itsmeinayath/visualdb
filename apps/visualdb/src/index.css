@@ -5,65 +5,82 @@
   --font-display: "Inter", system-ui, -apple-system, sans-serif;
   --font-mono: "Fira Code", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
 
-  /* Strict Zinc / Linear Aesthetic */
-  --color-zinc-950: #09090b;
-  --color-zinc-900: #18181b;
-  --color-zinc-800: #27272a;
-  --color-zinc-400: #a1a1aa;
+  /* Hacknet Neon Aesthetic */
+  --color-zinc-950: #040804;
+  --color-zinc-900: #091209;
+  --color-zinc-800: #132713;
+  --color-zinc-400: #3b8a3b;
   
-  /* Accent: Stripe/Linear Indigo */
-  --color-accent-indigo: #6366f1;
-  --color-accent-indigo-light: #818cf8;
+  /* Accent: Neon Green */
+  --color-accent-indigo: #00ff00;
+  --color-accent-indigo-light: #55ff55;
 }
 
 @layer base {
   :root {
-    --background: #ffffff;
-    --foreground: #09090b;
-    --card: #ffffff;
-    --card-foreground: #09090b;
-    --border: #e4e4e7;
-    --primary: #18181b;
-    --primary-foreground: #ffffff;
-    --muted: #f4f4f5;
-    --muted-foreground: #71717a;
-    --accent: #6366f1;
-    --danger: #ef4444;
-    --success: #10b981;
-    --selection-bg: #6366f1;
-    --selection-fg: #ffffff;
+    --background: #040804;
+    --foreground: #55ff55;
+    --card: #040804;
+    --card-foreground: #55ff55;
+    --border: #132713;
+    --primary: #091209;
+    --primary-foreground: #00ff00;
+    --muted: #091209;
+    --muted-foreground: #3b8a3b;
+    --accent: #00ff00;
+    --danger: #ff003c;
+    --success: #00ff00;
+    --selection-bg: #00ff00;
+    --selection-fg: #040804;
   }
 
   .dark {
-    --background: #09090b; /* zinc-950 */
-    --foreground: #fafafa; /* zinc-50 */
-    --card: #09090b; 
-    --card-foreground: #fafafa;
-    --border: #27272a; /* zinc-800 */
-    --primary: #fafafa;
-    --primary-foreground: #09090b;
-    --muted: #18181b; /* zinc-900 */
-    --muted-foreground: #a1a1aa; /* zinc-400 */
-    --accent: #6366f1;
-    --danger: #ef4444;
-    --success: #10b981;
-    --selection-bg: #6366f1;
-    --selection-fg: #ffffff;
+    --background: #040804;
+    --foreground: #55ff55;
+    --card: #040804;
+    --card-foreground: #55ff55;
+    --border: #132713;
+    --primary: #091209;
+    --primary-foreground: #00ff00;
+    --muted: #091209;
+    --muted-foreground: #3b8a3b;
+    --accent: #00ff00;
+    --danger: #ff003c;
+    --success: #00ff00;
+    --selection-bg: #00ff00;
+    --selection-fg: #040804;
   }
 
   * {
     border-color: var(--border);
   }
 
-  /* Global text selection — high contrast indigo highlight across light and dark themes */
+  /* CRT Scanlines Overlay */
+  body::before {
+    content: " ";
+    display: block;
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+    z-index: 999;
+    background-size: 100% 2px, 3px 100%;
+    pointer-events: none;
+  }
+
+  /* Global text selection */
   ::selection {
     background-color: var(--selection-bg);
     color: var(--selection-fg);
+    text-shadow: none;
   }
 
   ::-moz-selection {
     background-color: var(--selection-bg);
     color: var(--selection-fg);
+    text-shadow: none;
   }
 
   /* Code editors and text inputs explicit selection rule */

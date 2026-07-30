@@ -43,7 +43,7 @@ export default function LeftJoinModule() {
     currentRowIdx, currentRightRowIdx,
     parsedAST, resultSetData, checkingCondition,
     runQuery, resetQuery,
-    pauseQuery, stepQuery, speed, setSpeed, parseError,
+    pauseQuery, stepQuery, speed, setSpeed, parseError, queryScore,
   } = useExecutionEngine("SELECT *\nFROM students\nLEFT JOIN courses\n  ON students.course_id = courses.course_id;");
 
   const challenges = useChallenges(CHALLENGES);
@@ -165,6 +165,7 @@ export default function LeftJoinModule() {
             isPaused={isPaused}
             speed={speed}
             onSpeedChange={setSpeed}
+            queryScore={queryScore}
           />
         </div>
 
@@ -259,9 +260,10 @@ export default function LeftJoinModule() {
           <Table
             data={rightTableData}
             title="Right: courses"
-            highlightedRows={currentRightRowIdx !== -1 ? [rightTableData[currentRightRowIdx]?.course_id || currentRightRowIdx] : []}
+            highlightedRows={currentRightRowIdx !== -1 ? [rightTableData[currentRightRowIdx]?.course_id ?? currentRightRowIdx] : []}
             highlightedColumns={["course_id"]}
             idPrefix="right"
+            primaryKey="course_id"
           />
         </div>
         

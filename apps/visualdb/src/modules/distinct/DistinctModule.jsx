@@ -35,7 +35,7 @@ export default function DistinctModule() {
     isPlaying, isPaused, isFinished, step,
     activeTable, tableData, parsedAST,
     resultSetData, runQuery, resetQuery,
-    pauseQuery, stepQuery, speed, setSpeed, parseError,
+    pauseQuery, stepQuery, speed, setSpeed, parseError, queryScore,
   } = useExecutionEngine("SELECT major\nFROM students;");
 
   const challenges = useChallenges(CHALLENGES);
@@ -146,6 +146,7 @@ export default function DistinctModule() {
             isPaused={isPaused}
             speed={speed}
             onSpeedChange={setSpeed}
+            queryScore={queryScore}
           />
         </div>
 

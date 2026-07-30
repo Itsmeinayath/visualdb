@@ -8,7 +8,8 @@ export default function Table({
   highlightedRows = [], 
   discardedRows = [],
   highlightedColumns = [],
-  idPrefix = ""
+  idPrefix = "",
+  primaryKey = "id"
 }) {
   if (!data || data.length === 0) return null;
   
@@ -52,13 +53,14 @@ export default function Table({
           <tbody className="font-mono text-[13px]">
             <AnimatePresence>
               {data.map((row, idx) => {
-                const isHighlighted = highlightedRows.includes(row.id || idx);
-                const isDiscarded = discardedRows.includes(row.id || idx);
-                const rowId = idPrefix ? `${idPrefix}-row-${row.id || idx}` : undefined;
+                const pkValue = row[primaryKey] ?? idx;
+                const isHighlighted = highlightedRows.includes(pkValue);
+                const isDiscarded = discardedRows.includes(pkValue);
+                const rowId = idPrefix ? `${idPrefix}-row-${pkValue}` : undefined;
                 
                 return (
                   <motion.tr
-                    key={row.id || idx}
+                    key={pkValue}
                     id={rowId}
                     initial={{ opacity: 0, y: -4 }}
                     animate={{ 

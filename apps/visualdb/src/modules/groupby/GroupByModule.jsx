@@ -44,7 +44,7 @@ export default function GroupByModule() {
     isPlaying, isPaused, isFinished, step,
     activeTable, tableData, parsedAST,
     resultSetData, runQuery, resetQuery,
-    pauseQuery, stepQuery, speed, setSpeed, parseError,
+    pauseQuery, stepQuery, speed, setSpeed, parseError, queryScore,
   } = useExecutionEngine("SELECT major, COUNT(*)\nFROM students\nGROUP BY major;");
 
   const challenges = useChallenges(CHALLENGES);
@@ -160,6 +160,7 @@ export default function GroupByModule() {
             isPaused={isPaused}
             speed={speed}
             onSpeedChange={setSpeed}
+            queryScore={queryScore}
           />
         </div>
 
