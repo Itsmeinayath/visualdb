@@ -1,79 +1,38 @@
-import { useState, useRef } from 'react';
+import { useState } from 'react';
 import { cn } from '../utils/cn';
-import { BookOpen, Terminal, PanelLeftClose, PanelLeftOpen } from 'lucide-react';
+import { BookOpen, Terminal } from 'lucide-react';
 import { Panel, PanelGroup, PanelResizeHandle } from "react-resizable-panels";
 
 export default function ModuleLayout({ theoryContent, editorContent, dataContent }) {
   const [activeTab, setActiveTab] = useState('theory');
-  const [isLessonCollapsed, setIsLessonCollapsed] = useState(false);
-  const theoryPanelRef = useRef(null);
-
-  const toggleLesson = () => {
-    const panel = theoryPanelRef.current;
-    if (panel) {
-      if (isLessonCollapsed) {
-        panel.expand();
-        setIsLessonCollapsed(false);
-      } else {
-        panel.collapse();
-        setIsLessonCollapsed(true);
-      }
-    }
-  };
 
   return (
     <div className="flex flex-col w-full overflow-hidden bg-background relative" style={{ height: 'calc(100vh - 3rem)' }}>
       
-      {/* Floating Toggle Button (visible only when collapsed on desktop) */}
-      {isLessonCollapsed && (
-        <button
-          onClick={toggleLesson}
-          className="hidden lg:flex absolute left-4 top-4 z-50 bg-zinc-900/80 backdrop-blur border border-zinc-700 p-2 rounded-md shadow-lg text-zinc-400 hover:text-white transition-all hover:scale-105"
-          title="Show Lesson"
-        >
-          <PanelLeftOpen size={18} />
-        </button>
-      )}
-
       {/* DESKTOP LAYOUT (Uses Resizable Panels) */}
       <div className="hidden lg:flex flex-1 w-full h-full min-h-0">
         <PanelGroup direction="horizontal" autoSaveId="visualdb-layout">
           
           {/* COLUMN 1: Theory */}
           <Panel 
-            ref={theoryPanelRef}
-            collapsible={true}
-            collapsedSize={0}
             defaultSize={30}
             minSize={20}
-            onCollapse={() => setIsLessonCollapsed(true)}
-            onExpand={() => setIsLessonCollapsed(false)}
-            className={cn(
-              "h-full flex flex-col bg-card/30 transition-opacity duration-300 relative",
-              isLessonCollapsed ? "opacity-0" : "opacity-100"
-            )}
+            className="bg-card/30"
           >
-            <div className="h-full overflow-y-auto flex flex-col relative">
-              <button
-                onClick={toggleLesson}
-                className="absolute right-4 top-4 z-50 bg-zinc-900/50 hover:bg-zinc-800 p-1.5 rounded-md text-zinc-500 hover:text-zinc-300 transition-all"
-                title="Hide Lesson"
-              >
-                <PanelLeftClose size={16} />
-              </button>
+            <div className="h-full w-full overflow-y-auto flex flex-col">
               {theoryContent}
             </div>
           </Panel>
 
-          {!isLessonCollapsed && (
-            <PanelResizeHandle className="w-1.5 bg-border/50 hover:bg-accent/50 transition-colors cursor-col-resize flex flex-col items-center justify-center">
-              <div className="h-8 w-1 rounded-full bg-zinc-600/50" />
-            </PanelResizeHandle>
-          )}
+          <PanelResizeHandle className="w-1.5 bg-border/50 hover:bg-accent/50 transition-colors cursor-col-resize flex flex-col items-center justify-center">
+            <div className="h-8 w-1 rounded-full bg-zinc-600/50" />
+          </PanelResizeHandle>
 
           {/* COLUMN 2: Editor */}
-          <Panel defaultSize={35} minSize={20} className="h-full flex flex-col bg-zinc-950 relative">
-            {editorContent}
+          <Panel defaultSize={35} minSize={20} className="bg-zinc-950">
+            <div className="h-full w-full flex flex-col">
+              {editorContent}
+            </div>
           </Panel>
 
           <PanelResizeHandle className="w-1.5 bg-border/50 hover:bg-accent/50 transition-colors cursor-col-resize flex flex-col items-center justify-center">
@@ -81,8 +40,11 @@ export default function ModuleLayout({ theoryContent, editorContent, dataContent
           </PanelResizeHandle>
 
           {/* COLUMN 3: Data */}
-          <Panel defaultSize={35} minSize={20} className="h-full flex flex-col bg-zinc-950/20 p-4 gap-4 overflow-y-auto">
-            {dataContent}
+          <Panel defaultSize={35} minSize={20} className="bg-zinc-950/20">
+            {/* Inner scrollable container to bypass Panel's inline overflow:hidden */}
+            <div className="h-full w-full flex flex-col p-4 gap-4 overflow-y-auto">
+              {dataContent}
+            </div>
           </Panel>
 
         </PanelGroup>
