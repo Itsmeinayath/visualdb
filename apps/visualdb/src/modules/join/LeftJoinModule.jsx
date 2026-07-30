@@ -273,14 +273,17 @@ export default function LeftJoinModule() {
             end={`right-row-${rightTableData[currentRightRowIdx]?.course_id || currentRightRowIdx}`}
             color={
               checkingCondition 
-                ? "#a1a1aa" 
+                ? "#6366f1" 
                 : (tableData[currentRowIdx]?.course_id === rightTableData[currentRightRowIdx]?.course_id ? "#10b981" : "#ef4444")
             }
-            strokeWidth={2}
-            path="straight"
-            dashness={checkingCondition ? { animation: 1 } : false}
-            headSize={4}
+            strokeWidth={3}
+            path="grid"
+            startAnchor="right"
+            endAnchor="right"
+            dashness={checkingCondition ? { strokeLen: 8, nonStrokeLen: 6, animation: -20 } : false}
+            headSize={6}
             zIndex={50}
+            animateDrawing={0.2}
           />
         )}
 
