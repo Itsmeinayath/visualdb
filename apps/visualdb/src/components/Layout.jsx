@@ -279,7 +279,7 @@ function SidebarContent({ onClose }) {
 
 export default function Layout() {
   const [mobileOpen, setMobileOpen] = useState(false);
-  const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
   const [isResetModalOpen, setIsResetModalOpen] = useState(false);
 
   const [theme, setTheme] = useState(() => {
@@ -400,17 +400,25 @@ export default function Layout() {
 
       {/* Main App Body */}
       <div className="flex flex-1 overflow-hidden relative">
-        {/* Desktop Sidebar */}
+        {/* Desktop Sidebar (Floating Overlay) */}
         <aside 
           className={cn(
-            "hidden md:flex border-r border-border bg-card flex-col shrink-0 transition-all duration-300 overflow-hidden h-full z-10",
-            sidebarOpen ? "w-55" : "w-0 border-r-0"
+            "hidden md:flex border-r border-border bg-card/95 backdrop-blur-md flex-col shrink-0 transition-all duration-300 overflow-hidden h-full z-50 absolute left-0 top-0 shadow-2xl",
+            sidebarOpen ? "w-55 translate-x-0" : "w-55 -translate-x-full border-r-0 shadow-none"
           )}
         >
           <div className="w-55 h-full flex flex-col">
-            <SidebarContent />
+            <SidebarContent onClose={() => setSidebarOpen(false)} />
           </div>
         </aside>
+
+        {/* Desktop Overlay Background (Optional, to close when clicking outside) */}
+        {sidebarOpen && (
+          <div 
+            className="hidden md:block absolute inset-0 bg-black/20 backdrop-blur-[2px] z-40"
+            onClick={() => setSidebarOpen(false)}
+          />
+        )}
 
         {/* Mobile Sidebar Overlay */}
         {mobileOpen && (
