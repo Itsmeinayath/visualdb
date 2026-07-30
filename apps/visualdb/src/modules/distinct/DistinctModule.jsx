@@ -146,7 +146,6 @@ export default function DistinctModule() {
             isPaused={isPaused}
             speed={speed}
             onSpeedChange={setSpeed}
-            queryScore={queryScore}
           />
         </div>
 

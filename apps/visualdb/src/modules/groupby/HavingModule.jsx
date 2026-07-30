@@ -149,7 +149,6 @@ export default function HavingModule() {
             isPaused={isPaused}
             speed={speed}
             onSpeedChange={setSpeed}
-            queryScore={queryScore}
           />
         </div>
 

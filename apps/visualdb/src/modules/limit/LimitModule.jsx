@@ -154,7 +154,6 @@ export default function LimitModule() {
             isPaused={isPaused}
             speed={speed}
             onSpeedChange={setSpeed}
-            queryScore={queryScore}
           />
         </div>
 

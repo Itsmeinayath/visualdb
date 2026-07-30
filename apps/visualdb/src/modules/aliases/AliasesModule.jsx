@@ -149,7 +149,6 @@ export default function AliasesModule() {
             isPaused={isPaused}
             speed={speed}
             onSpeedChange={setSpeed}
-            queryScore={queryScore}
           />
         </div>
 

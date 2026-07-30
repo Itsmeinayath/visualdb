@@ -165,7 +165,6 @@ export default function WhereModule() {
             isPaused={isPaused}
             speed={speed}
             onSpeedChange={setSpeed}
-            queryScore={queryScore}
           />
         </div>
 

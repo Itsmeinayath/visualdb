@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import Xarrow from "react-xarrows";
+import XarrowModule from "react-xarrows";
+const Xarrow = XarrowModule.default || XarrowModule;
 import Table from "../../components/Table";
 import Query from "../../components/Query";
 import ChallengePanel from "../../components/ChallengePanel";
@@ -164,7 +165,6 @@ export default function InnerJoinModule() {
             isPaused={isPaused}
             speed={speed}
             onSpeedChange={setSpeed}
-            queryScore={queryScore}
           />
         </div>
 
