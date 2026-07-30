@@ -1,8 +1,7 @@
 import { useState, useRef } from 'react';
 import { cn } from '../utils/cn';
 import { BookOpen, Terminal, PanelLeftClose, PanelLeftOpen } from 'lucide-react';
-import * as ResizablePanelsModule from "react-resizable-panels";
-const { Panel, PanelGroup, PanelResizeHandle } = ResizablePanelsModule;
+import { Panel, PanelGroup, PanelResizeHandle } from "react-resizable-panels";
 
 export default function ModuleLayout({ theoryContent, editorContent, dataContent }) {
   const [activeTab, setActiveTab] = useState('theory');

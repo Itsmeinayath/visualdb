@@ -11,7 +11,7 @@ export default function Home() {
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-accent/20 blur-[120px] rounded-full pointer-events-none opacity-50" />
 
       {/* ── Hero ── */}
-      <div className="relative z-10 w-full max-w-6xl mx-auto px-6 pt-20 md:pt-28 pb-12 flex flex-col items-center text-center">
+      <div className="relative z-10 w-full max-w-6xl mx-auto px-6 pt-10 md:pt-16 pb-12 flex flex-col items-center text-center">
 
         <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-400/10 text-emerald-400 border border-emerald-400/20 mb-8 backdrop-blur-sm">
           <span className="relative flex h-2 w-2">
@@ -36,13 +36,13 @@ export default function Home() {
         </p>
 
         <div className="flex flex-col sm:flex-row items-center gap-4 w-full justify-center">
-          <a
-            href="#projects"
+          <Link
+            to="/select"
             className="group inline-flex h-11 items-center justify-center rounded-md bg-zinc-100 px-8 font-medium text-zinc-950 transition-all hover:bg-white hover:scale-[1.02] active:scale-[0.98] shadow-lg shadow-white/5"
           >
-            Explore Projects
-            <ArrowDown size={16} className="ml-2 opacity-50 group-hover:opacity-100 transition-transform group-hover:translate-y-1 duration-200" />
-          </a>
+            Start Learning SQL
+            <ArrowRight size={16} className="ml-2 opacity-50 group-hover:opacity-100 transition-transform group-hover:translate-x-1 duration-200" />
+          </Link>
           <a
             href="https://github.com/Itsmeinayath/visualdb"
             target="_blank"
