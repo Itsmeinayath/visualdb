@@ -53,7 +53,7 @@ export default function Table({
           <tbody className="font-mono text-[13px]">
             <AnimatePresence>
               {data.map((row, idx) => {
-                const pkValue = row[primaryKey] ?? idx;
+                const pkValue = row[primaryKey] ?? row.id ?? idx;
                 const isHighlighted = highlightedRows.includes(pkValue);
                 const isDiscarded = discardedRows.includes(pkValue);
                 const rowId = idPrefix ? `${idPrefix}-row-${pkValue}` : undefined;

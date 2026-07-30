@@ -51,12 +51,12 @@ export default function Query({
   });
 
   return (
-    <div className="panel overflow-hidden flex flex-col border border-accent h-full shadow-[0_0_15px_rgba(0,255,0,0.15)] rounded-md">
+    <div className="panel overflow-hidden flex flex-col border border-border h-full">
       {/* Editor Header */}
-      <div className="bg-zinc-950 px-3 py-2 border-b border-accent flex items-center justify-between gap-2">
+      <div className="bg-zinc-950 px-3 py-2 border-b border-border flex items-center justify-between gap-2">
         <div className="flex items-center gap-2">
-          <Terminal size={14} className="text-accent animate-pulse" />
-          <span className="text-xs font-mono text-accent">root@visualdb:~/query.sql</span>
+          <Terminal size={14} className="text-zinc-500" />
+          <span className="text-xs font-mono text-zinc-400">query.sql</span>
         </div>
         <div className="flex items-center gap-2">
           {isEditable && value && (
@@ -69,22 +69,17 @@ export default function Query({
             </button>
           )}
 
-          <span className="text-[10px] font-bold ml-1 uppercase tracking-widest">
+          <span className="text-[10px] font-medium ml-1">
             {isEditable ? (
-              <span className="text-accent flex items-center gap-1"><PencilLine size={10} /> Editable</span>
+              <span className="text-emerald-400 flex items-center gap-1"><PencilLine size={10} /> Editable</span>
             ) : isPaused ? (
               <span className="text-amber-400 flex items-center gap-1"><Pause size={10} /> Paused</span>
             ) : isFinished ? (
               <span className="text-blue-400 flex items-center gap-1"><Check size={10} /> Finished</span>
             ) : (
-              <span className="text-accent flex items-center gap-1"><Lock size={10} /> Executing_</span>
+              <span className="text-zinc-500 flex items-center gap-1"><Lock size={10} /> Running...</span>
             )}
           </span>
-          {queryScore && (
-            <span className={cn("text-[10px] font-bold ml-3 px-2 py-0.5 rounded border", queryScore.includes("S-Tier") ? "text-accent border-accent bg-accent/10" : queryScore.includes("Warning") ? "text-danger border-danger bg-danger/10" : "text-blue-400 border-blue-400 bg-blue-400/10")}>
-              {queryScore}
-            </span>
-          )}
         </div>
       </div>
 
