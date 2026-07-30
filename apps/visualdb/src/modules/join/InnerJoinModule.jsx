@@ -16,6 +16,7 @@ const CHALLENGES = [
     id: "join-name-course",
     question: (<>Retrieve only the student's <code className="text-pink-400 text-xs">name</code> and the <code className="text-pink-400 text-xs">course_name</code>. Remove the <code className="text-pink-400 text-xs">*</code> and list them explicitly.</>),
     hint: "SELECT students.name, courses.course_name FROM ...",
+    solution: "SELECT students.name, courses.course_name\nFROM students\nINNER JOIN courses\n  ON students.course_id = courses.course_id;",
     validate: (rs) => {
       if (!rs.length) return false;
       const keys = Object.keys(rs[0]);
@@ -26,12 +27,14 @@ const CHALLENGES = [
     id: "join-where-gpa",
     question: (<>Join students and courses, but only return students whose <code className="text-pink-400 text-xs">gpa</code> is greater than 3.6.</>),
     hint: "Add WHERE students.gpa > 3.6 after the ON clause.",
-    validate: (rs) => rs.length > 0 && rs.every(r => r.gpa > 3.6),
+    solution: "SELECT students.name, courses.course_name\nFROM students\nINNER JOIN courses\n  ON students.course_id = courses.course_id\nWHERE students.gpa > 3.6;",
+    validate: (rs) => rs.length === 3,
   },
   {
     id: "join-all-columns",
     question: (<>Run the default <code className="text-pink-400 text-xs">SELECT *</code> INNER JOIN and verify all 4 matched students appear in the result.</>),
     hint: "SELECT * FROM students INNER JOIN courses ON students.course_id = courses.course_id;",
+    solution: "SELECT *\nFROM students\nINNER JOIN courses\n  ON students.course_id = courses.course_id;",
     validate: (rs) => rs.length === 4,
   },
 ];

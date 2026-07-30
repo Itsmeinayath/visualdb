@@ -1,4 +1,5 @@
-import { ChevronLeft, ChevronRight, Trophy, CheckCircle2, XCircle, Circle } from "lucide-react";
+import { useState, useEffect } from "react";
+import { ChevronLeft, ChevronRight, Trophy, CheckCircle2, XCircle, Circle, Eye, EyeOff } from "lucide-react";
 import { cn } from "../utils/cn";
 
 /**
@@ -23,6 +24,12 @@ export default function ChallengePanel({
   onPrev,
   onNext,
 }) {
+  const [showSolution, setShowSolution] = useState(false);
+
+  useEffect(() => {
+    setShowSolution(false);
+  }, [currentIdx]);
+
   return (
     <div
       className={cn(
@@ -70,6 +77,25 @@ export default function ChallengePanel({
       {/* Hint (optional) */}
       {current.hint && (
         <p className="text-[11px] text-zinc-500 font-mono">{current.hint}</p>
+      )}
+
+      {/* Solution Toggle */}
+      {current.solution && (
+        <div className="mt-1 flex flex-col gap-2">
+          <button
+            onClick={() => setShowSolution(!showSolution)}
+            className="flex items-center gap-1.5 text-[11px] font-medium text-blue-400/80 hover:text-blue-400 transition-colors self-start"
+          >
+            {showSolution ? <EyeOff size={12} /> : <Eye size={12} />}
+            {showSolution ? "Hide Solution" : "Show Solution"}
+          </button>
+          
+          {showSolution && (
+            <div className="p-2 bg-zinc-950 border border-zinc-800 rounded text-[11px] font-mono text-zinc-300 whitespace-pre-wrap">
+              {current.solution}
+            </div>
+          )}
+        </div>
       )}
 
       {/* Result feedback */}
