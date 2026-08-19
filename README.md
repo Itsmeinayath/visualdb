@@ -8,7 +8,10 @@
   [![React](https://img.shields.io/badge/React-19-blue?style=flat-square&logo=react)](https://react.dev/)
   [![Vite](https://img.shields.io/badge/Vite-6.0-purple?style=flat-square&logo=vite)](https://vitejs.dev/)
   [![Tailwind CSS](https://img.shields.io/badge/Tailwind-4.0-38B2AC?style=flat-square&logo=tailwind-css)](https://tailwindcss.com/)
+  [![CI](https://github.com/Itsmeinayath/visualdb/actions/workflows/ci.yml/badge.svg)](https://github.com/Itsmeinayath/visualdb/actions)
+  [![Vercel](https://img.shields.io/vercel/deployment/itsmeinayath/visualdb/main?style=flat-square)](https://visualdb-sooty.vercel.app/)
   [![PRs Welcome](https://img.shields.io/badge/PRs-Welcome-brightgreen?style=flat-square)](https://github.com/Itsmeinayath/visualdb/pulls)
+  [![good first issue](https://img.shields.io/badge/good--first--issue-welcome-brightgreen?style=flat-square)](https://github.com/Itsmeinayath/visualdb/labels/good%20first%20issue)
   [![License](https://img.shields.io/github/license/Itsmeinayath/visualdb?style=flat-square)](LICENSE)
 </div>
 

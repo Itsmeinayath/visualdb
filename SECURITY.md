@@ -1,16 +1,7 @@
 # Security Policy
 
-## Supported Versions
+If you discover a security vulnerability, please do not create a public issue. Instead, contact the maintainers privately:
 
-Currently, only the latest version on the `main` branch is supported with security updates.
+- Email: itsmeinayath@gmail.com
 
-| Version | Supported          |
-| ------- | ------------------ |
-| main    | :white_check_mark: |
-
-## Reporting a Vulnerability
-
-If you discover a security vulnerability within VisualDB, please DO NOT open a public issue. 
-Instead, please email the repository owner directly or send a private message. 
-
-We will respond to all security reports within 48 hours and work with you to understand the issue and resolve it securely.
+We will respond within 72 hours and coordinate a fix and disclosure timeline. For non-security questions, please open an issue or use Discussions.
