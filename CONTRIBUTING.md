@@ -1,64 +1,46 @@
-# Contributing to VisualDB
+Thanks for your interest in contributing to visualdb! We welcome contributions of all types — bug fixes, documentation, examples, and feature ideas.
 
-First off, thank you for considering contributing to VisualDB! 🎉 We're excited to have you here. VisualDB is an open-source project aimed at helping students and educators understand how databases *execute* queries through interactive, visual animations.
+1) Quick start (local)
+- Prereqs: Node.js 18+ and npm/yarn
+- Clone:
+  git clone https://github.com/Itsmeinayath/visualdb.git
+  cd visualdb
+- Install:
+  npm install
+- Start dev server:
+  npm run dev
+- Build:
+  npm run build
+- Run tests (if any):
+  npm test
 
-## 🚀 Getting Started
+2) How to contribute
+- Pick an issue labeled good first issue, help wanted, or discussion.
+- Fork the repo and create a descriptive branch: feature/short-description or fix/short-description.
+- Make small, focused changes with clear commits.
+- Keep PRs focused to one topic and include screenshots or steps to reproduce when relevant.
+- Add or update tests where appropriate.
 
-To get the project running locally on your machine:
+3) Code style & commits
+- JavaScript code should follow existing patterns in the project.
+- Run linting if available: npm run lint
+- Commit messages: use short, imperative messages (e.g., “fix: handle empty results in query”).
 
-1. **Fork the repository** on GitHub.
-2. **Clone your fork** locally:
-   ```bash
-   git clone https://github.com/YOUR_USERNAME/visualdb.git
-   cd visualdb
-   ```
-3. **Install dependencies**:
-   ```bash
-   npm install
-   ```
-4. **Start the development server**:
-   ```bash
-   npm run dev
-   ```
-5. Open `http://localhost:5173` (or the URL Vite provides) in your browser.
+4) Pull request process
+- Create a PR from your branch to main.
+- Fill out the PR template.
+- Address CI/test failures if present.
+- Be responsive to review comments — maintainers may request changes.
 
-## 🛠️ Architecture Overview
+5) Communication & support
+- Open an issue for major changes or proposals.
+- For quick questions, open an issue and prefix with “question:”.
 
-VisualDB is a 100% client-side React 19 application built with Vite and Tailwind CSS. It uses `node-sql-parser` to parse SQL into an Abstract Syntax Tree (AST).
+6) New contributors
+- Look for issues labeled good first issue.
+- Ask for help in an issue if a task is unclear; maintainers will help you get started.
 
-The architecture is cleanly separated:
-- **`src/hooks/useExecutionEngine.js`**: The core simulation engine. It handles parsing the SQL, managing the animation loop speed and pauses, and running the query logic.
-- **`src/hooks/useChallenges.js`**: Manages the multi-challenge question system for each module.
-- **`src/modules/`**: Contains the individual learning modules (e.g., SELECT, WHERE, GROUP BY).
-- **`src/components/`**: Reusable UI components like the `ChallengePanel`, `Query` editor, and data `Table`.
+7) Security
+- Do not disclose vulnerabilities in public issues. Email us directly for security concerns.
 
-## 💡 How You Can Contribute
-
-We have issues tagged with `good first issue` to help you find a starting point. Here are some areas where contributions are highly valued:
-
-1. **New Modules:** We'd love to see modules for `SUBQUERY`, `UNION`, `INSERT/UPDATE`, or advanced concepts like Indexing and Normalization.
-2. **More Challenge Questions:** Expanding the existing modules with more questions helps students practice.
-3. **Mobile Responsiveness:** Improving the layout on smaller screens.
-4. **Bug Fixes:** Check the issues tab for any reported bugs.
-5. **Documentation:** Improving README, adding code comments, or writing better module explanations.
-
-## 📝 Making a Pull Request (PR)
-
-1. **Create a new branch** for your feature or bug fix:
-   ```bash
-   git checkout -b feature/my-awesome-feature
-   ```
-2. **Write your code**. If you are building a new module, use the existing modules as a template (they all use the `useExecutionEngine` and `useChallenges` hooks).
-3. **Test your changes** locally. Make sure the app builds without errors (`npm run build`).
-4. **Commit your changes** with a clear, descriptive commit message.
-5. **Push to your fork**:
-   ```bash
-   git push origin feature/my-awesome-feature
-   ```
-6. **Open a Pull Request** against the `main` branch of the original `visualdb` repository.
-
-## 💬 Need Help?
-
-If you get stuck or have questions about how a specific part of the code works, feel free to open a Discussion on GitHub or ask a question in the issues section.
-
-Happy Coding!
+Thank you — every contribution helps make visualdb better!

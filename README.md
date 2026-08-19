@@ -92,16 +92,20 @@ Read our **[VisualCS Manifesto (VISION.md)](VISION.md)** to see where we are hea
 
 ## 🤝 Contributing
 
-We love contributions! Whether you're fixing a typo, adding a new mock dataset, or building an entirely new visualization module, your help is welcome. 
+visualdb is a small, beginner-friendly project that visualizes simple database concepts and lets learners tinker with queries and data structures in the browser. If you’re learning JavaScript, databases, or UI/UX for developer tools, this project is a great place to contribute and learn.
 
-Please read our comprehensive **[Contributing Guide](CONTRIBUTING.md)** for details on:
-- How to set up the project locally
-- The architecture (how the Execution Engine and UI modules interact)
-- How to submit a Pull Request
+- Live demo: https://visualdb-sooty.vercel.app/
+- Want to help? See [CONTRIBUTING.md](CONTRIBUTING.md) for how to get started.
 
-Check out our issues tab for tasks labeled `good first issue`.
+### How to contribute (short)
+- Find issues labeled `good first issue` for an easy start.
+- We welcome documentation improvements, bug fixes, and new examples.
+- Please follow the code style and run the dev server locally before opening a PR.
 
----
+### Project roadmap
+- Improve onboarding and first-timer issues
+- Add more interactive examples and tutorials
+- Add test coverage and CI checks
 
 ## 🌟 Contributors
 
